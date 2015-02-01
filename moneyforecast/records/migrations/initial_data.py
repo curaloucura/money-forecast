@@ -29,6 +29,11 @@ def initial_accounts(apps, schema_editor):
         name = _("Initial Balance"),
         type_account = SYSTEM_ACCOUNTS
     )
+    Account.objects.create(
+        id = UNSCHEDULED_DEBTS_ID,
+        name = _("Initial Balance"),
+        type_account = SYSTEM_ACCOUNTS
+    )
 
 
 class Migration(migrations.Migration):

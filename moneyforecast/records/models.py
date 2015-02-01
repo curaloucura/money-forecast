@@ -10,6 +10,7 @@ SYSTEM_ACCOUNTS = 3
 TYPE_ACCOUNT_CHOICES = ((OUTCOME, _('Outcome')),(INCOME, _('Income')), (SAVINGS, _('Savings')), (SYSTEM_ACCOUNTS, _('System Internals')))
 
 INITIAL_BALANCE_ID = 4
+UNSCHEDULED_DEBTS_ID = 5
 
 class Account(models.Model):
 	name = models.CharField(max_length=50)

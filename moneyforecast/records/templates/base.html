@@ -27,7 +27,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-5 col-md-offset-7">
+			<div class="col-md-5 col-md-offset-7 text-right">
 				<span class="glyphicon glyphicon-import" aria-hidden="true"></span>
 				<a href="/admin/records/record/add/?account=1">{% trans "New Income" %}</a>&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
@@ -117,7 +117,73 @@
 					<td class="number">R$ 50,00</td>
 				</tr>
 			</table>
+			<hr>
+
+			<h4>
+				{% trans "Debitos nao agendados" %}:
+			</h4>
+			<table>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+			</table>
+			<a href="/admin/records/record/add/?account=5">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				{% trans "Add unscheduled debt" %}
+			</a>
+			<hr>
+
+			<h4>
+				{% trans "Savings" %}:
+			</h4>
+			<table>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+				<tr>
+					<td>11 Jan</td>
+					<td>Minha conta (1/12)</td>
+					<td class="number">R$ 50,00</td>
+				</tr>
+			</table>
+			<a href="/admin/records/record/add/?account=3">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				{% trans "Add savings" %}
+			</a>
+
 		  </div>
+		</div>
+		<div class="row" id="footer">
+			<p class="text-center">Copyleft {% now "Y" %} - www.andersonsantos.info - <a href="https://github.com/curaloucura/money-forecast" target="_blank">Source Code</a></p>
 		</div>
 	</div>
 </body>
