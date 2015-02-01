@@ -6,8 +6,7 @@ My Money Forecast is a simple application to give you an overview of what are yo
 You don't have to be an accounter to know how much you are spending or saving.
 
 This project is served under Apache, BSD, or whatever license you want. It's free to use and to distribute, improvements are also welcome!
-
-Inline-style: 
+ 
 ![screenshot of work so far](http://www.andersonsantos.info/img/moneyforecast.png)
 
 
