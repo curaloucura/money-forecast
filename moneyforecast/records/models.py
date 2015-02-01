@@ -29,13 +29,13 @@ class Account(models.Model):
 
 class Record(models.Model):
 	description = models.CharField(max_length=50, blank=True)
-	account = models.ForeignKey(Account)
-	value = models.FloatField(default=0, help_text=_("Please, use only the monthly value"))
-	day_of_month = models.SmallIntegerField(blank=True, null=True, help_text=_('Use este campo para contas mensais'))
-	number_payments = models.SmallIntegerField(blank=True, null=True)
-	start_date = models.DateField(default=datetime.today)
-	end_date = models.DateField(blank=True, null=True)
-	is_paid_off = models.BooleanField(default=False)
+	account = models.ForeignKey(Account, help_text=_('Select the account for this record. This field is required'))
+	value = models.FloatField(default=0, verbose_name=_("How much?"),help_text=_("Please, use only the monthly amount. This field is required"))
+	start_date = models.DateField(default=datetime.today, verbose_name=_('Date'), help_text=_('This field is required'))
+	day_of_month = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Day of the month"), help_text=_('Use this field to set recurring bills. The day in which will you be billed every month'))
+	number_payments = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Number of Payments"), help_text=_('This is only used to generate the final payment date'))
+	end_date = models.DateField(blank=True, null=True, verbose_name=_('Last payment on'), help_text=_('This is the date when it will be the last payment for this record, after this date the record will not appear on the calculations'))
+	is_paid_off = models.BooleanField(default=False, verbose_name=_('Is it totally paid?'), help_text=_('If checked, the record won\'t appear in the calculations anymore. Click it only to hide a record from your spreadsheet'))
 	notes = models.TextField(blank=True, null=True)
 	user = models.ForeignKey(User, blank=True, null=True)
 	
@@ -54,7 +54,7 @@ def generate_default_accounts(sender, instance, created, **kwargs):
 		(_('Extra Income'),'extra_income', INCOME),
 		(_('Extra Outcome'),'extra_outcome', OUTCOME),
 		(_('Savings'),'savings', SAVINGS),
-		(_('Initial Balance'),INITIAL_BALANCE_SLUG, SYSTEM_ACCOUNTS),
+		(_('Monthly Balance'),INITIAL_BALANCE_SLUG, SYSTEM_ACCOUNTS),
 		(_('Unscheduled Debts'),UNSCHEDULED_DEBTS_SLUG, SYSTEM_ACCOUNTS),
 	)
 	if created:

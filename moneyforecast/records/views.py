@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
-from records.models import Record, INCOME, OUTCOME, SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG
+from records.models import Record, Account, INCOME, OUTCOME, SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG
 
 class MonthControl(object):
 	def __init__(self, user, month, year):
@@ -72,6 +72,14 @@ class MonthControl(object):
 		pass
 
 
+def _get_account_id(user, type_account, slug):
+	account = Account.objects.filter(user=user, type_account=type_account, slug=slug)
+	# The slugs might have changed
+	if account.count():
+		return account[0].id
+	else:
+		return 0
+
 @login_required
 def index(request):
 	month_list = []
@@ -81,4 +89,9 @@ def index(request):
 		month_list.append(MonthControl(request.user, target_month.month, target_month.year))
 
 	current_month = month_list[0]
+
+	income_id = _get_account_id(request.user, INCOME, 'extra_income')
+	outcome_id = _get_account_id(request.user, OUTCOME, 'extra_outcome')
+	savings_id = _get_account_id(request.user, SAVINGS, 'savings')
+	set_balance_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG)
 	return render(request, "base.html", locals())

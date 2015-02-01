@@ -32,6 +32,12 @@ class RecordAdmin(CurrentUserAdmin):
 	list_filter = ('start_date','end_date','is_paid_off')
 	list_display_links = ('description', 'account')
 
+	def formfield_for_foreignkey(self, db_field, request, **kwargs):
+		if db_field.name == "account":
+			kwargs["queryset"] = Account.objects.filter(user=request.user)
+		return super(RecordAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
 
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Record, RecordAdmin)

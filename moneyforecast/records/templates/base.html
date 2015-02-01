@@ -19,7 +19,7 @@
 
 </head>
 <body>
-	<div class="container">
+ 	<div class="container">
 		<div class="row">
 			<div class="cold-md-12">
 				<h1>
@@ -31,13 +31,13 @@
 		<div class="row">
 			<div class="col-md-5 col-md-offset-7 text-right">
 				<span class="glyphicon glyphicon-import" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=1" target="_blank">{% trans "New Income" %}</a>&nbsp;&nbsp;
+				<a href="/admin/records/record/add/?account={{ income_id }}" target="_blank">{% trans "New Income" %}</a>&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=2" target="_blank">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
+				<a href="/admin/records/record/add/?account={{ outcome_id }}" target="_blank">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=3" target="_blank">{% trans "New Savings" %}</a>&nbsp;&nbsp;
+				<a href="/admin/records/record/add/?account={{ savings_id }}" target="_blank">{% trans "New Savings" %}</a>&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=4" target="_blank">{% trans "Set Balance" %}</a>
+				<a href="/admin/records/record/add/?account={{ set_balance_id }}" target="_blank">{% trans "Set Balance" %}</a>
 			</div>
 		</div>
 		<div class="row">

@@ -18,3 +18,5 @@ Improvements to be done:
 - Create forms to make it easier to add new records with modals and auto-refresh
 - Improve sidebar and add missing information
 - Give it some colors and styles
+- Display a list of records on mouse over
+- Translate to pt-br and de
