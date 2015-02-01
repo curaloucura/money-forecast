@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n record_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +6,15 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
 <!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
 
 <style>
-	
+	td {
+		text-align: right;
+	}	
 </style>
 
 </head>
@@ -29,13 +31,13 @@
 		<div class="row">
 			<div class="col-md-5 col-md-offset-7 text-right">
 				<span class="glyphicon glyphicon-import" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=1">{% trans "New Income" %}</a>&nbsp;&nbsp;
+				<a href="/admin/records/record/add/?account=1" target="_blank">{% trans "New Income" %}</a>&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=2">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
+				<a href="/admin/records/record/add/?account=2" target="_blank">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=3">{% trans "New Savings" %}</a>&nbsp;&nbsp;
+				<a href="/admin/records/record/add/?account=3" target="_blank">{% trans "New Savings" %}</a>&nbsp;&nbsp;
 				<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account=4">{% trans "Set Balance" %}</a>
+				<a href="/admin/records/record/add/?account=4" target="_blank">{% trans "Set Balance" %}</a>
 			</div>
 		</div>
 		<div class="row">
@@ -58,13 +60,13 @@
 					{% for month in month_list %}
 					<tr id="{{ month.start_date|date:"m-Y" }}">
 						<th><span id="col-1">{{ month.start_date|date:"F" }}</span></th>
-						<td><span id="col-2">{{ month.initial_balance }}</span></td>
-						<td><span id="col-3">{{ month.income_monthly }}</span></td>
-						<td><span id="col-4">{{ month.income_variable }}</span></td>
-						<td><span id="col-5">{{ month.outcome_monthly }}</span></td>
-						<td><span id="col-6">{{ month.outcome_variable }}</span></td>
-						<td><span id="col-7">{{ month.difference }}</span></td>
-						<td><span id="col-8">{{ month.final_balance }}</span></td>					
+						<td><span id="col-2" class="">{{ month.initial_balance|pretty_number }}</span></td>
+						<td><span id="col-3">{{ month.income_monthly|pretty_number }}</span></td>
+						<td><span id="col-4">{{ month.income_variable|pretty_number }}</span></td>
+						<td><span id="col-5">{{ month.outcome_monthly|pretty_number }}</span></td>
+						<td><span id="col-6">{{ month.outcome_variable|pretty_number }}</span></td>
+						<td><span id="col-7">{{ month.difference|pretty_number }}</span></td>
+						<td><span id="col-8">{{ month.final_balance|pretty_number }}</span></td>					
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -72,40 +74,30 @@
 		  </div>
 		  <div id="sidebar" class="col-md-3">
 			<h3>
-				{% trans "Este mês" %} ({{ today|date:"F" }}):
+				{% trans "It's" %} {{ current_month.start_date|date:"F Y" }}!
 			</h3>
 
 			<p>
-				{% trans "você tem que pagar" %}:
-				R$ XXX.XXX 
+				{% trans "Your total of debts this month so far is" %}: <br>
+				$ {{ current_month.total_outcome|pretty_number }}
 			</p>
 			
 			<p>
-				{% if True %}
-						{% trans "Falta" %}:
-							R$ XXX.XXX
-						{% trans "para completar o valor este mês" %}
+				{% if current_month.difference < 0 %}
+						{% trans "You need" %}: <br>
+							$ {{ current_month.difference|pretty_number }} <br>
+						{% trans "to be able to pay your bills" %}.
 				{% else %}
-					{% trans "Sobrará" %}:
-						R$ XXXX,XXXX
-					{% trans "este mês" %}.
+					{% trans "You have" %}: <br>
+							$ {{ current_month.difference|pretty_number }} 
+						{% trans "extra cash. Do some savings!" %}
 				{% endif %}
 			</p>
 
 			<h4>
-				{% trans "Contas que vencerão" %}:
+				{% trans "Upcoming this month" %}:
 			</h4>
 			<table>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
 				<tr>
 					<td>11 Jan</td>
 					<td>Minha conta (1/12)</td>
@@ -120,19 +112,16 @@
 			<hr>
 
 			<h4>
-				{% trans "Debitos nao agendados" %}:
+				{% trans "Unscheduled debts" %}:
 			</h4>
+			<p class="text-muted">
+				{% if False %}
+					{% trans "This is still not accounted. Be aware!" %}
+				{% else %}
+					{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum or uncle Joe." %}
+				{% endif %}
+			</p>
 			<table>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
 				<tr>
 					<td>11 Jan</td>
 					<td>Minha conta (1/12)</td>
@@ -154,16 +143,6 @@
 				{% trans "Savings" %}:
 			</h4>
 			<table>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
 				<tr>
 					<td>11 Jan</td>
 					<td>Minha conta (1/12)</td>
