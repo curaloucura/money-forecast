@@ -3,14 +3,18 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
-from records.models import Record, Account, INCOME, OUTCOME, SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG
+from records.models import get_last_day_of_month, Record, Account, INCOME, OUTCOME,\
+							 SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG
 
 class MonthControl(object):
 	def __init__(self, user, month, year):
 		self.user = user
+		self.month = month
+		self.year = year
+		self.today = date.today()
 		self.start_date = date(day=1, month=month, year=year)
 		# end_date is the last day of the month
-		self.end_date = (self.start_date+relativedelta(months=1))-timedelta(days=1)
+		self.end_date = get_last_day_of_month(month, year)
 		self.last_month = (self.start_date-relativedelta(months=1))
 		self._get_records()
 		self._calculate_totals()
@@ -68,7 +72,28 @@ class MonthControl(object):
 		pass
 
 	def get_upcoming_records(self):
-		# TODO: this have to bring all records from today until end of the month, recurring and one-timer bills
+		"""
+		This will return a tuple with the date for the month and the record.
+		It is necessary since you can't get the date of a recurring event inside the template
+		"""
+		outcomes  = self.outcome_monthly_list | self.outcome_variable_list
+		upcoming = []
+		results = []
+
+		for record in outcomes:
+			# Calculate dates
+			results.append((record.get_date_for_month(self.month, self.year), record))
+
+		# Sort per date
+		results.sort(key=lambda r: r[0])
+
+		for record in results:
+			if record[0] >= self.today:
+				upcoming.append(record)
+		return upcoming
+
+	def get_savings_totals(self):
+		# TODO: Sum up all savings by account to display in a table
 		pass
 
 
@@ -84,7 +109,7 @@ def _get_account_id(user, type_account, slug):
 def index(request):
 	month_list = []
 	today = datetime.today()
-	for i in range(0,11):
+	for i in range(0,13):
 		target_month = today+relativedelta(months=i)
 		month_list.append(MonthControl(request.user, target_month.month, target_month.year))
 

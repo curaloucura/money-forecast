@@ -1,9 +1,9 @@
-{% load i18n record_tags %}
+{% load i18n record_tags static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
 
 <!-- Optional theme -->
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
@@ -15,17 +15,25 @@
 	td {
 		text-align: right;
 	}	
+	table#upcoming{
+		font-size: 0.9em;
+	}
 </style>
 
 </head>
 <body>
  	<div class="container">
 		<div class="row">
-			<div class="cold-md-12">
+			<div class="col-md-8">
 				<h1>
 				{% trans "My Money Forecast" %}
 				<span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
 				</h1>
+			</div>
+			<div class="col-md-4 text-right">
+				<a href="#" title="Portuguese"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
+				<a href="#" title="English"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
+				<a href="#" title="German"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
 			</div>
 		</div>
 		<div class="row">
@@ -97,67 +105,81 @@
 			<h4>
 				{% trans "Upcoming this month" %}:
 			</h4>
-			<table>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
+			{% with current_month.get_upcoming_records as upcoming_list %}
+			{% if not upcoming_list %}
+				<p class="text-muted">{% trans "No more debts this month, hooray!" %}</p>
+			{% else %}
+			<table id="upcoming" class="table table-condensed">
+				{% for record in upcoming_list %}
+				<tr title="{{ record.1.account }}">
+					<td>{{ record.0|date:"d b" }}</td>
+					<td>{# TOOD: add number eg. 2/10 #} 
+						{{ record.1.description|default:record.1.account }}
+					</td>
+					<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
 				</tr>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
+				{% endfor %}
 			</table>
-			<hr>
-
-			<h4>
-				{% trans "Unscheduled debts" %}:
-			</h4>
-			<p class="text-muted">
-				{% if False %}
-					{% trans "This is still not accounted. Be aware!" %}
-				{% else %}
-					{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum or uncle Joe." %}
-				{% endif %}
-			</p>
-			<table>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
-			</table>
-			<a href="/admin/records/record/add/?account=5">
-				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-				{% trans "Add unscheduled debt" %}
-			</a>
+			{% endif %}
+			{% endwith %}
 			<hr>
 
 			<h4>
 				{% trans "Savings" %}:
 			</h4>
+			{% with current_month.get_savings_totals as savings_list %}
+			{% if not savings_list %}
+				<p class="text-muted">{% trans "You haven't saved anything yet, you'd better start soon!" %}</p>
+			{% else %}
 			<table>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
+				{% for record in savings_list %}
+				<tr title="{{ record.1.account }}">
+					<td>{{ record.0|date:"d b" }}</td>
+					<td>{# TOOD: add number eg. 2/10 #} 
+						{{ record.1.description|default:record.1.account }}
+					</td>
+					<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
 				</tr>
-				<tr>
-					<td>11 Jan</td>
-					<td>Minha conta (1/12)</td>
-					<td class="number">R$ 50,00</td>
-				</tr>
+				{% endfor %}
 			</table>
-			<a href="/admin/records/record/add/?account=3">
+			{% endif %}
+			{% endwith %}
+			<p><a href="/admin/records/record/add/?account=3">
 				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 				{% trans "Add savings" %}
-			</a>
+			</a></p>
+			<hr>
+
+			<h4>
+				{% trans "Unscheduled debts" %}:
+			</h4>
+			{% with current_month.get_savings_totals as unscheduled_list %}
+			<p class="text-muted">
+				{% if not unscheduled_list %}
+					{% trans "This is still not being accounted. Be aware!" %}
+				{% else %}
+					{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum or uncle Joe." %}
+				{% endif %}
+			</p>
+			<table>
+				{% for record in savings_list %}
+				<tr title="{{ record.1.account }}">
+					<td>{{ record.0|date:"d b" }}</td>
+					<td>{# TOOD: add number eg. 2/10 #} 
+						{{ record.1.description|default:record.1.account }}
+					</td>
+					<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+			{% endwith %}
+			<p><a href="/admin/records/record/add/?account=5">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				{% trans "Add unscheduled debt" %}
+			</a></p>
+			<hr>
+
+			
 
 		  </div>
 		</div>

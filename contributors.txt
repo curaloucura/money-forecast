@@ -1,0 +1,5 @@
+Thanks to the team from Bootstrap for their excellent CSS Framework.
+And special thanks to the team of Glyphicons and Antibakteriell for his nice free icons and world flags.
+
+http://getbootstrap.com
+http://antibakteriell.deviantart.com/art/Flag-Icons-FIFA-WC-2010-167149016

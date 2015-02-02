@@ -24,7 +24,7 @@ class AccountAdmin(CurrentUserAdmin):
 	def queryset(self, request):
 		qs = super(CurrentUserAdmin, self).queryset(request)
 		 # make sure all users, even superusers, see only their own objects
-		return qs.exclude(type_account=SYSTEM_ACCOUNTS)
+		return qs.exclude(type_account=SYSTEM_ACCOUNTS) # TODO: Hide also extra income and others
 
 
 class RecordAdmin(CurrentUserAdmin):

@@ -3,7 +3,8 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.db.models.signals import post_save
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 
 OUTCOME = 0
 INCOME = 1
@@ -27,6 +28,11 @@ class Account(models.Model):
 	# TODO: Prevent from changing the slug from System Accounts
 
 
+def get_last_day_of_month(month, year):
+	start_date = date(day=1, month=month, year=year)
+	return (start_date+relativedelta(months=1))-timedelta(days=1)
+
+
 class Record(models.Model):
 	description = models.CharField(max_length=50, blank=True)
 	account = models.ForeignKey(Account, help_text=_('Select the account for this record. This field is required'))
@@ -41,6 +47,40 @@ class Record(models.Model):
 	
 	def __unicode__(self):
 		return "%s %s %s" % (self.description,self.account,self.value)
+
+	def _get_valid_date_of_month(self, month, year):
+		day = 1
+		if self.day_of_month:
+			if not(self.day_of_month in range(1,32)):
+				# Invalid day, return 1
+				day = 1
+
+			# Avoid returning 31 of February for example
+			last_day = get_last_day_of_month(month, year)
+			if self.day_of_month > last_day.day:
+				day = last_day.day
+			else:
+				day = self.day_of_month
+
+		return date(day=day, month=month, year=year)
+
+	def get_date_for_month(self, month=None, year=None):
+		"""
+		Get date for the record, but when it's recurring, will get the date object for the month using the day_of_month
+		For recurring objects, month and year are required
+		"""
+
+		# Check if parameters are given, then if it's not
+		# current month and finally if there is a day of the month
+		if month and year:
+			if (((month != self.start_date.month) or
+					(month == self.start_date.month) and (year != self.start_date.year))
+				and
+					self.day_of_month):
+				return self._get_valid_date_of_month(month, year)
+
+		return self.start_date
+
 
 	# TODO: on saving System Accounts, make sure invalid fields are not being saved like end_date
 
