@@ -1,2 +1,2 @@
 django==1.7
-python-dateutils
+python-dateutil==2.4.0

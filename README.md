@@ -1,21 +1,18 @@
 My Money Forecast
 =================
 
-My Money Forecast is a simple application to give you an overview of your monthly expenses without much fuss and confusion. It supports multiple users, isolating the data creating total privacy.
+My Money Forecast is an easy-to-use budget forecaster, that gives you an instant of your monthly expenses without much fuss and confusion. It also supports multiple users, isolating the data and providing total privacy for you and your family members.
 
-You don't have to be an accounter to know how much you are spending or saving.
+You don't have to be an accounter to know how much you are spending or saving!
 
-This project is made with Django and served under Apache, BSD, or whatever license you want. Beaware we use third-party tools which may affect its use. This software free to use and to distribute, improvements are also welcome!
+This project is made with Django and served under UNLICENSE and can be used by anyone, for commercial and non-commerical purposes. Be aware that we use third-party tools, and their license must be respected accordingly. This software is free for use and to distribute, improvements are also welcome!
  
-![screenshot of work so far](http://www.andersonsantos.info/img/moneyforecast.png)
+![screenshot of work so far](http://www.andersonsantos.info/img/money_forecast_.png)
 
-To install, simply download, install the requirements.txt using pip and virtualenv and run the application.
-
+To install, simply download, install the requirements.txt using pip and run the application as a normal django app.
 
 Improvements to be done:
 
 - Create forms to make it easier to add new records with modals and auto-refresh
-- Improve sidebar and add missing information
 - Give it some colors and styles
-- Display a list of records on mouse over
 - Translate to pt-br and de
