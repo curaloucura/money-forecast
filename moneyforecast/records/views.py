@@ -130,7 +130,8 @@ def _get_account_id(user, type_account, slug):
 @login_required
 def index(request):
 	month_list = []
-	today = datetime.today()
+	today = date.today()
+	tomorrow = date.today()+timedelta(days=1)
 	for i in range(0,13):
 		target_month = today+relativedelta(months=i)
 		month_list.append(MonthControl(request.user, target_month.month, target_month.year))

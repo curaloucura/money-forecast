@@ -31,8 +31,18 @@
 	<table id="upcoming" class="table table-condensed">
 		{% for record in upcoming_list %}
 		<tr title="{{ record.1.account }}">
-			<td class="text-left">{{ record.0|date:"d b" }}</td>
-			<td>{# TOOD: add number eg. 2/10 #} 
+			<td class="text-left">
+				{% if record.0 == today %}
+					{% trans "Today" %}
+				{% else %}
+					{% if record.0 == tomorrow %}
+						{% trans "Tomorrow" %}
+					{% else %}
+						{{ record.0|date:"d b" }}
+					{% endif %}
+				{% endif %}
+			</td>
+			<td>{# TODO: add number eg. 2/10 #} 
 				{{ record.1.description|default:record.1.account }}
 			</td>
 			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
