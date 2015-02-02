@@ -9,180 +9,43 @@
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
 
 <!-- Latest compiled and minified JavaScript -->
-<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script> -->
+<script src="{% static "bootstrap/js/j.js" %}"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 
 <style>
+	#nav a {
+		font-size: 1.1em;
+		color: #666;
+		font-weight: bold;
+		margin-right: 1em;
+		display: inline-block;
+	}
+	#nav a:last-child {
+		margin-right: 0;
+	}
 	td {
 		text-align: right;
 	}	
-	table#upcoming{
+	table#upcoming {
 		font-size: 0.9em;
+	}
+	.records-list-modal .records-list {
+		max-height: 300px;
+		overflow-y: auto;
+		margin-bottom: 1em;
+	}
+	.records-list-modal table {
+		margin-bottom: 0;
 	}
 </style>
 
 </head>
 <body>
  	<div class="container">
-		<div class="row">
-			<div class="col-md-8">
-				<h1>
-				{% trans "My Money Forecast" %}
-				<span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
-				</h1>
-			</div>
-			<div class="col-md-4 text-right">
-				<a href="#" title="Portuguese"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
-				<a href="#" title="English"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
-				<a href="#" title="German"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-5 col-md-offset-7 text-right">
-				<span class="glyphicon glyphicon-import" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account={{ income_id }}" target="_blank">{% trans "New Income" %}</a>&nbsp;&nbsp;
-				<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account={{ outcome_id }}" target="_blank">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
-				<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account={{ savings_id }}" target="_blank">{% trans "New Savings" %}</a>&nbsp;&nbsp;
-				<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-				<a href="/admin/records/record/add/?account={{ set_balance_id }}" target="_blank">{% trans "Set Balance" %}</a>
-			</div>
-		</div>
-		<div class="row">
-		  <hr>
-		  <div class="col-md-9">
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th></th>
-						<th>{% trans "Initial Balance" %}</th>
-						<th>{% trans "Income" %}</th>
-						<th>{% trans "Extra Income" %}</th>
-						<th>{% trans "Outcome" %}</th>
-						<th>{% trans "Extra Outcome" %}</th>
-						<th>{% trans "Difference" %}</th>
-						<th>{% trans "Final Balance" %}</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for month in month_list %}
-					<tr id="{{ month.start_date|date:"m-Y" }}">
-						<th><span id="col-1">{{ month.start_date|date:"F" }}</span></th>
-						<td><span id="col-2" class="">{{ month.initial_balance|pretty_number }}</span></td>
-						<td><span id="col-3">{{ month.income_monthly|pretty_number }}</span></td>
-						<td><span id="col-4">{{ month.income_variable|pretty_number }}</span></td>
-						<td><span id="col-5">{{ month.outcome_monthly|pretty_number }}</span></td>
-						<td><span id="col-6">{{ month.outcome_variable|pretty_number }}</span></td>
-						<td><span id="col-7">{{ month.difference|pretty_number }}</span></td>
-						<td><span id="col-8">{{ month.final_balance|pretty_number }}</span></td>					
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		  </div>
-		  <div id="sidebar" class="col-md-3">
-			<h3>
-				{% trans "It's" %} {{ current_month.start_date|date:"F Y" }}!
-			</h3>
-
-			<p>
-				{% trans "Your total of debts this month so far is" %}: <br>
-				$ {{ current_month.total_outcome|pretty_number }}
-			</p>
-			
-			<p>
-				{% if current_month.difference < 0 %}
-						{% trans "You need" %}: <br>
-							$ {{ current_month.difference|pretty_number }} <br>
-						{% trans "to be able to pay your bills" %}.
-				{% else %}
-					{% trans "You have" %}: <br>
-							$ {{ current_month.difference|pretty_number }} 
-						{% trans "extra cash. Do some savings!" %}
-				{% endif %}
-			</p>
-
-			<h4>
-				{% trans "Upcoming this month" %}:
-			</h4>
-			{% with current_month.get_upcoming_records as upcoming_list %}
-			{% if not upcoming_list %}
-				<p class="text-muted">{% trans "No more debts this month, hooray!" %}</p>
-			{% else %}
-			<table id="upcoming" class="table table-condensed">
-				{% for record in upcoming_list %}
-				<tr title="{{ record.1.account }}">
-					<td>{{ record.0|date:"d b" }}</td>
-					<td>{# TOOD: add number eg. 2/10 #} 
-						{{ record.1.description|default:record.1.account }}
-					</td>
-					<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
-				</tr>
-				{% endfor %}
-			</table>
-			{% endif %}
-			{% endwith %}
-			<hr>
-
-			<h4>
-				{% trans "Savings" %}:
-			</h4>
-			{% with current_month.get_savings_totals as savings_list %}
-			{% if not savings_list %}
-				<p class="text-muted">{% trans "You haven't saved anything yet, you'd better start soon!" %}</p>
-			{% else %}
-			<table>
-				{% for record in savings_list %}
-				<tr title="{{ record.1.account }}">
-					<td>{{ record.0|date:"d b" }}</td>
-					<td>{# TOOD: add number eg. 2/10 #} 
-						{{ record.1.description|default:record.1.account }}
-					</td>
-					<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
-				</tr>
-				{% endfor %}
-			</table>
-			{% endif %}
-			{% endwith %}
-			<p><a href="/admin/records/record/add/?account=3">
-				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-				{% trans "Add savings" %}
-			</a></p>
-			<hr>
-
-			<h4>
-				{% trans "Unscheduled debts" %}:
-			</h4>
-			{% with current_month.get_savings_totals as unscheduled_list %}
-			<p class="text-muted">
-				{% if unscheduled_list %}
-					{% trans "This is still not being accounted. Be aware!" %}
-				{% else %}
-					{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum or uncle Joe." %}
-				{% endif %}
-			</p>
-			<table>
-				{% for record in savings_list %}
-				<tr title="{{ record.1.account }}">
-					<td>{{ record.0|date:"d b" }}</td>
-					<td>{# TOOD: add number eg. 2/10 #} 
-						{{ record.1.description|default:record.1.account }}
-					</td>
-					<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
-				</tr>
-				{% endfor %}
-			</table>
-			{% endwith %}
-			<p><a href="/admin/records/record/add/?account=5">
-				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-				{% trans "Add unscheduled debt" %}
-			</a></p>
-			<hr>
-
-			
-
-		  </div>
-		</div>
+		{% include "includes/header.html" %}
+		{% block content %}
+		{% endblock %}
+		{% include "includes/sidebar.html" %}
 		<div class="row" id="footer">
 			<p class="text-center">Copyleft {% now "Y" %} - www.andersonsantos.info - <a href="https://github.com/curaloucura/money-forecast" target="_blank">Source Code</a></p>
 		</div>

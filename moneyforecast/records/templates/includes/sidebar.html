@@ -1,0 +1,102 @@
+{% load i18n record_tags static %}
+<div id="sidebar" class="col-md-3">
+	<h3>
+		{% trans "It's" %} {{ current_month.start_date|date:"F Y" }}!
+	</h3>
+
+	<p>
+		{% trans "Your total of debts this month so far is" %}: <br>
+		$ {{ current_month.total_outcome|pretty_number }}
+	</p>
+	
+	<p>
+		{% if current_month.difference < 0 %}
+				{% trans "You need" %}: <br>
+					$ {{ current_month.difference|pretty_number }} <br>
+				{% trans "to be able to pay your bills" %}.
+		{% else %}
+			{% trans "You have" %}: <br>
+					$ {{ current_month.difference|pretty_number }} 
+				{% trans "extra cash. Do some savings!" %}
+		{% endif %}
+	</p>
+
+	<h4>
+		{% trans "Upcoming this month" %}:
+	</h4>
+	{% with current_month.get_upcoming_records as upcoming_list %}
+	{% if not upcoming_list %}
+		<p class="text-muted">{% trans "No more debts this month, hooray!" %}</p>
+	{% else %}
+	<table id="upcoming" class="table table-condensed">
+		{% for record in upcoming_list %}
+		<tr title="{{ record.1.account }}">
+			<td>{{ record.0|date:"d b" }}</td>
+			<td>{# TOOD: add number eg. 2/10 #} 
+				{{ record.1.description|default:record.1.account }}
+			</td>
+			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% endif %}
+	{% endwith %}
+	<hr>
+
+	<h4>
+		{% trans "Savings" %}:
+	</h4>
+	{% with current_month.get_savings_totals as savings_list %}
+	{% if not savings_list %}
+		<p class="text-muted">{% trans "You haven't saved anything yet, you'd better start soon!" %}</p>
+	{% else %}
+	<table>
+		{% for record in savings_list %}
+		<tr title="{{ record.1.account }}">
+			<td>{{ record.0|date:"d b" }}</td>
+			<td>{# TOOD: add number eg. 2/10 #} 
+				{{ record.1.description|default:record.1.account }}
+			</td>
+			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% endif %}
+	{% endwith %}
+	<p><a href="/admin/records/record/add/?account=3">
+		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+		{% trans "Add savings" %}
+	</a></p>
+	<hr>
+
+	<h4>
+		{% trans "Unscheduled debts" %}:
+	</h4>
+	{% with current_month.get_savings_totals as unscheduled_list %}
+	<p class="text-muted">
+		{% if unscheduled_list %}
+			{% trans "This is still not being accounted. Be aware!" %}
+		{% else %}
+			{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum or uncle Joe." %}
+		{% endif %}
+	</p>
+	<table>
+		{% for record in savings_list %}
+		<tr title="{{ record.1.account }}">
+			<td>{{ record.0|date:"d b" }}</td>
+			<td>{# TOOD: add number eg. 2/10 #} 
+				{{ record.1.description|default:record.1.account }}
+			</td>
+			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% endwith %}
+	<p><a href="/admin/records/record/add/?account=5">
+		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+		{% trans "Add unscheduled debt" %}
+	</a></p>
+	<hr>
+
+  </div>
+</div>

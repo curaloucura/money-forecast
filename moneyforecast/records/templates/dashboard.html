@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n record_tags static %}
+
+{% block content %}
+<div class="row">
+	<hr>
+	<div class="col-md-9">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th></th>
+				<th>{% trans "Initial Balance" %}</th>
+				<th>{% trans "Income" %}</th>
+				<th>{% trans "Extra Income" %}</th>
+				<th>{% trans "Outcome" %}</th>
+				<th>{% trans "Extra Outcome" %}</th>
+				<th>{% trans "Difference" %}</th>
+				<th>{% trans "Final Balance" %}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for month in month_list %}
+			<tr id="{{ month.start_date|date:"m-Y" }}">
+				<th><span id="col-1">{{ month.start_date|date:"F" }}{% if month.year != today.year %} {{ month.year }}{% endif %}</span></th>
+				<td><span id="col-2" class="">{{ month.initial_balance|pretty_number }}</span></td>
+				<td><span id="col-3">{{ month.income_monthly|pretty_number }}</span></td>
+				<td><span id="col-4">{{ month.income_variable|pretty_number }}</span>
+					<a href="#income-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#income-{{ month.month }}-{{ month.year }}">
+						<span class="glyphicon glyphicon-option-vertical text-muted" aria-hidden="true"></span>
+					</a>
+					{% with month.sorted_income_list as record_list %}
+					{% with "income" as type_records %}
+						{% include "includes/modal_overview.html" %}
+					{% endwith %}
+					{% endwith %}
+				</td>
+				<td><span id="col-5">{{ month.outcome_monthly|pretty_number }}</span></td>
+				<td><span id="col-6">{{ month.outcome_variable|pretty_number }}</span>
+					<a href="#outcome-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#outcome-{{ month.month }}-{{ month.year }}">
+						<span class="glyphicon glyphicon-option-vertical text-muted" aria-hidden="true"></span>
+					</a>
+					{% with month.sorted_outcome_list as record_list %}
+					{% with "outcome" as type_records %}
+						{% include "includes/modal_overview.html" %}
+					{% endwith %}
+					{% endwith %}
+				</td>
+				<td><span id="col-7">{{ month.difference|pretty_number }}</span></td>
+				<td><span id="col-8">{{ month.final_balance|pretty_number }}</span></td>					
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}

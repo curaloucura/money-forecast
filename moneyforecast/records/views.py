@@ -31,11 +31,26 @@ class MonthControl(object):
 						 	(self.outcome_monthly+self.outcome_variable))
 		self.final_balance = self.initial_balance + self.difference
 
+	def _sort_records_by_date(self, record_list):
+			results = []
+			for record in record_list:
+				# Calculate dates
+				results.append((record.get_date_for_month(self.month, self.year), record))
+
+			# Sort per date
+			results.sort(key=lambda r: r[0])
+			return results
+
+
 	def _get_records(self):
 		self.income_monthly_list = self._get_records_by_type(INCOME, False)
 		self.income_variable_list = self._get_records_by_type(INCOME, True)
 		self.outcome_monthly_list = self._get_records_by_type(OUTCOME, False)
 		self.outcome_variable_list = self._get_records_by_type(OUTCOME, True)
+		self.income_list = self.income_monthly_list | self.income_variable_list 
+		self.sorted_income_list = self._sort_records_by_date(self.income_list)
+		self.outcome_list = self.outcome_monthly_list | self.outcome_variable_list 
+		self.sorted_outcome_list = self._sort_records_by_date(self.outcome_list)
 
 	def _get_records_by_type(self, account, one_time_only):
 		records = self.get_queryset().filter(is_paid_off=False) # TODO: improve the way to track paid off or it could disappear prematurely
@@ -76,18 +91,10 @@ class MonthControl(object):
 		This will return a tuple with the date for the month and the record.
 		It is necessary since you can't get the date of a recurring event inside the template
 		"""
-		outcomes  = self.outcome_monthly_list | self.outcome_variable_list
 		upcoming = []
 		results = []
 
-		for record in outcomes:
-			# Calculate dates
-			results.append((record.get_date_for_month(self.month, self.year), record))
-
-		# Sort per date
-		results.sort(key=lambda r: r[0])
-
-		for record in results:
+		for record in self.sorted_outcome_list:
 			if record[0] >= self.today:
 				upcoming.append(record)
 		return upcoming
@@ -119,4 +126,4 @@ def index(request):
 	outcome_id = _get_account_id(request.user, OUTCOME, 'extra_outcome')
 	savings_id = _get_account_id(request.user, SAVINGS, 'savings')
 	set_balance_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG)
-	return render(request, "base.html", locals())
+	return render(request, "dashboard.html", locals())

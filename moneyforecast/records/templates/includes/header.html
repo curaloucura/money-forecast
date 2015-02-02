@@ -1,0 +1,27 @@
+{% load i18n record_tags static %}
+<div class="row">
+	<div class="col-md-8">
+		<h1>
+		{% trans "My Money Forecast" %}
+		<span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
+		</h1>
+	</div>
+	<div class="col-md-4 text-right">
+		<a href="#" title="Portuguese"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
+		<a href="#" title="English"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
+		<a href="#" title="German"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
+		<a href="{% url "logout" %}">{% trans "Logout" %}</a>
+	</div>
+</div>
+<div class="row" id="nav">
+	<div class="col-md-6 col-md-offset-6 text-right">
+		<span class="glyphicon glyphicon-import" aria-hidden="true"></span>
+		<a href="/admin/records/record/add/?account={{ income_id }}" target="_blank">{% trans "New Income" %}</a>&nbsp;&nbsp;
+		<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
+		<a href="/admin/records/record/add/?account={{ outcome_id }}" target="_blank">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
+		<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span>
+		<a href="/admin/records/record/add/?account={{ savings_id }}" target="_blank">{% trans "New Savings" %}</a>&nbsp;&nbsp;
+		<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+		<a href="/admin/records/record/add/?account={{ set_balance_id }}" target="_blank">{% trans "Set Balance" %}</a>
+	</div>
+</div>

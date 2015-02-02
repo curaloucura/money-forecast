@@ -1,0 +1,30 @@
+{% load admin_urls record_tags %}
+<div class="modal fade records-list-modal" id="{{ type_records }}-{{ month.month }}-{{ month.year }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h1 class="text-center">{{ type_records|capfirst }} {{ month.start_date|date:"b/Y"|capfirst }}</h1>
+        <div class="records-list">
+            <table class="table table-hover">
+              {% for record in record_list %}
+              <tr title="{{ record.account }}">
+                <td>{{ record.0|date:"d b" }}</td>
+                <td>{# TODO: add number eg. 2/10 #} 
+                  {{ record.1.description|default:record.1.account }}
+                </td>
+                <td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+                <td>
+                  <a href="{% url 'admin:records_record_change' record.1.pk %}" target="_blank">
+                    <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
