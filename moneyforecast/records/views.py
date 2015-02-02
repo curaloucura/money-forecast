@@ -103,10 +103,13 @@ class MonthControl(object):
 	def get_savings_totals(self):
 		accounts = Account.objects.filter(type_account=SAVINGS)
 		savings_list = []
+		total = 0
 		for account in accounts:
-			 savings_list.append((account,
-			 	self.get_queryset().filter(account=account, start_date__lte=self.today).aggregate(Sum('value'))['value__sum']))
-		return savings_list
+			total_account = self.get_queryset().filter(account=account, start_date__lte=self.today).aggregate(Sum('value'))['value__sum']
+			savings_list.append((account,total_account))
+			total += (total_account or 0)
+
+		return {'list': savings_list, 'total': total}
 
 	def get_unscheduled_totals(self):
 		account = Account.objects.get(type_account=SYSTEM_ACCOUNTS, slug=UNSCHEDULED_DEBTS_SLUG, user=self.user)
@@ -137,5 +140,6 @@ def index(request):
 	income_id = _get_account_id(request.user, INCOME, 'extra_income')
 	outcome_id = _get_account_id(request.user, OUTCOME, 'extra_outcome')
 	savings_id = _get_account_id(request.user, SAVINGS, 'savings')
+	unscheduled_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, UNSCHEDULED_DEBTS_SLUG)
 	set_balance_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG)
 	return render(request, "dashboard.html", locals())

@@ -47,11 +47,11 @@
 		{% trans "Savings" %}:
 	</h4>
 	{% with current_month.get_savings_totals as savings_list %}
-	{% if savings_list.1 <= 0 %}
-		<p class="text-muted">{% trans "You haven't saved anything yet, you'd better start soon!" %}</p>
+	{% if savings_list.total <= 0 %}
+		<p class="text-muted">{% trans "Oops, no savings yet. <br>You'd better start soon!" %}</p>
 	{% else %}
 	<table class="table table-condensed">
-		{% for record in current_month.get_savings_totals %}
+		{% for record in savings_list.list %}
 		{% if record.1 > 0 %}
 		<tr>
 			<td class="text-left">{{ record.0.name }}</td>
@@ -62,7 +62,7 @@
 	</table>
 	{% endif %}
 	{% endwith %}
-	<p><a href="/admin/records/record/add/?account=3" target="_blank">
+	<p><a href="{% url 'admin:records_record_add' %}?account={{ savings_id }}" target="_blank">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add savings" %}
 	</a></p>
@@ -100,7 +100,7 @@
 		{% endif %}
 	</table>
 	{% endwith %}
-	<p><a href="/admin/records/record/add/?account=5" target="_blank">
+	<p><a href="{% url 'admin:records_record_add' %}?account={{ unscheduled_id }}" target="_blank">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add unscheduled debt" %}
 	</a></p>
