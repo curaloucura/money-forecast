@@ -7,7 +7,7 @@ You don't have to be an accounter to know how much you are spending or saving!
 
 This project is made with Django and served under UNLICENSE, so it can be used by anyone, for commercial and non-commerical purposes. 
 
-Be aware that as we use third-party tools, their license must be respected accordingly. This software is free for use and to distribute, improvements are also welcome!
+Be aware that as we use third-party tools, their license must be respected accordingly. This software is free to use and to distribute, improvements are also welcome!
  
 ![screenshot of work so far](http://www.andersonsantos.info/img/money_forecast_.png)
 

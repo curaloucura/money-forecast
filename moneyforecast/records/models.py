@@ -41,7 +41,7 @@ class Record(models.Model):
 	day_of_month = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Day of the month"), help_text=_('Use this field to set recurring bills. The day in which will you be billed every month'))
 	number_payments = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Number of Payments"), help_text=_('This is only used to generate the final payment date'))
 	end_date = models.DateField(blank=True, null=True, verbose_name=_('Last payment on'), help_text=_('This is the date when it will be the last payment for this record, after this date the record will not appear on the calculations'))
-	is_paid_out = models.BooleanField(default=False, db_column='is_paid_off', verbose_name=_('Is it totally paid?'), help_text=_('If checked, the record won\'t appear in the calculations anymore. Click it only to hide a record from your spreadsheet'))
+	is_paid_out = models.BooleanField(default=False, verbose_name=_('Is it totally paid?'), help_text=_('If checked, the record won\'t appear in the calculations anymore. Click it only to hide a record from your spreadsheet'))
 	notes = models.TextField(blank=True, null=True)
 	user = models.ForeignKey(User, blank=True, null=True)
 	

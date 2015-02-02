@@ -47,7 +47,7 @@
 		{% trans "Savings" %}:
 	</h4>
 	{% with current_month.get_savings_totals as savings_list %}
-	{% if not savings_list %}
+	{% if savings_list.1 <= 0 %}
 		<p class="text-muted">{% trans "You haven't saved anything yet, you'd better start soon!" %}</p>
 	{% else %}
 	<table class="table table-condensed">
@@ -73,7 +73,7 @@
 	</h4>
 	{% with current_month.get_unscheduled_totals as unscheduled_list %}
 	<p class="text-muted">
-		{% if unscheduled_list %}
+		{% if unscheduled_list.list %}
 			{% trans "This is still not being accounted. Be aware!" %}
 		{% else %}
 			{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum's or uncle Joe's." %}
