@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 from records.models import get_last_day_of_month, Record, Account, INCOME, OUTCOME,\
-							 SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG
+							 SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBTS_SLUG
 
 class MonthControl(object):
 	def __init__(self, user, month, year):
@@ -53,7 +53,7 @@ class MonthControl(object):
 		self.sorted_outcome_list = self._sort_records_by_date(self.outcome_list)
 
 	def _get_records_by_type(self, account, one_time_only):
-		records = self.get_queryset().filter(is_paid_off=False) # TODO: improve the way to track paid off or it could disappear prematurely
+		records = self.get_queryset() 
 		records = records.filter( Q(end_date__isnull=True) | Q(end_date__range=(self.start_date, self.end_date)) )
 		records = records.filter(account__type_account=account, day_of_month__isnull=one_time_only)
 
@@ -64,7 +64,8 @@ class MonthControl(object):
 
 	def get_queryset(self):
 		# Make sure to filter only records by the user
-		records = Record.objects.filter(user=self.user) 
+		# TODO: improve the way to track paid off or it could disappear prematurely
+		records = Record.objects.filter(user=self.user, is_paid_out=False) 
 
 		# All records must start in the month or earlier
 		records = records.filter(start_date__lte=self.end_date)
@@ -100,8 +101,19 @@ class MonthControl(object):
 		return upcoming
 
 	def get_savings_totals(self):
-		# TODO: Sum up all savings by account to display in a table
-		pass
+		accounts = Account.objects.filter(type_account=SAVINGS)
+		savings_list = []
+		for account in accounts:
+			 savings_list.append((account,
+			 	self.get_queryset().filter(account=account, start_date__lte=self.today).aggregate(Sum('value'))['value__sum']))
+		return savings_list
+
+	def get_unscheduled_totals(self):
+		account = Account.objects.get(type_account=SYSTEM_ACCOUNTS, slug=UNSCHEDULED_DEBTS_SLUG, user=self.user)
+		records = Record.objects.filter(user=self.user, account=account)
+		total = records.aggregate(Sum('value'))['value__sum']
+		return {'list': records, 'total': total}
+
 
 
 def _get_account_id(user, type_account, slug):

@@ -5,7 +5,7 @@
 	</h3>
 
 	<p>
-		{% trans "Your total of debts this month so far is" %}: <br>
+		{% trans "The total of debts this month is" %}: <br>
 		$ {{ current_month.total_outcome|pretty_number }}
 	</p>
 	
@@ -31,7 +31,7 @@
 	<table id="upcoming" class="table table-condensed">
 		{% for record in upcoming_list %}
 		<tr title="{{ record.1.account }}">
-			<td>{{ record.0|date:"d b" }}</td>
+			<td class="text-left">{{ record.0|date:"d b" }}</td>
 			<td>{# TOOD: add number eg. 2/10 #} 
 				{{ record.1.description|default:record.1.account }}
 			</td>
@@ -50,20 +50,19 @@
 	{% if not savings_list %}
 		<p class="text-muted">{% trans "You haven't saved anything yet, you'd better start soon!" %}</p>
 	{% else %}
-	<table>
-		{% for record in savings_list %}
-		<tr title="{{ record.1.account }}">
-			<td>{{ record.0|date:"d b" }}</td>
-			<td>{# TOOD: add number eg. 2/10 #} 
-				{{ record.1.description|default:record.1.account }}
-			</td>
-			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+	<table class="table table-condensed">
+		{% for record in current_month.get_savings_totals %}
+		{% if record.1 > 0 %}
+		<tr>
+			<td class="text-left">{{ record.0.name }}</td>
+			<td class="number">$ {{ record.1|stringformat:".2f" }}</td>
 		</tr>
+		{% endif %}
 		{% endfor %}
 	</table>
 	{% endif %}
 	{% endwith %}
-	<p><a href="/admin/records/record/add/?account=3">
+	<p><a href="/admin/records/record/add/?account=3" target="_blank">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add savings" %}
 	</a></p>
@@ -72,27 +71,36 @@
 	<h4>
 		{% trans "Unscheduled debts" %}:
 	</h4>
-	{% with current_month.get_savings_totals as unscheduled_list %}
+	{% with current_month.get_unscheduled_totals as unscheduled_list %}
 	<p class="text-muted">
 		{% if unscheduled_list %}
 			{% trans "This is still not being accounted. Be aware!" %}
 		{% else %}
-			{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum or uncle Joe." %}
+			{% trans "You have no unscheduled debts. Scheduled debts are those debts you don't know when you are going to pay for them yet, like your mum's or uncle Joe's." %}
 		{% endif %}
 	</p>
-	<table>
-		{% for record in savings_list %}
-		<tr title="{{ record.1.account }}">
-			<td>{{ record.0|date:"d b" }}</td>
-			<td>{# TOOD: add number eg. 2/10 #} 
-				{{ record.1.description|default:record.1.account }}
+	<table class="table table-condensed">
+		{% for record in unscheduled_list.list %}
+		<tr>
+			<td class="text-left">{{ record.description|default:record.account }}</td>
+			<td class="number">$ {{ record.value|stringformat:".2f" }}</td>
+			<td>
+				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
+	                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+	             </a>
 			</td>
-			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
 		</tr>
 		{% endfor %}
+		{% if unscheduled_list.total > 0 %}
+		<tr>
+			<td class="text-left"><strong>Total Debts</strong></td>
+			<td class="number">$ {{ unscheduled_list.total|stringformat:".2f" }}</td>	
+			<td></td>
+		</tr>
+		{% endif %}
 	</table>
 	{% endwith %}
-	<p><a href="/admin/records/record/add/?account=5">
+	<p><a href="/admin/records/record/add/?account=5" target="_blank">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add unscheduled debt" %}
 	</a></p>
