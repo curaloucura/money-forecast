@@ -1,0 +1,27 @@
+#nav a {
+	font-size: 1.1em;
+	color: #666;
+	font-weight: bold;
+	margin-right: 1em;
+	display: inline-block;
+}
+#nav a:last-child {
+	margin-right: 0;
+}
+td {
+	text-align: right;
+}	
+table#upcoming {
+	font-size: 0.9em;
+}
+.records-list-modal .records-list {
+	max-height: 300px;
+	overflow-y: auto;
+	margin-bottom: 1em;
+}
+.records-list-modal table {
+	margin-bottom: 0;
+}
+.language-selector {
+	margin-top: 1em;
+}

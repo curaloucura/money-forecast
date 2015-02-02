@@ -1,0 +1,231 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-02-02 22:31+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: mybills/settings.py:76
+msgid "Portuguese"
+msgstr "Portugiesisch"
+
+#: mybills/settings.py:77
+msgid "German"
+msgstr "Deutsch"
+
+#: mybills/settings.py:78
+msgid "English"
+msgstr "Englisch"
+
+#: records/models.py:13 records/templates/dashboard.html:15
+msgid "Outcome"
+msgstr "Ausgaben"
+
+#: records/models.py:13 records/templates/dashboard.html:13
+msgid "Income"
+msgstr "Einkommen"
+
+#: records/models.py:13 records/models.py:96
+#: records/templates/includes/sidebar.html:47
+msgid "Savings"
+msgstr "Rücklagen"
+
+#: records/models.py:13
+msgid "System Internals"
+msgstr ""
+
+#: records/models.py:38
+msgid "Select the account for this record. This field is required"
+msgstr ""
+
+#: records/models.py:39
+msgid "How much?"
+msgstr "Wie viel?"
+
+#: records/models.py:39
+msgid "Please, use only the monthly amount. This field is required"
+msgstr ""
+
+#: records/models.py:40
+msgid "Date"
+msgstr "Datum"
+
+#: records/models.py:40
+msgid "This field is required"
+msgstr ""
+
+#: records/models.py:41
+msgid "Day of the month"
+msgstr ""
+
+#: records/models.py:41
+msgid ""
+"Use this field to set recurring bills. The day in which will you be billed "
+"every month"
+msgstr ""
+
+#: records/models.py:42
+msgid "Number of Payments"
+msgstr "Anzahlder Raten"
+
+#: records/models.py:42
+msgid "This is only used to generate the final payment date"
+msgstr ""
+
+#: records/models.py:43
+msgid "Last payment on"
+msgstr ""
+
+#: records/models.py:43
+msgid ""
+"This is the date when it will be the last payment for this record, after "
+"this date the record will not appear on the calculations"
+msgstr ""
+
+#: records/models.py:44
+msgid "Is it totally paid?"
+msgstr ""
+
+#: records/models.py:44
+msgid ""
+"If checked, the record won't appear in the calculations anymore. Click it "
+"only to hide a record from your spreadsheet"
+msgstr ""
+
+#: records/models.py:91
+msgid "Salary"
+msgstr ""
+
+#: records/models.py:92
+msgid "Food & Goods"
+msgstr ""
+
+#: records/models.py:93
+msgid "House Expenses"
+msgstr ""
+
+#: records/models.py:94 records/templates/dashboard.html:14
+msgid "Extra Income"
+msgstr ""
+
+#: records/models.py:95 records/templates/dashboard.html:16
+msgid "Extra Outcome"
+msgstr ""
+
+#: records/models.py:97
+msgid "Monthly Balance"
+msgstr ""
+
+#: records/models.py:98
+msgid "Unscheduled Debts"
+msgstr ""
+
+#: records/models.py:112
+msgid "initial_balance"
+msgstr ""
+
+#: records/templates/dashboard.html:12
+msgid "Initial Balance"
+msgstr ""
+
+#: records/templates/dashboard.html:17
+msgid "Difference"
+msgstr ""
+
+#: records/templates/dashboard.html:18
+msgid "Final Balance"
+msgstr ""
+
+#: records/templates/includes/header.html:5
+msgid "My Money Forecast"
+msgstr ""
+
+#: records/templates/includes/header.html:13
+msgid "Logout"
+msgstr ""
+
+#: records/templates/includes/header.html:19
+msgid "New Income"
+msgstr ""
+
+#: records/templates/includes/header.html:21
+msgid "New Outcome"
+msgstr ""
+
+#: records/templates/includes/header.html:23
+msgid "New Savings"
+msgstr ""
+
+#: records/templates/includes/header.html:25
+msgid "Set Balance"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:4
+msgid "It's"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:8
+msgid "The total of debts this month is"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:14
+msgid "You need"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:16
+msgid "to be able to pay your bills"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:18
+msgid "You have"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:20
+msgid "extra cash. Do some savings!"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:25
+msgid "Upcoming this month"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:29
+msgid "No more debts this month, hooray!"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:51
+msgid "Oops, no savings yet. <br>You'd better start soon!"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:67
+msgid "Add savings"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:72
+msgid "Unscheduled debts"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:77
+msgid "This is still not being accounted. Be aware!"
+msgstr ""
+
+#: records/templates/includes/sidebar.html:79
+msgid ""
+"You have no unscheduled debts. Unscheduled debts are those debts you don't "
+"know when you are going to pay for them yet, like your mum's or uncle Joe's."
+msgstr ""
+
+#: records/templates/includes/sidebar.html:105
+msgid "Add unscheduled debt"
+msgstr ""

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, timedelta
@@ -143,3 +143,15 @@ def index(request):
 	unscheduled_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, UNSCHEDULED_DEBTS_SLUG)
 	set_balance_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG)
 	return render(request, "dashboard.html", locals())
+
+
+def set_language(request):
+	from django.utils import translation
+	from django.conf import settings
+	# TODO: validate language codes receive
+	next = request.GET.get("next","/")
+	lang = request.GET.get("language", settings.LANGUAGE_CODE)
+	translation.activate(lang)
+	request.session[translation.LANGUAGE_SESSION_KEY] = lang
+
+	return redirect(next) 

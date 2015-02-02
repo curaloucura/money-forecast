@@ -6,12 +6,11 @@
 		<span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
 		</h1>
 	</div>
-	<div class="col-md-4 text-right">
-		<a href="#" title="Português"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
-		<a href="#" title="English"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
-		<a href="#" title="Deutsch"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
+	<div class="col-md-4 text-right language-selector">
+		<a href="{% url 'set_language' %}?language=pt&next=/" title="Português"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
+		<a href="{% url 'set_language' %}?language=en&next=/" title="English"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
+		<a href="{% url 'set_language' %}?language=de&next=/" title="Deutsch"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
 		<a href="{% url "logout" %}">{% trans "Logout" %}</a>
-	</div>
 </div>
 <div class="row" id="nav">
 	<div class="col-md-6 col-md-offset-6 text-right">
