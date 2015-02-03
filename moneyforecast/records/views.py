@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, timedelta
+from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from records.models import get_last_day_of_month, Record, Account, INCOME, OUTCOME,\
 							 SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBTS_SLUG
@@ -11,7 +12,7 @@ class MonthControl(object):
 		self.user = user
 		self.month = month
 		self.year = year
-		self.today = date.today()
+		self.today = timezone.now().replace(hour=0, minute=0)
 		self.start_date = date(day=1, month=month, year=year)
 		# end_date is the last day of the month
 		self.end_date = get_last_day_of_month(month, year)
@@ -130,8 +131,8 @@ def _get_account_id(user, type_account, slug):
 @login_required
 def index(request):
 	month_list = []
-	today = date.today()
-	tomorrow = date.today()+timedelta(days=1)
+	today = timezone.now().replace(hour=0, minute=0)
+	tomorrow = today+timedelta(days=1)
 	for i in range(0,13):
 		target_month = today+relativedelta(months=i)
 		month_list.append(MonthControl(request.user, target_month.month, target_month.year))

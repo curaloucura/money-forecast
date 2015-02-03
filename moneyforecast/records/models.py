@@ -3,7 +3,9 @@ from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.db.models.signals import post_save
+from django.utils import timezone
 from datetime import datetime, date, timedelta
+import pytz
 from dateutil.relativedelta import relativedelta
 
 OUTCOME = 0
@@ -29,18 +31,19 @@ class Account(models.Model):
 
 
 def get_last_day_of_month(month, year):
-	start_date = date(day=1, month=month, year=year)
-	return (start_date+relativedelta(months=1))-timedelta(days=1)
+	start_date = datetime(day=1, month=month, year=year)
+	start_date = (start_date+relativedelta(months=1))-timedelta(days=1)
+	return start_date.replace(tzinfo = pytz.utc)
 
 
 class Record(models.Model):
 	description = models.CharField(max_length=50, blank=True)
 	account = models.ForeignKey(Account, help_text=_('Select the account for this record. This field is required'))
 	value = models.FloatField(default=0, verbose_name=_("How much?"),help_text=_("Please, use only the monthly amount. This field is required"))
-	start_date = models.DateField(default=datetime.today, verbose_name=_('Date'), help_text=_('This field is required'))
+	start_date = models.DateTimeField(default=timezone.now, verbose_name=_('Date'), help_text=_('This field is required'))
 	day_of_month = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Day of the month"), help_text=_('Use this field to set recurring bills. The day in which will you be billed every month'))
 	number_payments = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Number of Payments"), help_text=_('This is only used to generate the final payment date'))
-	end_date = models.DateField(blank=True, null=True, verbose_name=_('Last payment on'), help_text=_('This is the date when it will be the last payment for this record, after this date the record will not appear on the calculations'))
+	end_date = models.DateTimeField(blank=True, null=True, verbose_name=_('Last payment on'), help_text=_('This is the date when it will be the last payment for this record, after this date the record will not appear on the calculations'))
 	is_paid_out = models.BooleanField(default=False, verbose_name=_('Is it totally paid?'), help_text=_('If checked, the record won\'t appear in the calculations anymore. Click it only to hide a record from your spreadsheet'))
 	notes = models.TextField(blank=True, null=True)
 	user = models.ForeignKey(User, blank=True, null=True)
@@ -112,6 +115,6 @@ def generate_default_accounts(sender, instance, created, **kwargs):
 			description = _('initial_balance'),
 			account = Account.objects.get(slug=INITIAL_BALANCE_SLUG, type_account=SYSTEM_ACCOUNTS, user=instance),
 			value = 0,
-			start_date = datetime.today(), 
+			start_date = timezone.now(), 
 			user = instance
 		)

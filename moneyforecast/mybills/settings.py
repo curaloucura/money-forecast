@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     #'debug_toolbar',
     'records',
+    'profiles',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -53,6 +54,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'profiles.middleware.TimezoneMiddleware',
 )
 
 

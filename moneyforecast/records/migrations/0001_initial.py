@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.utils.timezone
 from django.conf import settings
-import datetime
 
 
 class Migration(migrations.Migration):
@@ -32,10 +32,10 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('description', models.CharField(max_length=50, blank=True)),
                 ('value', models.FloatField(default=0, help_text='Please, use only the monthly amount. This field is required', verbose_name='How much?')),
-                ('start_date', models.DateField(default=datetime.datetime.today, help_text='This field is required', verbose_name='Date')),
+                ('start_date', models.DateTimeField(default=django.utils.timezone.now, help_text='This field is required', verbose_name='Date')),
                 ('day_of_month', models.SmallIntegerField(help_text='Use this field to set recurring bills. The day in which will you be billed every month', null=True, verbose_name='Day of the month', blank=True)),
                 ('number_payments', models.SmallIntegerField(help_text='This is only used to generate the final payment date', null=True, verbose_name='Number of Payments', blank=True)),
-                ('end_date', models.DateField(help_text='This is the date when it will be the last payment for this record, after this date the record will not appear on the calculations', null=True, verbose_name='Last payment on', blank=True)),
+                ('end_date', models.DateTimeField(help_text='This is the date when it will be the last payment for this record, after this date the record will not appear on the calculations', null=True, verbose_name='Last payment on', blank=True)),
                 ('is_paid_out', models.BooleanField(default=False, help_text="If checked, the record won't appear in the calculations anymore. Click it only to hide a record from your spreadsheet", verbose_name='Is it totally paid?')),
                 ('notes', models.TextField(null=True, blank=True)),
                 ('account', models.ForeignKey(help_text='Select the account for this record. This field is required', to='records.Account')),
