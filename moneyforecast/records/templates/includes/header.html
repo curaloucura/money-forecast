@@ -6,10 +6,10 @@
 		<span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
 		</h1>
 	</div>
-	<div class="col-md-4 text-right language-selector">
-		<a href="{% url 'set_language' %}?language=pt&next=/" title="Português"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
-		<a href="{% url 'set_language' %}?language=en&next=/" title="English"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
-		<a href="{% url 'set_language' %}?language=de&next=/" title="Deutsch"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
+	<div id="user-menu" class="col-md-4 text-right">
+		<a href="{% url 'set_language' %}?language=pt&next=/" title="Português" class="language-selector"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
+		<a href="{% url 'set_language' %}?language=en&next=/" title="English" class="language-selector"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
+		<a href="{% url 'set_language' %}?language=de&next=/" title="Deutsch" class="language-selector"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
 		<a href="{% url 'admin:profiles_profile_change' request.user.profile.id %}" target="_blank"><span>My Profile</span></a>
 		<a href="{% url "logout" %}">{% trans "Logout" %}</a>
 </div>

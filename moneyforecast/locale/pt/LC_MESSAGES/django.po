@@ -181,7 +181,7 @@ msgstr "Ajustar Saldo"
 
 #: records/templates/includes/sidebar.html:4
 msgid "It's"
-msgstr "Estamos em"
+msgstr "É"
 
 #: records/templates/includes/sidebar.html:8
 msgid "The total of debts this month is"

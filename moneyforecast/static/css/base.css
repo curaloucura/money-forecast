@@ -22,6 +22,14 @@ table#upcoming {
 .records-list-modal table {
 	margin-bottom: 0;
 }
-.language-selector {
+#user-menu {
 	margin-top: 1em;
+}
+#user-menu a {
+	margin-left: 1em;
+	color: #666;
+	display: inline-block;
+}
+#user-menu a.language-selector {
+	margin-left: 0.3em;
 }
