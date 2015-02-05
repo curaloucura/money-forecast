@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ title }} | {% trans 'My Money Forecast' %}{% endblock %}
+
+{% block branding %}
+<h1 id='site-name'>
+	<a href="{% url 'dashboard' %}">{% trans "My Money Forecast" %}
+	</a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
