@@ -15,9 +15,20 @@
 					$ {{ current_month.difference|pretty_number }} <br>
 				{% trans "to be able to pay your bills" %}.
 		{% else %}
-			{% trans "You have" %}: <br>
-					$ {{ current_month.difference|pretty_number }} 
-				{% trans "extra cash. Do some savings!" %}
+			{% if current_month.difference == 0 %}
+				{% trans "You have nothing" %}: <br>
+					{% trans "No gain, no fun." %}
+				}No gain, no fun
+				{% trans "No gain, no fun" %}: <br>
+						$ {{ current_month.difference|pretty_number }} 
+					{% trans "extra cash. Do some savings!" %}
+				}
+			{% else %}
+				{% trans "You have" %}: <br>
+						$ {{ current_month.difference|pretty_number }} 
+					{% trans "extra cash. Do some savings!" %}
+				}
+			{% endif %}
 		{% endif %}
 	</p>
 
