@@ -20,9 +20,8 @@
 				{% trans "No gain, no fun." %}
 			{% else %}
 				{% trans "You have" %}: <br>
-						$ {{ current_month.difference|pretty_number }} 
-					{% trans "extra cash. Do some savings!" %}
-				}
+					$ {{ current_month.difference|pretty_number }} 
+				{% trans "extra cash. Do some savings!" %}
 			{% endif %}
 		{% endif %}
 	</p>
