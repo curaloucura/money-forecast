@@ -11,23 +11,23 @@ from dateutil.relativedelta import relativedelta
 OUTCOME = 0
 INCOME = 1
 SAVINGS = 2
-SYSTEM_ACCOUNTS = 3
-TYPE_ACCOUNT_CHOICES = ((OUTCOME, _('Outcome')),(INCOME, _('Income')), (SAVINGS, _('Savings')), (SYSTEM_ACCOUNTS, _('System Internals')))
+SYSTEM_CATEGORIES = 3
+TYPE_CATEGORY_CHOICES = ((OUTCOME, _('Outcome')),(INCOME, _('Income')), (SAVINGS, _('Savings')), (SYSTEM_CATEGORIES, _('System Internals')))
 
 INITIAL_BALANCE_SLUG = 'initial_balance'
 UNSCHEDULED_DEBTS_SLUG = 'unscheduled'
 
 
-class Account(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=50)
-    type_account = models.IntegerField(choices=TYPE_ACCOUNT_CHOICES)
+    type_category = models.IntegerField(choices=TYPE_CATEGORY_CHOICES)
     slug = models.SlugField(null=True)
     user = models.ForeignKey(User, blank=True, null=True)
 
     def __unicode__(self):
         return self.name
 
-    # TODO: Prevent from changing the slug from System Accounts
+    # TODO: Prevent from changing the slug from System Categories
 
 
 def get_last_day_of_month(month, year):
@@ -38,7 +38,7 @@ def get_last_day_of_month(month, year):
 
 class Record(models.Model):
     description = models.CharField(max_length=50, blank=True)
-    account = models.ForeignKey(Account, help_text=_('Select the account for this record. This field is required'))
+    category = models.ForeignKey(Category, help_text=_('Select the category for this record. This field is required'))
     value = models.FloatField(default=0, verbose_name=_("How much?"),help_text=_("Please, use only the monthly amount. This field is required"))
     start_date = models.DateTimeField(default=timezone.now, verbose_name=_('Date'), help_text=_('This field is required'))
     day_of_month = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Day of the month"), help_text=_('Use this field to set recurring bills. The day in which will you be billed every month'))
@@ -49,7 +49,7 @@ class Record(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     
     def __unicode__(self):
-        return "%s %s %s" % (self.description,self.account,self.value)
+        return "%s %s %s" % (self.description,self.category,self.value)
 
     def _get_valid_date_of_month(self, month, year):
         day = 1
@@ -85,35 +85,35 @@ class Record(models.Model):
         return self.start_date
 
 
-    # TODO: on saving System Accounts, make sure invalid fields are not being saved like end_date
+    # TODO: on saving System Categories, make sure invalid fields are not being saved like end_date
 
 
 @receiver(post_save, sender=User)
-def generate_default_accounts(sender, instance, created, **kwargs):
-    default_accounts = (
+def generate_default_categories(sender, instance, created, **kwargs):
+    default_categories = (
         (_('Salary'),'salary', INCOME),
         (_('Food & Goods'),'food', OUTCOME),
         (_('House Expenses'),'house', OUTCOME),
         (_('Extra Income'),'extra_income', INCOME),
         (_('Extra Outcome'),'extra_outcome', OUTCOME),
         (_('Savings'),'savings', SAVINGS),
-        (_('Monthly Balance'),INITIAL_BALANCE_SLUG, SYSTEM_ACCOUNTS),
-        (_('Unscheduled Debts'),UNSCHEDULED_DEBTS_SLUG, SYSTEM_ACCOUNTS),
+        (_('Monthly Balance'),INITIAL_BALANCE_SLUG, SYSTEM_CATEGORIES),
+        (_('Unscheduled Debts'),UNSCHEDULED_DEBTS_SLUG, SYSTEM_CATEGORIES),
     )
     if created:
-        # Create default accounts for the new user
-        for account in default_accounts:
-            Account.objects.create(
-                name = account[0],
-                slug = account[1],
-                type_account = account[2],
+        # Create default categories for the new user
+        for category in default_categories:
+            Category.objects.create(
+                name = category[0],
+                slug = category[1],
+                type_category = category[2],
                 user = instance,
             )
 
         # Create initial balance for last month, otherwise goes into infinite loop
         Record.objects.create(
             description = _('initial_balance'),
-            account = Account.objects.get(slug=INITIAL_BALANCE_SLUG, type_account=SYSTEM_ACCOUNTS, user=instance),
+            category = Category.objects.get(slug=INITIAL_BALANCE_SLUG, type_category=SYSTEM_CATEGORIES, user=instance),
             value = 0,
             start_date = timezone.now(), 
             user = instance

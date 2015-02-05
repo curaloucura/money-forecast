@@ -35,7 +35,7 @@
 	{% else %}
 	<table id="upcoming" class="table table-condensed">
 		{% for record in upcoming_list %}
-		<tr title="{{ record.1.account }}">
+		<tr title="{{ record.1.category }}">
 			<td class="text-left">
 				{% if record.0 == today %}
 					{% trans "Today" %}
@@ -48,7 +48,7 @@
 				{% endif %}
 			</td>
 			<td>{# TODO: add number eg. 2/10 #} 
-				{{ record.1.description|default:record.1.account }}
+				{{ record.1.description|default:record.1.category }}
 			</td>
 			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
 		</tr>
@@ -77,7 +77,7 @@
 	</table>
 	{% endif %}
 	{% endwith %}
-	<p><a href="{% url 'admin:records_record_add' %}?account={{ savings_id }}" target="_blank">
+	<p><a href="{% url 'admin:records_record_add' %}?category={{ savings_id }}" target="_blank">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add savings" %}
 	</a></p>
@@ -89,7 +89,7 @@
 	{% with current_month.get_unscheduled_totals as unscheduled_list %}
 	<p class="text-muted">
 		{% if unscheduled_list.list %}
-			{% trans "This is still not being accounted. Be aware!" %}
+			{% trans "This is still not being categoryed. Be aware!" %}
 		{% else %}
 			{% trans "You have no unscheduled debts. Unscheduled debts are those debts you don't know when you are going to pay for them yet, like your mum's or uncle Joe's." %}
 		{% endif %}
@@ -97,7 +97,7 @@
 	<table class="table table-condensed">
 		{% for record in unscheduled_list.list %}
 		<tr>
-			<td class="text-left">{{ record.description|default:record.account }}</td>
+			<td class="text-left">{{ record.description|default:record.category }}</td>
 			<td class="number">$ {{ record.value|stringformat:".2f" }}</td>
 			<td>
 				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
@@ -115,7 +115,7 @@
 		{% endif %}
 	</table>
 	{% endwith %}
-	<p><a href="{% url 'admin:records_record_add' %}?account={{ unscheduled_id }}" target="_blank">
+	<p><a href="{% url 'admin:records_record_add' %}?category={{ unscheduled_id }}" target="_blank">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add unscheduled debt" %}
 	</a></p>

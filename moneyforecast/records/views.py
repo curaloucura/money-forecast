@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, timedelta
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
-from records.models import get_last_day_of_month, Record, Account, INCOME, OUTCOME,\
-                             SAVINGS, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBTS_SLUG
+from records.models import get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
+                             SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBTS_SLUG
 
 class MonthControl(object):
     def __init__(self, user, month, year):
@@ -53,10 +53,10 @@ class MonthControl(object):
         self.outcome_list = self.outcome_monthly_list | self.outcome_variable_list 
         self.sorted_outcome_list = self._sort_records_by_date(self.outcome_list)
 
-    def _get_records_by_type(self, account, one_time_only):
+    def _get_records_by_type(self, category, one_time_only):
         records = self.get_queryset() 
         records = records.filter( Q(end_date__isnull=True) | Q(end_date__range=(self.start_date, self.end_date)) )
-        records = records.filter(account__type_account=account, day_of_month__isnull=one_time_only)
+        records = records.filter(category__type_category=category, day_of_month__isnull=one_time_only)
 
         if one_time_only:
             # If not recurring, then it should check the start date
@@ -74,7 +74,7 @@ class MonthControl(object):
         return records
 
     def get_initial_balance(self):
-        balance = self.get_queryset().filter(account__type_account=SYSTEM_ACCOUNTS, account__slug=INITIAL_BALANCE_SLUG) 
+        balance = self.get_queryset().filter(category__type_category=SYSTEM_CATEGORIES, category__slug=INITIAL_BALANCE_SLUG) 
         # Initial Balance must be from this month
         balance = balance.filter(start_date__range=(self.start_date, self.end_date))
         if balance.count():
@@ -102,29 +102,29 @@ class MonthControl(object):
         return upcoming
 
     def get_savings_totals(self):
-        accounts = Account.objects.filter(type_account=SAVINGS)
+        categories = Category.objects.filter(type_category=SAVINGS)
         savings_list = []
         total = 0
-        for account in accounts:
-            total_account = self.get_queryset().filter(account=account, start_date__lte=self.today).aggregate(Sum('value'))['value__sum']
-            savings_list.append((account,total_account))
-            total += (total_account or 0)
+        for category in categories:
+            total_category = self.get_queryset().filter(category=category, start_date__lte=self.today).aggregate(Sum('value'))['value__sum']
+            savings_list.append((category,total_category))
+            total += (total_category or 0)
 
         return {'list': savings_list, 'total': total}
 
     def get_unscheduled_totals(self):
-        account = Account.objects.get(type_account=SYSTEM_ACCOUNTS, slug=UNSCHEDULED_DEBTS_SLUG, user=self.user)
-        records = Record.objects.filter(user=self.user, account=account)
+        category = Category.objects.get(type_category=SYSTEM_CATEGORIES, slug=UNSCHEDULED_DEBTS_SLUG, user=self.user)
+        records = Record.objects.filter(user=self.user, category=category)
         total = records.aggregate(Sum('value'))['value__sum']
         return {'list': records, 'total': total}
 
 
 
-def _get_account_id(user, type_account, slug):
-    account = Account.objects.filter(user=user, type_account=type_account, slug=slug)
+def _get_category_id(user, type_category, slug):
+    category = Category.objects.filter(user=user, type_category=type_category, slug=slug)
     # The slugs might have changed
-    if account.count():
-        return account[0].id
+    if category.count():
+        return category[0].id
     else:
         return 0
 
@@ -139,11 +139,11 @@ def index(request):
 
     current_month = month_list[0]
 
-    income_id = _get_account_id(request.user, INCOME, 'extra_income')
-    outcome_id = _get_account_id(request.user, OUTCOME, 'extra_outcome')
-    savings_id = _get_account_id(request.user, SAVINGS, 'savings')
-    unscheduled_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, UNSCHEDULED_DEBTS_SLUG)
-    set_balance_id = _get_account_id(request.user, SYSTEM_ACCOUNTS, INITIAL_BALANCE_SLUG)
+    income_id = _get_category_id(request.user, INCOME, 'extra_income')
+    outcome_id = _get_category_id(request.user, OUTCOME, 'extra_outcome')
+    savings_id = _get_category_id(request.user, SAVINGS, 'savings')
+    unscheduled_id = _get_category_id(request.user, SYSTEM_CATEGORIES, UNSCHEDULED_DEBTS_SLUG)
+    set_balance_id = _get_category_id(request.user, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG)
     return render(request, "dashboard.html", locals())
 
 

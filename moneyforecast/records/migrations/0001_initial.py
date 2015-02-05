@@ -14,11 +14,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Account',
+            name='Category',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=50)),
-                ('type_account', models.IntegerField(choices=[(0, 'Outcome'), (1, 'Income'), (2, 'Savings'), (3, 'System Internals')])),
+                ('type_category', models.IntegerField(choices=[(0, 'Outcome'), (1, 'Income'), (2, 'Savings'), (3, 'System Internals')])),
                 ('slug', models.SlugField(null=True)),
                 ('user', models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('end_date', models.DateTimeField(help_text='This is the date when it will be the last payment for this record, after this date the record will not appear on the calculations', null=True, verbose_name='Last payment on', blank=True)),
                 ('is_paid_out', models.BooleanField(default=False, help_text="If checked, the record won't appear in the calculations anymore. Click it only to hide a record from your spreadsheet", verbose_name='Is it totally paid?')),
                 ('notes', models.TextField(null=True, blank=True)),
-                ('account', models.ForeignKey(help_text='Select the account for this record. This field is required', to='records.Account')),
+                ('category', models.ForeignKey(help_text='Select the category for this record. This field is required', to='records.Category')),
                 ('user', models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={

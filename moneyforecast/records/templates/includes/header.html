@@ -16,12 +16,12 @@
 <div class="row" id="nav">
 	<div class="col-md-6 col-md-offset-6 text-right">
 		<span class="glyphicon glyphicon-import" aria-hidden="true"></span>
-		<a href="{% url 'admin:records_record_add' %}?account={{ income_id }}" target="_blank">{% trans "New Income" %}</a>&nbsp;&nbsp;
+		<a href="{% url 'admin:records_record_add' %}?category={{ income_id }}" target="_blank">{% trans "New Income" %}</a>&nbsp;&nbsp;
 		<span class="glyphicon glyphicon-export" aria-hidden="true"></span>
-		<a href="{% url 'admin:records_record_add' %}?account={{ outcome_id }}" target="_blank">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
+		<a href="{% url 'admin:records_record_add' %}?category={{ outcome_id }}" target="_blank">{% trans "New Outcome" %}</a>&nbsp;&nbsp;
 		<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true"></span>
-		<a href="{% url 'admin:records_record_add' %}?account={{ savings_id }}" target="_blank">{% trans "New Savings" %}</a>&nbsp;&nbsp;
+		<a href="{% url 'admin:records_record_add' %}?category={{ savings_id }}" target="_blank">{% trans "New Savings" %}</a>&nbsp;&nbsp;
 		<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-		<a href="{% url 'admin:records_record_add' %}?account={{ set_balance_id }}" target="_blank">{% trans "Set Balance" %}</a>
+		<a href="{% url 'admin:records_record_add' %}?category={{ set_balance_id }}" target="_blank">{% trans "Set Balance" %}</a>
 	</div>
 </div>

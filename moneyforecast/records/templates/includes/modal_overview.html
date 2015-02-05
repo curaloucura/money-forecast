@@ -8,10 +8,10 @@
         <div class="records-list">
             <table class="table table-hover">
               {% for record in record_list %}
-              <tr title="{{ record.account }}">
+              <tr title="{{ record.category }}">
                 <td>{{ record.0|date:"d b" }}</td>
                 <td>{# TODO: add number eg. 2/10 #} 
-                  {{ record.1.description|default:record.1.account }}
+                  {{ record.1.description|default:record.1.category }}
                 </td>
                 <td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
                 <td>
