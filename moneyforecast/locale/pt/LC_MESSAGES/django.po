@@ -214,7 +214,7 @@ msgstr "para pagar as contas"
 
 #: records/templates/includes/sidebar.html:25
 msgid "You have nothing"
-msgstr "Você tem"
+msgstr "Você não tem nada"
 
 #: records/templates/includes/sidebar.html:26
 msgid "No gain, no fun."
