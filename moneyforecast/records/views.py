@@ -17,20 +17,40 @@ class MonthControl(object):
         # end_date is the last day of the month
         self.end_date = get_last_day_of_month(month, year)
         self.last_month = (self.start_date-relativedelta(months=1))
+
+        # Initialize variables
+        self.initial_balance = 0
         self._get_records()
         self._calculate_totals()
 
+    def _sum_after_date(self, date, record_list):
+        total = 0.0
+        for record in record_list:
+            if record.start_date >= date:
+                total += record.value
+
+        return total
+
     def _calculate_totals(self):
         self.initial_balance = self.get_initial_balance()
+        # TODO: disaply total amount but not use it for calculations
         self.income_monthly = sum([x.value for x in self.income_monthly_list])
         self.income_variable = sum([x.value for x in self.income_variable_list])
         self.outcome_monthly = sum([x.value for x in self.outcome_monthly_list])
         self.outcome_variable = sum([x.value for x in self.outcome_variable_list])
+        self.accountable_income_monthly = self._sum_after_date(self.initial_balance_date, self.income_monthly_list)
+        self.accountable_income_variable = self._sum_after_date(self.initial_balance_date, self.income_variable_list)
+        self.accountable_outcome_monthly = self._sum_after_date(self.initial_balance_date, self.outcome_monthly_list)
+        self.accountable_outcome_variable = self._sum_after_date(self.initial_balance_date, self.outcome_variable_list)
         self.total_income = self.income_monthly + self.income_variable
         self.total_outcome = self.outcome_monthly + self.outcome_variable
         self.difference = ((self.income_monthly+self.income_variable) -
                             (self.outcome_monthly+self.outcome_variable))
-        self.final_balance = self.initial_balance + self.difference
+        self.accountable_difference = (
+                (self.accountable_income_monthly+self.accountable_outcome_variable)-
+                (self.accountable_income_monthly+self.accountable_outcome_variable)
+            )
+        self.final_balance = self.initial_balance + self.accountable_difference
 
     def _sort_records_by_date(self, record_list):
             results = []
@@ -73,16 +93,25 @@ class MonthControl(object):
         
         return records
 
-    def get_initial_balance(self):
+    def _get_initial_balance_info(self):
         balance = self.get_queryset().filter(category__type_category=SYSTEM_CATEGORIES, category__slug=INITIAL_BALANCE_SLUG) 
         # Initial Balance must be from this month
         balance = balance.filter(start_date__range=(self.start_date, self.end_date))
         if balance.count():
-            return balance[0].value
+            return (balance[0].start_date, balance[0].value)
         else:
             # TODO: Have to improve it, raising errors when no last balance is found
             last_balance = MonthControl(self.user, self.last_month.month, self.last_month.year)
-            return last_balance.final_balance
+            # If using last month, initial date is the first day of the month
+            return (self.start_date, last_balance.final_balance)
+
+
+    def get_initial_balance(self):
+            if not self.initial_balance:
+                (self.initial_balance_date, self.initial_balance) = self._get_initial_balance_info()
+
+            return self.initial_balance
+        
 
     def set_initial_balance(self, value):
         # TODO: set record for initial balance for the month

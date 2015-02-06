@@ -18,3 +18,4 @@ Improvements to be done:
 - Create forms to make it easier to add new records with modals and auto-refresh
 - Give it some colors and styles
 - Translate to pt-br and de
+- Make initial balance for the month and accounts smarter
