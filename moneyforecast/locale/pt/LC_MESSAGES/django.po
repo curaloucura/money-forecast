@@ -47,7 +47,6 @@ msgid "System Internals"
 msgstr ""
 
 #: records/models.py:45
-#| msgid "Select the account for this record. This field is required"
 msgid "Select the category for this record. This field is required"
 msgstr "Selectione a conta para este registro. Este campo é obrigatório"
 
@@ -214,8 +213,6 @@ msgid "to be able to pay your bills"
 msgstr "para pagar as contas"
 
 #: records/templates/includes/sidebar.html:25
-#, fuzzy
-#| msgid "You have"
 msgid "You have nothing"
 msgstr "Você tem"
 
@@ -260,8 +257,6 @@ msgid "Unscheduled debts"
 msgstr "Débitos Não Agendados"
 
 #: records/templates/includes/sidebar.html:98
-#, fuzzy
-#| msgid "This is still not being accounted. Be aware!"
 msgid "This is still not being categoryed. Be aware!"
 msgstr "Estes não estão sendo contabilizados. Cuidado!"
 
