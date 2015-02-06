@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime, date, timedelta
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
-from records.models import get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
+from records.models import tmz, get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
                              SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBTS_SLUG
 
 class MonthControl(object):
@@ -13,7 +13,7 @@ class MonthControl(object):
         self.month = month
         self.year = year
         self.today = timezone.now().replace(hour=0, minute=0)
-        self.start_date = date(day=1, month=month, year=year)
+        self.start_date = tmz(datetime(day=1, month=month, year=year))
         # end_date is the last day of the month
         self.end_date = get_last_day_of_month(month, year)
         self.last_month = (self.start_date-relativedelta(months=1))
@@ -23,21 +23,23 @@ class MonthControl(object):
         self._get_records()
         self._calculate_totals()
 
+    
+
     def _sum_after_date(self, date, record_list):
         total = 0.0
         for record in record_list:
-            if record.start_date >= date:
-                total += record.value
+            if record.is_accountable(date):
+                total += record.amount
 
         return total
 
     def _calculate_totals(self):
         self.initial_balance = self.get_initial_balance()
         # TODO: disaply total amount but not use it for calculations
-        self.income_monthly = sum([x.value for x in self.income_monthly_list])
-        self.income_variable = sum([x.value for x in self.income_variable_list])
-        self.outcome_monthly = sum([x.value for x in self.outcome_monthly_list])
-        self.outcome_variable = sum([x.value for x in self.outcome_variable_list])
+        self.income_monthly = sum([x.amount for x in self.income_monthly_list])
+        self.income_variable = sum([x.amount for x in self.income_variable_list])
+        self.outcome_monthly = sum([x.amount for x in self.outcome_monthly_list])
+        self.outcome_variable = sum([x.amount for x in self.outcome_variable_list])
         self.accountable_income_monthly = self._sum_after_date(self.initial_balance_date, self.income_monthly_list)
         self.accountable_income_variable = self._sum_after_date(self.initial_balance_date, self.income_variable_list)
         self.accountable_outcome_monthly = self._sum_after_date(self.initial_balance_date, self.outcome_monthly_list)
@@ -47,8 +49,8 @@ class MonthControl(object):
         self.difference = ((self.income_monthly+self.income_variable) -
                             (self.outcome_monthly+self.outcome_variable))
         self.accountable_difference = (
-                (self.accountable_income_monthly+self.accountable_outcome_variable)-
-                (self.accountable_income_monthly+self.accountable_outcome_variable)
+                (self.accountable_income_monthly+self.accountable_income_variable)-
+                (self.accountable_outcome_monthly+self.accountable_outcome_variable)
             )
         self.final_balance = self.initial_balance + self.accountable_difference
 
@@ -77,9 +79,10 @@ class MonthControl(object):
         records = self.get_queryset() 
         records = records.filter( Q(end_date__isnull=True) | Q(end_date__range=(self.start_date, self.end_date)) )
         records = records.filter(category__type_category=category, day_of_month__isnull=one_time_only)
+        records = records.filter(start_date__lte=self.end_date)
 
         if one_time_only:
-            # If not recurring, then it should check the start date
+            # If not recurring, then it should check the start date within this month
             records = records.filter(start_date__range=(self.start_date, self.end_date))
         return records
 
@@ -98,7 +101,7 @@ class MonthControl(object):
         # Initial Balance must be from this month
         balance = balance.filter(start_date__range=(self.start_date, self.end_date))
         if balance.count():
-            return (balance[0].start_date, balance[0].value)
+            return (balance[0].start_date, balance[0].amount)
         else:
             # TODO: Have to improve it, raising errors when no last balance is found
             last_balance = MonthControl(self.user, self.last_month.month, self.last_month.year)
@@ -113,7 +116,7 @@ class MonthControl(object):
             return self.initial_balance
         
 
-    def set_initial_balance(self, value):
+    def set_initial_balance(self, amount):
         # TODO: set record for initial balance for the month
         pass
 
@@ -135,7 +138,7 @@ class MonthControl(object):
         savings_list = []
         total = 0
         for category in categories:
-            total_category = self.get_queryset().filter(category=category, start_date__lte=self.today).aggregate(Sum('value'))['value__sum']
+            total_category = self.get_queryset().filter(category=category, start_date__lte=self.today).aggregate(Sum('amount'))['amount__sum']
             savings_list.append((category,total_category))
             total += (total_category or 0)
 
@@ -144,7 +147,7 @@ class MonthControl(object):
     def get_unscheduled_totals(self):
         category = Category.objects.get(type_category=SYSTEM_CATEGORIES, slug=UNSCHEDULED_DEBTS_SLUG, user=self.user)
         records = Record.objects.filter(user=self.user, category=category)
-        total = records.aggregate(Sum('value'))['value__sum']
+        total = records.aggregate(Sum('amount'))['amount__sum']
         return {'list': records, 'total': total}
 
 
@@ -173,6 +176,8 @@ def index(request):
     savings_id = _get_category_id(request.user, SAVINGS, 'savings')
     unscheduled_id = _get_category_id(request.user, SYSTEM_CATEGORIES, UNSCHEDULED_DEBTS_SLUG)
     set_balance_id = _get_category_id(request.user, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG)
+
+    currency = request.user.profile.get_currency_display()
     return render(request, "dashboard.html", locals())
 
 

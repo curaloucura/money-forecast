@@ -29,7 +29,7 @@ class CategoryAdmin(CurrentUserAdmin):
 
 
 class RecordAdmin(CurrentUserAdmin):
-    list_display = ('description','category','value','start_date','day_of_month','end_date','is_paid_out')
+    list_display = ('description','category','amount','start_date','day_of_month','end_date','is_paid_out')
     list_filter = ('start_date','end_date','is_paid_out')
     list_display_links = ('description', 'category')
 

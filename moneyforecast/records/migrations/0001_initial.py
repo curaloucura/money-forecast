@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('description', models.CharField(max_length=50, blank=True)),
-                ('value', models.FloatField(default=0, help_text='Please, use only the monthly amount. This field is required', verbose_name='How much?')),
+                ('amount', models.FloatField(default=0, help_text='Please, use only the monthly amount. This field is required', verbose_name='How much?')),
                 ('start_date', models.DateTimeField(default=django.utils.timezone.now, help_text='This field is required', verbose_name='Date')),
                 ('day_of_month', models.SmallIntegerField(help_text='Use this field to set recurring bills. The day in which will you be billed every month', null=True, verbose_name='Day of the month', blank=True)),
                 ('number_payments', models.SmallIntegerField(help_text='This is only used to generate the final payment date', null=True, verbose_name='Number of Payments', blank=True)),

@@ -8,13 +8,13 @@
         <div class="records-list">
             <table class="table table-hover">
               {% for record in record_list %}
-              <tr title="{{ record.category }}" class="{% if record.start_date < month.initial_balance_date %}text-muted{% endif %}">
+              <tr title="{{ record.category }}" class="{% if not record.1|is_accountable:month.initial_balance_date %}warning{% endif %}">
                 <td>{{ record.0|date:"d b" }}</td>
                 <td>{# TODO: add number eg. 2/10 #} 
                   {{ record.1.description|default:record.1.category }}
-                  {% if record.start_date < month.initial_balance_date %}*{% endif %}
+                  {% if not record.1|is_accountable:month.initial_balance_date %}*{% endif %}
                 </td>
-                <td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+                <td class="number">{{ currency }} {{ record.1.amount|stringformat:".2f" }}</td>
                 <td>
                   <a href="{% url 'admin:records_record_change' record.1.pk %}" target="_blank">
                     <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
@@ -24,7 +24,7 @@
               {% endfor %}
             </table>
           </div>
-        <p class="text-muted"><small>*{% trans "Greyed-out records are not being calculated on the final balance <br>because they are before the initial balance from " %}{{ month.initial_balance_date|date:"d b Y" }}</small></p>
+        <p class="text-muted"><small>*{% trans "Yellow records are not being calculated on the final balance <br>because they are before the initial balance from " %}{{ month.initial_balance_date|date:"d b Y" }}</small></p>
 
         <p>
           <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>

@@ -6,21 +6,27 @@
 
 	<p>
 		{% trans "The total of debts this month is" %}: <br>
-		$ {{ current_month.total_outcome|pretty_number }}
+		{{ currency }} {{ current_month.total_outcome|pretty_number }}
 	</p>
 	
 	<p>
 		{% if current_month.accountable_difference < 0 %}
+			{% if current_month.final_balance > 0 %}
+				{% trans "You spent"%}: <br>
+					{{ currency }} {{ current_month.accountable_difference|pretty_number:"absolute" }} <br>
+				{% trans "more then you've earned this month" %}.
+			{% else %}
 				{% trans "You need" %}: <br>
-					$ {{ current_month.accountable_difference|pretty_number }} <br>
+					{{ currency }} {{ current_month.accountable_difference|pretty_number }} <br>
 				{% trans "to be able to pay your bills" %}.
+			{% endif %}
 		{% else %}
 			{% if current_month.accountable_difference == 0 %}
 				{% trans "You have nothing" %}: <br>
 				{% trans "No gain, no fun." %}
 			{% else %}
 				{% trans "You have" %}: <br>
-					$ {{ current_month.accountable_difference|pretty_number }} 
+					{{ currency }} {{ current_month.accountable_difference|pretty_number }} 
 				{% trans "extra cash. Do some savings!" %}
 			{% endif %}
 		{% endif %}
@@ -50,7 +56,7 @@
 			<td>{# TODO: add number eg. 2/10 #} 
 				{{ record.1.description|default:record.1.category }}
 			</td>
-			<td class="number">$ {{ record.1.value|stringformat:".2f" }}</td>
+			<td class="number">{{ currency }} {{ record.1.amount|stringformat:".2f" }}</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -70,7 +76,7 @@
 		{% if record.1 > 0 %}
 		<tr>
 			<td class="text-left">{{ record.0.name }}</td>
-			<td class="number">$ {{ record.1|stringformat:".2f" }}</td>
+			<td class="number">{{ currency }} {{ record.1|stringformat:".2f" }}</td>
 		</tr>
 		{% endif %}
 		{% endfor %}
@@ -98,7 +104,7 @@
 		{% for record in unscheduled_list.list %}
 		<tr>
 			<td class="text-left">{{ record.description|default:record.category }}</td>
-			<td class="number">$ {{ record.value|stringformat:".2f" }}</td>
+			<td class="number">{{ currency }} {{ record.amount|stringformat:".2f" }}</td>
 			<td>
 				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
 	                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
@@ -109,7 +115,7 @@
 		{% if unscheduled_list.total > 0 %}
 		<tr>
 			<td class="text-left"><strong>Total Debts</strong></td>
-			<td class="number">$ {{ unscheduled_list.total|stringformat:".2f" }}</td>	
+			<td class="number">{{ currency }} {{ unscheduled_list.total|stringformat:".2f" }}</td>	
 			<td></td>
 		</tr>
 		{% endif %}

@@ -30,16 +30,20 @@ class Category(models.Model):
     # TODO: Prevent from changing the slug from System Categories
 
 
+def tmz(naive_date):
+        return naive_date.replace(tzinfo = pytz.utc)
+
+
 def get_last_day_of_month(month, year):
     start_date = datetime(day=1, month=month, year=year)
     start_date = (start_date+relativedelta(months=1))-timedelta(days=1)
-    return start_date.replace(tzinfo = pytz.utc)
+    return tmz(start_date)
 
 
 class Record(models.Model):
     description = models.CharField(max_length=50, blank=True)
     category = models.ForeignKey(Category, help_text=_('Select the category for this record. This field is required'))
-    value = models.FloatField(default=0, verbose_name=_("How much?"),help_text=_("Please, use only the monthly amount. This field is required"))
+    amount = models.FloatField(default=0, verbose_name=_("How much?"),help_text=_("Please, use only the monthly amount. This field is required"))
     start_date = models.DateTimeField(default=timezone.now, verbose_name=_('Date'), help_text=_('This field is required'))
     day_of_month = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Day of the month"), help_text=_('Use this field to set recurring bills. The day in which will you be billed every month'))
     number_payments = models.SmallIntegerField(blank=True, null=True, verbose_name=_("Number of Payments"), help_text=_('This is only used to generate the final payment date'))
@@ -49,7 +53,7 @@ class Record(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     
     def __unicode__(self):
-        return "%s %s %s" % (self.description,self.category,self.value)
+        return "%s %s %s" % (self.description,self.category,self.amount)
 
     def _get_valid_date_of_month(self, month, year):
         day = 1
@@ -65,7 +69,7 @@ class Record(models.Model):
             else:
                 day = self.day_of_month
 
-        return date(day=day, month=month, year=year)
+        return tmz(datetime(day=day, month=month, year=year))
 
     def get_date_for_month(self, month=None, year=None):
         """
@@ -74,7 +78,7 @@ class Record(models.Model):
         """
 
         # Check if parameters are given, then if it's not
-        # current month and finally if there is a day of the month
+        # current month (and not same month in different year) and finally if there is a day of the month
         if month and year:
             if (((month != self.start_date.month) or
                     (month == self.start_date.month) and (year != self.start_date.year))
@@ -83,6 +87,14 @@ class Record(models.Model):
                 return self._get_valid_date_of_month(month, year)
 
         return self.start_date
+
+
+    def is_accountable(self, initial_date=None):
+        """
+        An accountable record is all records that are in the same day or after the initial balance for the month
+        """
+        record_date = self.get_date_for_month(initial_date.month, initial_date.year)
+        return initial_date <= record_date
 
 
     # TODO: on saving System Categories, make sure invalid fields are not being saved like end_date
@@ -114,7 +126,7 @@ def generate_default_categories(sender, instance, created, **kwargs):
         Record.objects.create(
             description = _('initial_balance'),
             category = Category.objects.get(slug=INITIAL_BALANCE_SLUG, type_category=SYSTEM_CATEGORIES, user=instance),
-            value = 0,
-            start_date = timezone.now(), 
+            amount = 0,
+            start_date = timezone.now().replace(day=1), 
             user = instance
         )
