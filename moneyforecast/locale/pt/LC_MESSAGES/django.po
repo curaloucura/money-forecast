@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-02 22:31+0000\n"
+"POT-Creation-Date: 2015-02-06 23:16+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,61 +17,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: mybills/settings.py:76
+#: mybills/settings.py:84
 msgid "Portuguese"
 msgstr "Português"
 
-#: mybills/settings.py:77
+#: mybills/settings.py:85
 msgid "German"
 msgstr "Alemão"
 
-#: mybills/settings.py:78
+#: mybills/settings.py:86
 msgid "English"
 msgstr "Inglês"
 
-#: records/models.py:13 records/templates/dashboard.html:15
+#: records/models.py:15 records/templates/dashboard.html:15
 msgid "Outcome"
 msgstr "Débito"
 
-#: records/models.py:13 records/templates/dashboard.html:13
+#: records/models.py:15 records/templates/dashboard.html:13
 msgid "Income"
 msgstr "Crédito"
 
-#: records/models.py:13 records/models.py:96
-#: records/templates/includes/sidebar.html:47
+#: records/models.py:15 records/models.py:111
+#: records/templates/includes/sidebar.html:68
 msgid "Savings"
 msgstr "Poupança"
 
-#: records/models.py:13
+#: records/models.py:15
 msgid "System Internals"
 msgstr ""
 
-#: records/models.py:38
-msgid "Select the account for this record. This field is required"
+#: records/models.py:45
+#| msgid "Select the account for this record. This field is required"
+msgid "Select the category for this record. This field is required"
 msgstr "Selectione a conta para este registro. Este campo é obrigatório"
 
-#: records/models.py:39
+#: records/models.py:46
 msgid "How much?"
 msgstr "Quanto?"
 
-#: records/models.py:39
+#: records/models.py:46
 msgid "Please, use only the monthly amount. This field is required"
 msgstr ""
 "Por favor, informe somente a quantidade mensal. Este campo é obrigatório"
 
-#: records/models.py:40
+#: records/models.py:47
 msgid "Date"
 msgstr "Data"
 
-#: records/models.py:40
+#: records/models.py:47
 msgid "This field is required"
 msgstr "Este campo é obrigatório"
 
-#: records/models.py:41
+#: records/models.py:48
 msgid "Day of the month"
 msgstr "Dia do mês"
 
-#: records/models.py:41
+#: records/models.py:48
 msgid ""
 "Use this field to set recurring bills. The day in which will you be billed "
 "every month"
@@ -79,19 +80,19 @@ msgstr ""
 "Use este campo para contas recorrentes. Este é o dia que será debitada "
 "mensalmente"
 
-#: records/models.py:42
+#: records/models.py:49
 msgid "Number of Payments"
 msgstr "Número de Parcelas"
 
-#: records/models.py:42
+#: records/models.py:49
 msgid "This is only used to generate the final payment date"
 msgstr "Este é somente usado para gerar a data final de pagamento"
 
-#: records/models.py:43
+#: records/models.py:50
 msgid "Last payment on"
 msgstr "Último pagamento em"
 
-#: records/models.py:43
+#: records/models.py:50
 msgid ""
 "This is the date when it will be the last payment for this record, after "
 "this date the record will not appear on the calculations"
@@ -99,11 +100,11 @@ msgstr ""
 "Esta é a data para o último pagamento desta conta, depois desta data a conta "
 "não aparecerá mais nos cálculos"
 
-#: records/models.py:44
+#: records/models.py:51
 msgid "Is it totally paid?"
 msgstr "Foi totalmente paga?"
 
-#: records/models.py:44
+#: records/models.py:51
 msgid ""
 "If checked, the record won't appear in the calculations anymore. Click it "
 "only to hide a record from your spreadsheet"
@@ -111,37 +112,42 @@ msgstr ""
 "Se selecionado, a conta não aparecerá nos cálculos mais. Selecione somente "
 "para esconder a conta da planilha"
 
-#: records/models.py:91
+#: records/models.py:106
 msgid "Salary"
 msgstr "Salário"
 
-#: records/models.py:92
+#: records/models.py:107
 msgid "Food & Goods"
 msgstr "Alimentação"
 
-#: records/models.py:93
+#: records/models.py:108
 msgid "House Expenses"
 msgstr "Despesas da Casa"
 
-#: records/models.py:94 records/templates/dashboard.html:14
+#: records/models.py:109 records/templates/dashboard.html:14
 msgid "Extra Income"
 msgstr "Receita Extra"
 
-#: records/models.py:95 records/templates/dashboard.html:16
+#: records/models.py:110 records/templates/dashboard.html:16
 msgid "Extra Outcome"
 msgstr "Despesa Extra"
 
-#: records/models.py:97
+#: records/models.py:112
 msgid "Monthly Balance"
 msgstr "Saldo Mensal"
 
-#: records/models.py:98
+#: records/models.py:113
 msgid "Unscheduled Debts"
 msgstr "Contas Não Agendadas"
 
-#: records/models.py:112
+#: records/models.py:127
 msgid "initial_balance"
 msgstr ""
+
+#: records/templates/base.html:6 records/templates/includes/header.html:5
+#: templates/admin/base_site.html:4 templates/admin/base_site.html.py:8
+msgid "My Money Forecast"
+msgstr "Minha Previsão Financeira"
 
 #: records/templates/dashboard.html:12
 msgid "Initial Balance"
@@ -155,11 +161,7 @@ msgstr "Diferença"
 msgid "Final Balance"
 msgstr "Saldo Final"
 
-#: records/templates/includes/header.html:5
-msgid "My Money Forecast"
-msgstr "Minha Previsão Financeira"
-
-#: records/templates/includes/header.html:13
+#: records/templates/includes/header.html:14
 msgid "Logout"
 msgstr "Sair"
 
@@ -179,6 +181,14 @@ msgstr "Nova Poupança"
 msgid "Set Balance"
 msgstr "Ajustar Saldo"
 
+#: records/templates/includes/modal_overview.html:27
+msgid ""
+"Yellow records are not being calculated on the final balance <br>because "
+"they are before the initial balance from "
+msgstr ""
+"Linhas amarelas não estão sendo calculadas no balanço final <br>porque"
+"elas são contabilizadas antes do balanço inicial em "
+
 #: records/templates/includes/sidebar.html:4
 msgid "It's"
 msgstr "É"
@@ -187,47 +197,75 @@ msgstr "É"
 msgid "The total of debts this month is"
 msgstr "O total de débitos este mês é"
 
-#: records/templates/includes/sidebar.html:14
+#: records/templates/includes/sidebar.html:15
+msgid "You spent"
+msgstr "Você gastou"
+
+#: records/templates/includes/sidebar.html:17
+msgid "more then you've earned this month"
+msgstr "mais do que ganhou este mês"
+
+#: records/templates/includes/sidebar.html:19
 msgid "You need"
 msgstr "Você precisa"
 
-#: records/templates/includes/sidebar.html:16
+#: records/templates/includes/sidebar.html:21
 msgid "to be able to pay your bills"
 msgstr "para pagar as contas"
 
-#: records/templates/includes/sidebar.html:18
+#: records/templates/includes/sidebar.html:25
+#, fuzzy
+#| msgid "You have"
+msgid "You have nothing"
+msgstr "Você tem"
+
+#: records/templates/includes/sidebar.html:26
+msgid "No gain, no fun."
+msgstr "Sem ganho, sem fama."
+
+#: records/templates/includes/sidebar.html:28
 msgid "You have"
 msgstr "Você tem"
 
-#: records/templates/includes/sidebar.html:20
+#: records/templates/includes/sidebar.html:30
 msgid "extra cash. Do some savings!"
 msgstr "a mais. Vamos poupar!"
 
-#: records/templates/includes/sidebar.html:25
+#: records/templates/includes/sidebar.html:36
 msgid "Upcoming this month"
 msgstr "A pagar este mês"
 
-#: records/templates/includes/sidebar.html:29
+#: records/templates/includes/sidebar.html:40
 msgid "No more debts this month, hooray!"
 msgstr "Sem mais débitos este mês, eba!"
 
-#: records/templates/includes/sidebar.html:51
+#: records/templates/includes/sidebar.html:47
+msgid "Today"
+msgstr "Hoje"
+
+#: records/templates/includes/sidebar.html:50
+msgid "Tomorrow"
+msgstr "Amanhã"
+
+#: records/templates/includes/sidebar.html:72
 msgid "Oops, no savings yet. <br>You'd better start soon!"
 msgstr "Oops, nenhuma poupança ainda. <br>Melhor começar a economizar!"
 
-#: records/templates/includes/sidebar.html:67
+#: records/templates/includes/sidebar.html:88
 msgid "Add savings"
 msgstr "Poupar"
 
-#: records/templates/includes/sidebar.html:72
+#: records/templates/includes/sidebar.html:93
 msgid "Unscheduled debts"
 msgstr "Débitos Não Agendados"
 
-#: records/templates/includes/sidebar.html:77
-msgid "This is still not being accounted. Be aware!"
+#: records/templates/includes/sidebar.html:98
+#, fuzzy
+#| msgid "This is still not being accounted. Be aware!"
+msgid "This is still not being categoryed. Be aware!"
 msgstr "Estes não estão sendo contabilizados. Cuidado!"
 
-#: records/templates/includes/sidebar.html:79
+#: records/templates/includes/sidebar.html:100
 msgid ""
 "You have no unscheduled debts. Unscheduled debts are those debts you don't "
 "know when you are going to pay for them yet, like your mum's or uncle Joe's."
@@ -235,6 +273,6 @@ msgstr ""
 "Você não tem nenhum débito não agendado. Esses débitos são aqueles que você "
 "não sabe quando vai pagar, como para a sua mãe ou o tio Chico."
 
-#: records/templates/includes/sidebar.html:105
+#: records/templates/includes/sidebar.html:126
 msgid "Add unscheduled debt"
 msgstr "Adicionar débito não planejado"
