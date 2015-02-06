@@ -185,7 +185,7 @@ msgid ""
 "Yellow records are not being calculated on the final balance <br>because "
 "they are before the initial balance from "
 msgstr ""
-"Linhas amarelas não estão sendo calculadas no balanço final <br>porque"
+"Linhas amarelas não estão sendo calculadas no balanço final <br>porque "
 "elas são contabilizadas antes do balanço inicial em "
 
 #: records/templates/includes/sidebar.html:4
