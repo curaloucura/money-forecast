@@ -21,8 +21,19 @@
 		<tbody>
 			{% for month in month_list %}
 			<tr id="{{ month.start_date|date:"m-Y" }}">
-				<th><span id="col-1">{{ month.start_date|date:"F" }}{% if month.year != today.year %} {{ month.year }}{% endif %}</span></th>
-				<td><span id="col-2" class="">{{ month.initial_balance|pretty_number }}</span></td>
+				<th><span id="col-1">{{ month.start_date|date:"F" }}
+							{% if month.year != today.year %} {{ month.year }}{% endif %}
+							
+					</span>
+				</th>
+				<td><span id="col-2" class="">
+					{{ month.initial_balance|pretty_number }}
+					{% if month.initial_balance_instance %}
+						<a href="{% url 'admin:records_record_change' month.initial_balance_instance.pk %}" target="_blank">
+	                    	<span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+						</a>
+                    {% endif %}
+				</span></td>
 				<td><span id="col-3">{{ month.income_monthly|pretty_number }}</span></td>
 				<td><span id="col-4">{{ month.income_variable|pretty_number }}</span>
 					<a href="#income-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#income-{{ month.month }}-{{ month.year }}">

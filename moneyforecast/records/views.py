@@ -5,7 +5,8 @@ from datetime import datetime, date, timedelta
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from records.models import tmz, get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
-                             SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBTS_SLUG
+                             SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,\
+                             UNSCHEDULED_CREDIT_SLUG
 
 class MonthControl(object):
     def __init__(self, user, month, year):
@@ -15,7 +16,7 @@ class MonthControl(object):
         self.today = timezone.now().replace(hour=0, minute=0)
         self.start_date = tmz(datetime(day=1, month=month, year=year))
         # end_date is the last day of the month
-        self.end_date = get_last_day_of_month(month, year)
+        self.end_date = get_last_day_of_month(month, year).replace(hour=23, minute=59, second=59)
         self.last_month = (self.start_date-relativedelta(months=1))
 
         # Initialize variables
@@ -101,17 +102,17 @@ class MonthControl(object):
         # Initial Balance must be from this month
         balance = balance.filter(start_date__range=(self.start_date, self.end_date))
         if balance.count():
-            return (balance[0].start_date, balance[0].amount)
+            return (balance[0].start_date, balance[0].amount, balance[0])
         else:
             # TODO: Have to improve it, raising errors when no last balance is found
             last_balance = MonthControl(self.user, self.last_month.month, self.last_month.year)
             # If using last month, initial date is the first day of the month
-            return (self.start_date, last_balance.final_balance)
+            return (self.start_date, last_balance.final_balance, None)
 
 
     def get_initial_balance(self):
             if not self.initial_balance:
-                (self.initial_balance_date, self.initial_balance) = self._get_initial_balance_info()
+                (self.initial_balance_date, self.initial_balance, self.initial_balance_instance) = self._get_initial_balance_info()
 
             return self.initial_balance
         
@@ -138,18 +139,23 @@ class MonthControl(object):
         savings_list = []
         total = 0
         for category in categories:
-            total_category = self.get_queryset().filter(category=category, start_date__lte=self.today).aggregate(Sum('amount'))['amount__sum']
+            total_category = self.get_queryset().filter(category=category).aggregate(Sum('amount'))['amount__sum']
             savings_list.append((category,total_category))
             total += (total_category or 0)
 
         return {'list': savings_list, 'total': total}
 
-    def get_unscheduled_totals(self):
-        category = Category.objects.get(type_category=SYSTEM_CATEGORIES, slug=UNSCHEDULED_DEBTS_SLUG, user=self.user)
+    def _get_unscheduled(self, slug_category):
+        category = Category.objects.get(type_category=SYSTEM_CATEGORIES, slug=slug_category, user=self.user)
         records = Record.objects.filter(user=self.user, category=category)
         total = records.aggregate(Sum('amount'))['amount__sum']
         return {'list': records, 'total': total}
 
+    def get_unscheduled_debt_totals(self):
+        return self._get_unscheduled(UNSCHEDULED_DEBT_SLUG)
+
+    def get_unscheduled_credit_totals(self):
+        return self._get_unscheduled(UNSCHEDULED_CREDIT_SLUG)
 
 
 def _get_category_id(user, type_category, slug):
@@ -174,7 +180,8 @@ def index(request):
     income_id = _get_category_id(request.user, INCOME, 'extra_income')
     outcome_id = _get_category_id(request.user, OUTCOME, 'extra_outcome')
     savings_id = _get_category_id(request.user, SAVINGS, 'savings')
-    unscheduled_id = _get_category_id(request.user, SYSTEM_CATEGORIES, UNSCHEDULED_DEBTS_SLUG)
+    unscheduled_debt_id = _get_category_id(request.user, SYSTEM_CATEGORIES, UNSCHEDULED_DEBT_SLUG)
+    unscheduled_credit_id = _get_category_id(request.user, SYSTEM_CATEGORIES, UNSCHEDULED_CREDIT_SLUG)
     set_balance_id = _get_category_id(request.user, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG)
 
     currency = request.user.profile.get_currency_display()

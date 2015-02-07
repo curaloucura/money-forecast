@@ -10,12 +10,16 @@ from dateutil.relativedelta import relativedelta
 
 OUTCOME = 0
 INCOME = 1
+#Savings has it's own category because it must be grouped together
 SAVINGS = 2
+# System Categories are those not being accounted
 SYSTEM_CATEGORIES = 3
-TYPE_CATEGORY_CHOICES = ((OUTCOME, _('Outcome')),(INCOME, _('Income')), (SAVINGS, _('Savings')), (SYSTEM_CATEGORIES, _('System Internals')))
+TYPE_CATEGORY_CHOICES = ((OUTCOME, _('Outcome')),(INCOME, _('Income')), (SAVINGS, _('Savings')),
+                         (SYSTEM_CATEGORIES, _('System Internals')))
 
 INITIAL_BALANCE_SLUG = 'initial_balance'
-UNSCHEDULED_DEBTS_SLUG = 'unscheduled'
+UNSCHEDULED_DEBT_SLUG = 'unscheduled_debt'
+UNSCHEDULED_CREDIT_SLUG = 'unscheduled_credit'
 
 
 class Category(models.Model):
@@ -26,6 +30,10 @@ class Category(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ('type_category','name')
+        verbose_name_plural = _('Categories')
 
     # TODO: Prevent from changing the slug from System Categories
 
@@ -111,6 +119,7 @@ def generate_default_categories(sender, instance, created, **kwargs):
         (_('Savings'),'savings', SAVINGS),
         (_('Monthly Balance'),INITIAL_BALANCE_SLUG, SYSTEM_CATEGORIES),
         (_('Unscheduled Debts'),UNSCHEDULED_DEBTS_SLUG, SYSTEM_CATEGORIES),
+        (_('Unscheduled Credit'),UNSCHEDULED_CREDIT_SLUG, SYSTEM_CATEGORIES),
     )
     if created:
         # Create default categories for the new user
@@ -124,7 +133,7 @@ def generate_default_categories(sender, instance, created, **kwargs):
 
         # Create initial balance for last month, otherwise goes into infinite loop
         Record.objects.create(
-            description = _('initial_balance'),
+            description = _('Initial Balance'),
             category = Category.objects.get(slug=INITIAL_BALANCE_SLUG, type_category=SYSTEM_CATEGORIES, user=instance),
             amount = 0,
             start_date = timezone.now().replace(day=1), 

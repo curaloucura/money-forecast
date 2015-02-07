@@ -10,24 +10,18 @@
 	</p>
 	
 	<p>
-		{% if current_month.accountable_difference < 0 %}
-			{% if current_month.final_balance > 0 %}
+		{% if current_month.difference < 0 %}
 				{% trans "You spent"%}: <br>
-					{{ currency }} {{ current_month.accountable_difference|pretty_number:"absolute" }} <br>
+					{{ currency }} {{ current_month.difference|pretty_number:"absolute" }} <br>
 				{% trans "more then you've earned this month" %}.
-			{% else %}
-				{% trans "You need" %}: <br>
-					{{ currency }} {{ current_month.accountable_difference|pretty_number }} <br>
-				{% trans "to be able to pay your bills" %}.
-			{% endif %}
 		{% else %}
-			{% if current_month.accountable_difference == 0 %}
+			{% if current_month.difference == 0 %}
 				{% trans "You have nothing" %}: <br>
 				{% trans "No gain, no fun." %}
 			{% else %}
 				{% trans "You have" %}: <br>
-					{{ currency }} {{ current_month.accountable_difference|pretty_number }} 
-				{% trans "extra cash. Do some savings!" %}
+					{{ currency }} {{ current_month.difference|pretty_number }} 
+				{% trans "extra cash this month. <br>Do some savings!" %}
 			{% endif %}
 		{% endif %}
 	</p>
@@ -92,10 +86,10 @@
 	<h4>
 		{% trans "Unscheduled debts" %}:
 	</h4>
-	{% with current_month.get_unscheduled_totals as unscheduled_list %}
+	{% with current_month.get_unscheduled_debt_totals as unscheduled_list %}
 	<p class="text-muted">
 		{% if unscheduled_list.list %}
-			{% trans "This is still not being categoryed. Be aware!" %}
+			{% trans "This is still not being accounted. Be aware!" %}
 		{% else %}
 			{% trans "You have no unscheduled debts. Unscheduled debts are those debts you don't know when you are going to pay for them yet, like your mum's or uncle Joe's." %}
 		{% endif %}
@@ -121,9 +115,47 @@
 		{% endif %}
 	</table>
 	{% endwith %}
-	<p><a href="{% url 'admin:records_record_add' %}?category={{ unscheduled_id }}" target="_blank">
+	<p><a href="{% url 'admin:records_record_add' %}?category={{ unscheduled_debt_id }}" target="_blank">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add unscheduled debt" %}
+	</a></p>
+	<hr>
+
+	<h4>
+		{% trans "Unscheduled credits" %}:
+	</h4>
+	{% with current_month.get_unscheduled_credit_totals as unscheduled_list %}
+	<p class="text-muted">
+		{% if unscheduled_list.list %}
+			{% trans "This is still not being accounted. Be aware!" %}
+		{% else %}
+			{% trans "You have no unscheduled credits. Unscheduled credits is the money you lent that you have no idea when they will be paid back, like to your best friend or your brother." %}
+		{% endif %}
+	</p>
+	<table class="table table-condensed">
+		{% for record in unscheduled_list.list %}
+		<tr>
+			<td class="text-left">{{ record.description|default:record.category }}</td>
+			<td class="number">{{ currency }} {{ record.amount|stringformat:".2f" }}</td>
+			<td>
+				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
+	                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+	             </a>
+			</td>
+		</tr>
+		{% endfor %}
+		{% if unscheduled_list.total > 0 %}
+		<tr>
+			<td class="text-left"><strong>Total Credits</strong></td>
+			<td class="number">{{ currency }} {{ unscheduled_list.total|stringformat:".2f" }}</td>	
+			<td></td>
+		</tr>
+		{% endif %}
+	</table>
+	{% endwith %}
+	<p><a href="{% url 'admin:records_record_add' %}?category={{ unscheduled_credit_id }}" target="_blank">
+		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+		{% trans "Add unscheduled credit" %}
 	</a></p>
 	<hr>
 
