@@ -17,5 +17,6 @@ Improvements to be done:
 
 - Create forms to make it easier to add new records with modals and auto-refresh
 - Give it some colors and styles
-- Translate to pt-br and de
+- Improve messaging and translate to pt-br and de
 - Make initial balance for the month and accounts smarter
+- Fix how to deal with savings, withdrawing from the current balance and also creating a withdraw from savings functionality
