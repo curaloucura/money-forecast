@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-07 09:20+0100\n"
+"POT-Creation-Date: 2015-02-07 17:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,7 +184,11 @@ msgstr "Nova Poupança"
 msgid "Set Balance"
 msgstr "Ajustar Saldo"
 
-#: records/templates/includes/modal_overview.html:27
+#: records/templates/includes/modal_overview.html:13
+msgid "Recurrent"
+msgstr "Recorrente"
+
+#: records/templates/includes/modal_overview.html:32
 msgid ""
 "Yellow records are not being calculated on the final balance <br>because "
 "they are before the initial balance from "
@@ -280,7 +284,8 @@ msgid ""
 "or your brother."
 msgstr ""
 "Você não tem nenhum crédito não agendado. Esses são aquele dinheiro que você "
-"empresta e não sabe quando receberá de volta, como para o seu melhor amigo ou seu irmão."
+"empresta e não sabe quando receberá de volta, como para o seu melhor amigo "
+"ou seu irmão."
 
 #: records/templates/includes/sidebar.html:158
 msgid "Add unscheduled credit"
