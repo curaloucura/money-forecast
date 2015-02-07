@@ -20,3 +20,4 @@ Improvements to be done:
 - Improve messaging and translate to pt-br and de
 - Make initial balance for the month and accounts smarter
 - Fix how to deal with savings, withdrawing from the current balance and also creating a withdraw from savings functionality
+- Modal list, add tabs so user can see totals per group (graph)
