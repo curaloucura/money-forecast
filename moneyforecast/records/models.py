@@ -118,7 +118,7 @@ def generate_default_categories(sender, instance, created, **kwargs):
         (_('Extra Outcome'),'extra_outcome', OUTCOME),
         (_('Savings'),'savings', SAVINGS),
         (_('Monthly Balance'),INITIAL_BALANCE_SLUG, SYSTEM_CATEGORIES),
-        (_('Unscheduled Debts'),UNSCHEDULED_DEBTS_SLUG, SYSTEM_CATEGORIES),
+        (_('Unscheduled Debts'),UNSCHEDULED_DEBT_SLUG, SYSTEM_CATEGORIES),
         (_('Unscheduled Credit'),UNSCHEDULED_CREDIT_SLUG, SYSTEM_CATEGORIES),
     )
     if created:
