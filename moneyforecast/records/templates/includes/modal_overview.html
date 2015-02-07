@@ -14,7 +14,7 @@
                   {{ record.1.description|default:record.1.category }}
                   {% if not record.1|is_accountable:month.initial_balance_date %}*{% endif %}
                 </td>
-                <td class="number">{{ currency }} {{ record.1.amount|stringformat:".2f" }}</td>
+                <td class="number">{{ currency }} {{ record.1.amount|format_number }}</td>
                 <td>
                   <a href="{% url 'admin:records_record_change' record.1.pk %}" target="_blank">
                     <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n record_tags static %}
+{% load i18n record_tags static l10n %}
 
 {% block content %}
 <div class="row">
@@ -32,10 +32,16 @@
 						<a href="{% url 'admin:records_record_change' month.initial_balance_instance.pk %}" target="_blank">
 	                    	<span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
 						</a>
+                    {% else %}
+                    	{% if month.is_current%}
+						<a href="{% url 'admin:records_record_add' %}?category={{ set_balance_id }}" target="_blank">
+	                    	<span class="glyphicon glyphicon-plus text-muted" aria-hidden="true"></span>
+						</a>
+	                    {% endif %}
                     {% endif %}
 				</span></td>
-				<td><span id="col-3">{{ month.income_monthly|pretty_number }}</span></td>
-				<td><span id="col-4">{{ month.income_variable|pretty_number }}</span>
+				<td><span id="col-3">{{ month.income_monthly|format_number }}</span></td>
+				<td><span id="col-4">{{ month.income_variable|format_number }}</span>
 					<a href="#income-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#income-{{ month.month }}-{{ month.year }}">
 						<span class="glyphicon glyphicon-option-vertical text-muted" aria-hidden="true"></span>
 					</a>
@@ -45,8 +51,8 @@
 					{% endwith %}
 					{% endwith %}
 				</td>
-				<td><span id="col-5">{{ month.outcome_monthly|pretty_number }}</span></td>
-				<td><span id="col-6">{{ month.outcome_variable|pretty_number }}</span>
+				<td><span id="col-5">{{ month.outcome_monthly|format_number }}</span></td>
+				<td><span id="col-6">{{ month.outcome_variable |format_number}}</span>
 					<a href="#outcome-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#outcome-{{ month.month }}-{{ month.year }}">
 						<span class="glyphicon glyphicon-option-vertical text-muted" aria-hidden="true"></span>
 					</a>

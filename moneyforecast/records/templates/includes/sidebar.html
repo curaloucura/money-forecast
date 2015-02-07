@@ -6,7 +6,7 @@
 
 	<p>
 		{% trans "The total of debts this month is" %}: <br>
-		{{ currency }} {{ current_month.total_outcome|pretty_number }}
+		{{ currency }} {{ current_month.total_outcome|format_number }}
 	</p>
 	
 	<p>
@@ -50,7 +50,7 @@
 			<td>{# TODO: add number eg. 2/10 #} 
 				{{ record.1.description|default:record.1.category }}
 			</td>
-			<td class="number">{{ currency }} {{ record.1.amount|stringformat:".2f" }}</td>
+			<td class="number">{{ currency }} {{ record.1.amount|format_number }}</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -70,7 +70,7 @@
 		{% if record.1 > 0 %}
 		<tr>
 			<td class="text-left">{{ record.0.name }}</td>
-			<td class="number">{{ currency }} {{ record.1|stringformat:".2f" }}</td>
+			<td class="number">{{ currency }} {{ record.1|format_number }}</td>
 		</tr>
 		{% endif %}
 		{% endfor %}
@@ -98,7 +98,7 @@
 		{% for record in unscheduled_list.list %}
 		<tr>
 			<td class="text-left">{{ record.description|default:record.category }}</td>
-			<td class="number">{{ currency }} {{ record.amount|stringformat:".2f" }}</td>
+			<td class="number">{{ currency }} {{ record.amount|format_number }}</td>
 			<td>
 				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
 	                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
@@ -109,7 +109,7 @@
 		{% if unscheduled_list.total > 0 %}
 		<tr>
 			<td class="text-left"><strong>Total Debts</strong></td>
-			<td class="number">{{ currency }} {{ unscheduled_list.total|stringformat:".2f" }}</td>	
+			<td class="number">{{ currency }} {{ unscheduled_list.total|format_number }}</td>	
 			<td></td>
 		</tr>
 		{% endif %}
@@ -136,7 +136,7 @@
 		{% for record in unscheduled_list.list %}
 		<tr>
 			<td class="text-left">{{ record.description|default:record.category }}</td>
-			<td class="number">{{ currency }} {{ record.amount|stringformat:".2f" }}</td>
+			<td class="number">{{ currency }} {{ record.amount|format_number }}</td>
 			<td>
 				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
 	                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
@@ -147,7 +147,7 @@
 		{% if unscheduled_list.total > 0 %}
 		<tr>
 			<td class="text-left"><strong>Total Credits</strong></td>
-			<td class="number">{{ currency }} {{ unscheduled_list.total|stringformat:".2f" }}</td>	
+			<td class="number">{{ currency }} {{ unscheduled_list.total|format_number }}</td>	
 			<td></td>
 		</tr>
 		{% endif %}

@@ -24,6 +24,10 @@ class MonthControl(object):
         self._get_records()
         self._calculate_totals()
 
+
+    def is_current(self):
+        return ((self.today >= self.start_date) and
+                (self.today <= self.end_date))
     
 
     def _sum_after_date(self, date, record_list):
