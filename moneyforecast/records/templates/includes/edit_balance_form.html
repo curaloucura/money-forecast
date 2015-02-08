@@ -2,18 +2,14 @@
 {% load i18n %}
 
 {% block title %}
-{% if object and object.pk %}
-    {% trans 'Update Initial Balance' %}
-{% else %}
-    {% trans 'Create Initial Balance' %}
-{% endif %}
+    {{ view.title }}
 {% endblock title %} 
 
 {% block pre-body %}
 {% if object and object.pk %}
-    <form action="{% url 'update_initial_balance' pk=object.pk %}" id="edit-balance-form" method="post">
+    <form action="{% url view.url_name pk=object.pk %}" id="edit-balance-form" method="post">
 {% else %}
-    <form action="{% url 'create_initial_balance' %}" id="edit-balance-form" method="post">
+    <form action="{% url view.url_name %}" id="edit-balance-form" method="post">
 {% endif %}
 {% endblock %}
 
@@ -24,6 +20,9 @@
 
 
 {% block footer-body %}
+        {% if view.can_delete %}
+        <button id="btn-delete" type="button" class="btn btn-danger" data-url="{% url 'delete_record' pk=object.pk %}">Delete record</button>
+        {% endif %}
         <div class="pull-right">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Save changes</button>
@@ -46,5 +45,23 @@
             });
             return false;
         });
+        {% if view.can_delete %}
+        $('#edit-balance-form #btn-delete').on('click',function(){
+            var pk = $(this).data("id")
+            var url = $(this).data("url")
+            var r = confirm("{% trans "Do you really want to delete this record?" %}");
+            if (r == true) {
+                $.post(url, function(responseText){
+                    if (responseText == 'successfully-sent!'){
+                        location.reload();
+                    } else {
+                        alert("{% trans "We are experiencing a problem. Please, try again later." %}");
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+        {% endif %}
     </script> 
 {% endblock %}

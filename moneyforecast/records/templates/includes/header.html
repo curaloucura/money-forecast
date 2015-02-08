@@ -10,7 +10,7 @@
 		<a href="{% url 'set_language' %}?language=pt&next=/" title="Português" class="language-selector"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
 		<a href="{% url 'set_language' %}?language=en&next=/" title="English" class="language-selector"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
 		<a href="{% url 'set_language' %}?language=de&next=/" title="Deutsch" class="language-selector"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
-		<a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_profile' pk=user.profile.pk %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span>{{ request.user.first_name|default:request.user.username|capfirst }}</span></a>
+		<a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_profile' pk=user.profile.pk %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span>{{ request.user.first_name|default:request.user.username|capfirst }}</span></a>
 		<a href="{% url "logout" %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>  {% trans "Logout" %}</a>
 </div>
 <div class="row" id="nav">

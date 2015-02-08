@@ -100,7 +100,7 @@
 			<td class="text-left">{{ record.description|default:record.category }}</td>
 			<td class="number">{{ currency }} {{ record.amount|format_number }}</td>
 			<td>
-				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
+				 <a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_unscheduled_debt' pk=record.pk %}">
 	                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
 	             </a>
 			</td>
@@ -115,9 +115,10 @@
 		{% endif %}
 	</table>
 	{% endwith %}
-	<p><a href="{% url 'admin:records_record_add' %}?category={{ unscheduled_debt_id }}" target="_blank">
-		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-		{% trans "Add unscheduled debt" %}
+	<p>
+		<a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'create_unscheduled_debt' %}">
+			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+			{% trans "Add unscheduled debt" %}
 	</a></p>
 	<hr>
 
@@ -138,7 +139,7 @@
 			<td class="text-left">{{ record.description|default:record.category }}</td>
 			<td class="number">{{ currency }} {{ record.amount|format_number }}</td>
 			<td>
-				 <a href="{% url 'admin:records_record_change' record.pk %}" target="_blank">
+				 <a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_unscheduled_credit' pk=record.pk %}">
 	                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
 	             </a>
 			</td>
@@ -153,7 +154,8 @@
 		{% endif %}
 	</table>
 	{% endwith %}
-	<p><a href="{% url 'admin:records_record_add' %}?category={{ unscheduled_credit_id }}" target="_blank">
+	<p>
+		<a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'create_unscheduled_credit' %}">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add unscheduled credit" %}
 	</a></p>

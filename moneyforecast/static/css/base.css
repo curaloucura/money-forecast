@@ -34,6 +34,7 @@ table#upcoming {
 	margin-left: 0.3em;
 }
 
-#edit-record-form .btn-danger{
+#edit-record-form .btn-danger,
+#edit-balance-form .btn-danger{
 	float: left;
 }

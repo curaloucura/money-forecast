@@ -4,11 +4,12 @@ from django.db.models import Q, Sum
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.utils.translation import ugettext as _
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import TemplateView, DeleteView
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
-from records.forms import RecordForm, InitialBalanceForm
+from records.forms import RecordForm, InitialBalanceForm, UnscheduledDebtForm, UnscheduledCreditForm
 from records.models import tmz, get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
                              SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,\
                              UNSCHEDULED_CREDIT_SLUG
@@ -111,7 +112,9 @@ class MonthControl(object):
         # Initial Balance must be from this month
         balance = balance.filter(start_date__range=(self.start_date, self.end_date))
         if balance.count():
-            return (balance[0].start_date, balance[0].amount, balance[0])
+            # Get the most recent balance
+            idx = balance.count()-1
+            return (balance[idx].start_date, balance[idx].amount, balance[idx])
         else:
             # TODO: Have to improve it, raising errors when no last balance is found
             last_balance = MonthControl(self.user, self.last_month.month, self.last_month.year)
@@ -266,6 +269,8 @@ class CreateInitialBalanceView(CreateView):
     model = Record
     form_class = InitialBalanceForm
     template_name = 'includes/edit_balance_form.html'
+    title = _('Create Initial Balance')
+    url_name = 'create_initial_balance'
 
     def form_valid(self, form): 
         form.save(self.request.user)
@@ -277,8 +282,38 @@ class UpdateInitialBalanceView(UpdateView):
     model = Record
     form_class = InitialBalanceForm
     template_name = 'includes/edit_balance_form.html'
+    title = _('Update Initial Balance')
+    url_name = 'update_initial_balance'
+    can_delete = False
 
     def form_valid(self, form): 
         form.save(self.request.user)
 
         return HttpResponse('successfully-sent!')
+
+
+class CreateUnscheduledDebtView(CreateInitialBalanceView):
+    title = _('Create Unscheduled Debt')
+    form_class = UnscheduledDebtForm
+    url_name = 'create_unscheduled_debt'
+
+
+class CreateUnscheduledCreditView(CreateInitialBalanceView):
+    title = _('Create Unscheduled Credit')
+    form_class = UnscheduledCreditForm
+    url_name = 'create_unscheduled_credit'
+
+
+class UpdateUnscheduledDebtView(UpdateInitialBalanceView):
+    title = _('Update Unscheduled Debt')
+    form_class = UnscheduledDebtForm
+    url_name = 'update_unscheduled_debt'
+    can_delete = True
+
+
+class UpdateUnscheduledCreditView(UpdateInitialBalanceView):
+    title = _('Update Unscheduled Credit')
+    form_class = UnscheduledCreditForm
+    url_name = 'update_unscheduled_credit'
+    can_delete = True
+
