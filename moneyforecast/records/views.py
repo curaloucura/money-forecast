@@ -261,12 +261,24 @@ class DeleteRecordView(DeleteView):
         payload = {'delete': 'ok'}
         return HttpResponse('successfully-sent!')
 
+
+class CreateInitialBalanceView(CreateView):
+    model = Record
+    form_class = InitialBalanceForm
+    template_name = 'includes/edit_balance_form.html'
+
+    def form_valid(self, form): 
+        form.save(self.request.user)
+
+        return HttpResponse('successfully-sent!')
+
+
 class UpdateInitialBalanceView(UpdateView):
     model = Record
     form_class = InitialBalanceForm
     template_name = 'includes/edit_balance_form.html'
 
     def form_valid(self, form): 
-        form.save()
+        form.save(self.request.user)
 
         return HttpResponse('successfully-sent!')

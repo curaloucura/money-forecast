@@ -1,20 +1,10 @@
 {% extends 'includes/modal_base.html' %}
 {% load i18n %}
 
-{% block title %}
-{% if object and object.pk %}
-    {% trans 'Update Initial Balance' %}
-{% else %}
-    {% trans 'Create Initial Balance' %}
-{% endif %}
-{% endblock title %} 
+{% block title %}{% trans 'Update Profile' %}{% endblock title %} 
 
 {% block pre-body %}
-{% if object and object.pk %}
-    <form action="{% url 'update_initial_balance' pk=object.pk %}" id="edit-balance-form" method="post">
-{% else %}
-    <form action="{% url 'create_initial_balance' %}" id="edit-balance-form" method="post">
-{% endif %}
+<form action="{% url 'update_profile' pk=object.pk %}" id="edit-profile-form" method="post">
 {% endblock %}
 
 {% block body %} 
@@ -32,10 +22,9 @@
 
 {% block post-footer %}
     </form>
-
     <script> 
         $('#id_start_date, #id_end_date').datetimepicker({format:'Y-m-d H:i'});
-        $('#edit-balance-form').on('submit', function(){
+        $('#edit-profile-form').on('submit', function(){
             form = $(this);
             $.post(form.attr('action'), form.serialize(), function(responseText){
                 if (responseText == 'successfully-sent!'){

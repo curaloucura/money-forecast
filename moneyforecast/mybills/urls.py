@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from records.views import index, set_language, CreateRecordView, UpdateRecordView,\
-         DeleteRecordView, UpdateInitialBalanceView
-from profiles.views import set_timezone
+         DeleteRecordView, UpdateInitialBalanceView, CreateInitialBalanceView
+from profiles.views import set_timezone, UpdateProfileView
 from django.core.urlresolvers import reverse_lazy
 
 urlpatterns = patterns('',
@@ -11,9 +11,11 @@ urlpatterns = patterns('',
          name="logout"),
     url(r'^i18n/$', set_language, name='set_language'),
     url(r'^tz/$', set_language, name='set_language'),
+    url(r'^profile/update/(?P<pk>\d+)/$', UpdateProfileView.as_view(), name='update_profile'),
     url(r'^record/create/(?P<type>\d+)/$', CreateRecordView.as_view(), name='create_record'),
     url(r'^record/update/(?P<pk>\d+)/$', UpdateRecordView.as_view(), name='update_record'),
     url(r'^record/delete/(?P<pk>\d+)/$', DeleteRecordView.as_view(), name='delete_record'),
+    url(r'^balance/create/$', CreateInitialBalanceView.as_view(), name='create_initial_balance'),
     url(r'^balance/update/(?P<pk>\d+)/$', UpdateInitialBalanceView.as_view(), name='update_initial_balance'),
     url(r'^$', index, name='dashboard'),
 )

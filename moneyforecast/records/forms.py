@@ -20,9 +20,15 @@ class RecordForm(forms.ModelForm):
 class InitialBalanceForm(forms.ModelForm):
     class Meta:
         model = Record
-        fields = ('description', 'amount', 'start_date')
+        fields = ('description', 'amount', 'start_date', 'notes')
 
-    def save(self, commit=False):
+    def save(self, user, commit=False):
         instance = super(InitialBalanceForm, self).save(commit=False)
         instance.category = Category.objects.get(type_category=SYSTEM_CATEGORIES, slug=INITIAL_BALANCE_SLUG) 
+        if not instance.pk:
+            instance.user = user
+        else:
+            if instance.user != user:
+                raise Exception("Invalid user")
+
         return instance.save()

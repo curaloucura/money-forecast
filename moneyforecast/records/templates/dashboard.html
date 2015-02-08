@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load i18n record_tags static l10n %}
 
-{% block extra_js%} <script src="http://malsup.github.com/jquery.form.js"></script> {% endblock %}
-
 {% block content %}
 <div class="row">
 	<hr>
@@ -36,7 +34,7 @@
 						</a>
                     {% else %}
                     	{% if month.is_current%}
-						<a href="{% url 'admin:records_record_add' %}?category={{ set_balance_id }}" target="_blank">
+						<a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'create_initial_balance' %}">
 	                    	<span class="glyphicon glyphicon-plus text-muted" aria-hidden="true"></span>
 						</a>
 	                    {% endif %}

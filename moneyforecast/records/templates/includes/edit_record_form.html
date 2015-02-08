@@ -24,43 +24,6 @@
 {% block post-footer %}
     </form>
     <script> 
-
-        /// Huge code dump for CSRF security
-        function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie != '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = jQuery.trim(cookies[i]);
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-
-        var csrftoken = getCookie('csrftoken');
-
-        function csrfSafeMethod(method) {
-            // these HTTP methods do not require CSRF protection
-            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-        }
-        $.ajaxSetup({
-            crossDomain: false, // obviates need for sameOrigin test
-            beforeSend: function(xhr, settings) {
-                console.log('adding CSRF token');
-                console.log(csrftoken);
-                if (!csrfSafeMethod(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                }
-            }
-        });
-        /// End huge code dump
-
         $('#id_start_date, #id_end_date').datetimepicker({format:'Y-m-d H:i'});
         $('#edit-record-form').on('submit', function(){
             form = $(this);
