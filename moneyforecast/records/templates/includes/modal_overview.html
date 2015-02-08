@@ -21,7 +21,7 @@
                 </td>
                 <td class="number">{{ currency }} {{ record.1.amount|format_number }}</td>
                 <td>
-                  <a href="{% url 'admin:records_record_change' record.1.pk %}" target="_blank">
+                  <a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_record' pk=record.1.pk %}">
                     <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
                   </a>
                 </td>

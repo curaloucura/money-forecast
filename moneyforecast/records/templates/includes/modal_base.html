@@ -1,15 +1,57 @@
  <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h4 class="modal-title" id="{% block modal_id %}modal{% endblock %}">{% block title %}{% endblock %}</h4>
-  </div>
-  {% block pre-body %}{% endblock pre-body %}
-  <div class="modal-body">
-    {% block body %}{% endblock body%}
-  </div>
-  {% block footer %}
+</div>
+
+{% block pre-body %}{% endblock pre-body %}
+
+<div class="modal-body">
+  {% block body %}{% endblock body%}
+</div>
+
+{% block footer %}
   <div class="modal-footer">
     {% block footer-body %}
     {% endblock footer-body %}
   </div>  
-  {% endblock footer %}
-  {% block post-footer %}{% endblock post-footer %}
+{% endblock footer %}
+
+{% block post-footer %}{% endblock post-footer %}
+
+<script>
+  /// Huge code dump for CSRF security
+  function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+  }
+
+
+  var csrftoken = getCookie('csrftoken');
+
+  function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+  }
+  $.ajaxSetup({
+      crossDomain: false, // obviates need for sameOrigin test
+      beforeSend: function(xhr, settings) {
+          console.log('adding CSRF token');
+          console.log(csrftoken);
+          if (!csrfSafeMethod(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+      }
+  });
+  /// End huge code dump
+</script>

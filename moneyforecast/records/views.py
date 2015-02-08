@@ -1,14 +1,14 @@
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Sum
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DeleteView
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
-from records.forms import RecordForm
+from records.forms import RecordForm, InitialBalanceForm
 from records.models import tmz, get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
                              SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,\
                              UNSCHEDULED_CREDIT_SLUG
@@ -241,3 +241,32 @@ class UpdateRecordView(UpdateView):
     model = Record
     template_name = 'includes/edit_record_form.html'
     form_class = RecordForm
+
+    def form_valid(self, form): 
+        instance = form.save(commit=False)
+        # Make sure the record is owned by the user
+        if self.request.user == instance.user:
+            instance.save() 
+
+        return HttpResponse('successfully-sent!')
+
+
+class DeleteRecordView(DeleteView):
+    def get_queryset(self):
+        return Record.objects.filter(user=self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        payload = {'delete': 'ok'}
+        return HttpResponse('successfully-sent!')
+
+class UpdateInitialBalanceView(UpdateView):
+    model = Record
+    form_class = InitialBalanceForm
+    template_name = 'includes/edit_balance_form.html'
+
+    def form_valid(self, form): 
+        form.save()
+
+        return HttpResponse('successfully-sent!')

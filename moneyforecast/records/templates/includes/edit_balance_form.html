@@ -1,0 +1,40 @@
+{% extends 'includes/modal_base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Update Initial Balance' %}{% endblock title %} 
+
+{% block pre-body %}
+<form action="{% url 'update_initial_balance' pk=object.pk %}" id="edit-balance-form" method="post">
+{% endblock %}
+
+{% block body %} 
+    {% csrf_token %}
+    {{ form.as_p }}
+{% endblock body %}
+
+
+{% block footer-body %}
+        <div class="pull-right">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+{% endblock footer-body %}
+
+{% block post-footer %}
+    </form>
+
+    <script> 
+        $('#id_start_date, #id_end_date').datetimepicker({format:'Y-m-d H:i'});
+        $('#edit-balance-form').on('submit', function(){
+            form = $(this);
+            $.post(form.attr('action'), form.serialize(), function(responseText){
+                if (responseText == 'successfully-sent!'){
+                    location.reload();
+                } else {
+                    alert("{% trans "We are experiencing a problem. Please, try again later." %}");
+                }
+            });
+            return false;
+        });
+    </script> 
+{% endblock %}

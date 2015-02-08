@@ -7,10 +7,9 @@
 </div>
 
 <script>
-  $('#record-form').on('show.bs.modal', function (event) {
+  $('.modal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget); // Button that triggered the modal
     var recipient = button.data('url'); // Extract info from data-* attributes
-    console.log(recipient);
     $('#record-form .modal-content').load(recipient);
   });
 </script>

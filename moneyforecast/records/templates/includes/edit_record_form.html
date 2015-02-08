@@ -1,5 +1,93 @@
-<form action="{% url 'edit_record' object.pk %}" method="post">
+{% extends 'includes/modal_base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Update Record' %}{% endblock title %} 
+
+{% block pre-body %}
+<form action="{% url 'update_record' pk=object.pk %}" id="edit-record-form" method="post">
+{% endblock %}
+
+{% block body %} 
     {% csrf_token %}
     {{ form.as_p }}
-</form>
+{% endblock body %}
 
+
+{% block footer-body %}
+        <button id="btn-delete" type="button" class="btn btn-danger" data-url="{% url 'delete_record' pk=object.pk %}">Delete record</button>
+        <div class="pull-right">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+{% endblock footer-body %}
+
+{% block post-footer %}
+    </form>
+    <script> 
+
+        /// Huge code dump for CSRF security
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        var csrftoken = getCookie('csrftoken');
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                console.log('adding CSRF token');
+                console.log(csrftoken);
+                if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        /// End huge code dump
+
+        $('#id_start_date, #id_end_date').datetimepicker({format:'Y-m-d H:i'});
+        $('#edit-record-form').on('submit', function(){
+            form = $(this);
+            $.post(form.attr('action'), form.serialize(), function(responseText){
+                if (responseText == 'successfully-sent!'){
+                    location.reload();
+                } else {
+                    $('#record-form .modal-content').html(responseText);
+                }
+            });
+            return false;
+        });
+        $('#edit-record-form #btn-delete').on('click',function(){
+            var pk = $(this).data("id")
+            var url = $(this).data("url")
+            var r = confirm("{% trans "Do you really want to delete this record?" %}");
+            if (r == true) {
+                $.post(url, function(responseText){
+                    if (responseText == 'successfully-sent!'){
+                        location.reload();
+                    } else {
+                        alert("{% trans "We are experiencing a problem. Please, try again later." %}");
+                    }
+                });
+            } else {
+                return false;
+            }
+        });
+    </script> 
+{% endblock %}

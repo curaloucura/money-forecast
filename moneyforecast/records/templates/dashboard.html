@@ -31,7 +31,7 @@
 				<td><span id="col-2" class="">
 					{{ month.initial_balance|pretty_number }}
 					{% if month.initial_balance_instance %}
-						<a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_record' pk=month.initial_balance_instance.pk %}">
+						<a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_initial_balance' pk=month.initial_balance_instance.pk %}">
 	                    	<span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
 						</a>
                     {% else %}

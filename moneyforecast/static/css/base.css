@@ -33,3 +33,7 @@ table#upcoming {
 #user-menu a.language-selector {
 	margin-left: 0.3em;
 }
+
+#edit-record-form .btn-danger{
+	float: left;
+}
