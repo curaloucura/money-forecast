@@ -1,0 +1,15 @@
+ <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="{% block modal_id %}modal{% endblock %}">{% block title %}{% endblock %}</h4>
+  </div>
+  {% block pre-body %}{% endblock pre-body %}
+  <div class="modal-body">
+    {% block body %}{% endblock body%}
+  </div>
+  {% block footer %}
+  <div class="modal-footer">
+    {% block footer-body %}
+    {% endblock footer-body %}
+  </div>  
+  {% endblock footer %}
+  {% block post-footer %}{% endblock post-footer %}

@@ -1,0 +1,5 @@
+<form action="{% url 'edit_record' object.pk %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+</form>
+

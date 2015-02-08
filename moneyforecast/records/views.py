@@ -1,9 +1,14 @@
-from django.shortcuts import render, redirect
-from django.db.models import Q, Sum
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from datetime import datetime, date, timedelta
+from django.db.models import Q, Sum
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic import TemplateView
+from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
+from records.forms import RecordForm
 from records.models import tmz, get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
                              SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,\
                              UNSCHEDULED_CREDIT_SLUG
@@ -184,11 +189,15 @@ def index(request):
     income_id = _get_category_id(request.user, INCOME, 'extra_income')
     outcome_id = _get_category_id(request.user, OUTCOME, 'extra_outcome')
     savings_id = _get_category_id(request.user, SAVINGS, 'savings')
+    income_type = INCOME
+    outcome_type = OUTCOME
+    savings_type = SAVINGS
     unscheduled_debt_id = _get_category_id(request.user, SYSTEM_CATEGORIES, UNSCHEDULED_DEBT_SLUG)
     unscheduled_credit_id = _get_category_id(request.user, SYSTEM_CATEGORIES, UNSCHEDULED_CREDIT_SLUG)
     set_balance_id = _get_category_id(request.user, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG)
 
     currency = request.user.profile.get_currency_display()
+    record_form = RecordForm()
     return render(request, "dashboard.html", locals())
 
 
@@ -202,3 +211,33 @@ def set_language(request):
     request.session[translation.LANGUAGE_SESSION_KEY] = lang
 
     return redirect(next) 
+
+
+class CreateRecordView(CreateView):
+    model = Record
+    template_name = 'includes/create_record_form.html'
+    form_class = RecordForm
+
+    def form_valid(self, form): 
+        instance = form.save(commit=False) 
+        instance.user = self.request.user
+        instance.save() 
+
+        return HttpResponse('successfully-sent!')
+
+    def get_form_kwargs(self):
+        kwargs = super(CreateRecordView, self).get_form_kwargs()
+        kwargs['type_category'] = self.kwargs['type']
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = kwargs
+        self.type_category = self.kwargs['type']
+        context['type_category'] = self.type_category
+        return context
+
+
+class UpdateRecordView(UpdateView):
+    model = Record
+    template_name = 'includes/edit_record_form.html'
+    form_class = RecordForm

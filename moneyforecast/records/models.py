@@ -104,6 +104,9 @@ class Record(models.Model):
         record_date = self.get_date_for_month(initial_date.month, initial_date.year)
         return initial_date <= record_date
 
+    def get_default_description(self):
+        return self.description or self.category.name
+
 
     # TODO: on saving System Categories, make sure invalid fields are not being saved like end_date
 

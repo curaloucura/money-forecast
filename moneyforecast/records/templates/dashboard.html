@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load i18n record_tags static l10n %}
 
+{% block extra_js%} <script src="http://malsup.github.com/jquery.form.js"></script> {% endblock %}
+
 {% block content %}
 <div class="row">
 	<hr>
@@ -29,7 +31,7 @@
 				<td><span id="col-2" class="">
 					{{ month.initial_balance|pretty_number }}
 					{% if month.initial_balance_instance %}
-						<a href="{% url 'admin:records_record_change' month.initial_balance_instance.pk %}" target="_blank">
+						<a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_record' pk=month.initial_balance_instance.pk %}">
 	                    	<span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
 						</a>
                     {% else %}

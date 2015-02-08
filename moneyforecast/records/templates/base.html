@@ -14,7 +14,7 @@
 <!-- Latest compiled and minified JavaScript -->
 <script src="{% static "bootstrap/js/j.js" %}"></script>
 <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-
+{% block extra_js%}{% endblock %}
 </head>
 <body>
  	<div class="container">
@@ -22,9 +22,12 @@
 		{% block content %}
 		{% endblock %}
 		{% include "includes/sidebar.html" %}
+        {% include "includes/modal_forms.html" %}
 		<div class="row" id="footer">
 			<p class="text-center">Copyleft {% now "Y" %} - www.andersonsantos.info - <a href="https://github.com/curaloucura/money-forecast" target="_blank">Source Code</a></p>
 		</div>
 	</div>
 </body>
+<link rel="stylesheet" type="text/css" href="{% static "js/datetimepicker/jquery.datetimepicker.css" %}"/ >
+<script src="{% static "js/datetimepicker/jquery.datetimepicker.js" %}"></script>
 </html>

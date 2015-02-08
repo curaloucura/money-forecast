@@ -1,0 +1,37 @@
+{% extends 'includes/modal_base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Create Record' %}{% endblock title %} 
+
+{% block pre-body %}
+<form action="{% url 'create_record' type=type_category %}" id="created-record-form" method="post">
+{% endblock %}
+
+{% block body %} 
+    {% csrf_token %}
+    {{ form.as_p }}
+{% endblock body %}
+
+
+{% block footer-body %}
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+{% endblock footer-body %}
+
+{% block post-footer %}
+    </form>
+    <script> 
+        $('#id_start_date, #id_end_date').datetimepicker({format:'Y-m-d H:i'});
+        $('#created-record-form').on('submit', function(){
+            form = $(this);
+            $.post(form.attr('action'), form.serialize(), function(responseText){
+                if (responseText == 'successfully-sent!'){
+                    location.reload();
+                } else {
+                    $('#record-form .modal-content').html(responseText);
+                }
+            });
+            return false;
+        }); 
+    </script> 
+{% endblock %}

@@ -1,0 +1,16 @@
+<!-- Modal -->
+<div class="modal fade" id="record-form" tabindex="-1" role="dialog" aria-labelledby="record-form" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+<script>
+  $('#record-form').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Button that triggered the modal
+    var recipient = button.data('url'); // Extract info from data-* attributes
+    console.log(recipient);
+    $('#record-form .modal-content').load(recipient);
+  });
+</script>

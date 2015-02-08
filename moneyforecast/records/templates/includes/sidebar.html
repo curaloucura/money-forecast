@@ -77,7 +77,7 @@
 	</table>
 	{% endif %}
 	{% endwith %}
-	<p><a href="{% url 'admin:records_record_add' %}?category={{ savings_id }}" target="_blank">
+	<p><a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'create_record' type=savings_type %}">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add savings" %}
 	</a></p>
