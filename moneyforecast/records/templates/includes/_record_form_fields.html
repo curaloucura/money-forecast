@@ -1,0 +1,96 @@
+    <p><label for="id_description">Description
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.description.help_text }}"></span>
+        </label> 
+        <br>
+        {{ form.description }}
+        {% if form.description.errors %}
+            <div id="{{ form.description.auto_id }}_errors">
+                {{ form.description.errors }}
+            </div>
+        {% endif %}
+    </p>
+
+    <p><label for="id_category">Category
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.category.help_text }}"></span>
+        </label> 
+        <br>
+        {{ form.category }} 
+        {% if form.category.errors %}
+            <div id="{{ form.category.auto_id }}_errors">
+                {{ form.category.errors }}
+            </div>
+        {% endif %}
+    </p>
+    <p><label for="id_amount">Amount 
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.amount.help_text }}"></span>
+        </label> 
+        <br>
+        <input id="id_amount" name="amount" step="any" value="{{ form.initial.amount }}" type="number" placeholder="0.00">
+        {% if form.amount.errors %}
+            <div id="{{ form.amount.auto_id }}_errors">
+                {{ form.amount.errors }}
+            </div>
+        {% endif %}
+    </p>
+    <p><label for="id_start_date">Date
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.start_date.help_text }}"></span>
+        </label> 
+        <br>
+        {{ form.start_date }}
+        {% if form.start_date.errors %}
+            <div id="{{ form.start_date.auto_id }}_errors">
+                {{ form.start_date.errors }}
+            </div>
+        {% endif %}
+    </p>
+    <fieldset>
+    <caption>Extra Info
+            <a href="#" class="toggle text-muted"><span class="glyphicon glyphicon-collapse-down"></span></a>
+    </caption>
+    <div class="fields">
+    <p><label for="id_day_of_month">Day of the month
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.day_of_month.help_text }}"></span>
+        </label> 
+        <br>
+        {{ form.day_of_month }}
+    </p>
+    <p><label for="id_number_payments">Number of Payments
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.number_payments.help_text }}"></span>
+        </label> 
+        <br>
+        {{ form.number_payments }}
+        {% if form.number_payments.errors %}
+            <div id="{{ form.number_payments.auto_id }}_errors">
+                {{ form.number_payments.errors }}
+            </div>
+        {% endif %}
+    </p>
+    <p><label for="id_end_date">Last payment on
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.end_date.help_text }}"></span>
+        </label> 
+        <br>
+        {{ form.end_date }}
+        {% if form.end_date.errors %}
+            <div id="{{ form.end_date.auto_id }}_errors">
+                {{ form.end_date.errors }}
+            </div>
+        {% endif %}
+    </p>
+    <p><label for="id_is_paid_out">Is it totally paid
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.is_paid_out.help_text }}"></span>
+        </label> 
+        {{ form.is_paid_out }}
+    </p>
+    </div>
+    </fieldset>
+    <fieldset>
+        <caption>Notes
+            <a href="#" class="toggle text-muted"><span class="glyphicon glyphicon-collapse-down"></span></a>
+        </caption>
+        <div class="fields">
+        <br>
+        <p> 
+        {{ form.notes }}
+         </p>
+        </div>
+    </fieldset>

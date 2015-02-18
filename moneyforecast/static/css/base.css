@@ -38,3 +38,7 @@ table#upcoming {
 #edit-balance-form .btn-danger{
 	float: left;
 }
+
+fieldset div.fields{
+	display: none;
+}

@@ -101,11 +101,15 @@ class Record(models.Model):
         """
         An accountable record is all records that are in the same day or after the initial balance for the month
         """
+        # TODO: Perhaps consider checking the time too?
         record_date = self.get_date_for_month(initial_date.month, initial_date.year)
         return initial_date <= record_date
 
     def get_default_description(self):
         return self.description or self.category.name
+
+    def is_savings(self):
+        return self.category.type_category == SAVINGS
 
 
     # TODO: on saving System Categories, make sure invalid fields are not being saved like end_date

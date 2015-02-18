@@ -16,8 +16,9 @@
                   {{ record.0|date:"d b" }}
                 </td>
                 <td>{# TODO: add number eg. 2/10 #} 
-                  {{ record.1.description|default:record.1.category }}
-                  {% if not record.1|is_accountable:month.initial_balance_date %}*{% endif %}
+                  {{ record.1.description|default:record.1.category }} 
+                  {% if record.1.is_savings %}&rarrhk;  <span class="glyphicon glyphicon-piggy-bank" aria-hidden="true" title="{% trans 'Savings' %}"></span>{% endif %}
+                  {% if not record.1|is_accountable:month.initial_balance_date %}&midast;{% endif %}
                 </td>
                 <td class="number">{{ currency }} {{ record.1.amount|format_number }}</td>
                 <td>

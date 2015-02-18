@@ -80,7 +80,9 @@ class MonthControl(object):
         self.income_monthly_list = self._get_records_by_type(INCOME, False)
         self.income_variable_list = self._get_records_by_type(INCOME, True)
         self.outcome_monthly_list = self._get_records_by_type(OUTCOME, False)
+        self.outcome_monthly_list = self.outcome_monthly_list | self._get_records_by_type(SAVINGS, False)
         self.outcome_variable_list = self._get_records_by_type(OUTCOME, True)
+        self.outcome_variable_list = self.outcome_variable_list | self._get_records_by_type(SAVINGS, True)
         self.income_list = self.income_monthly_list | self.income_variable_list 
         self.sorted_income_list = self._sort_records_by_date(self.income_list)
         self.outcome_list = self.outcome_monthly_list | self.outcome_variable_list 
