@@ -15,6 +15,8 @@ class RecordForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
 
+        user = kwargs.pop('user', None)
+
         instance = kwargs.get('instance', None)
         if instance:
             type_category_pk = instance.category.type_category
@@ -28,12 +30,12 @@ class RecordForm(forms.ModelForm):
         super(RecordForm, self).__init__(*args, **kwargs) 
 
         if type_category_pk:
-            self.fields['category'].queryset = Category.objects.filter(type_category=type_category_pk)
+            self.fields['category'].queryset = Category.objects.filter(type_category=type_category_pk, user=user)
         else:
             try:
-                self.fields['category'].queryset = Category.objects.filter(type_category=self.instance.category.type_category)
+                self.fields['category'].queryset = Category.objects.filter(type_category=self.instance.category.type_category, user=user)
             except:
-                self.fields['category'].queryset = Category.objects.all()
+                self.fields['category'].queryset = Category.objects.filter(user=user)
 
     def clean_category(self):
         data = self.data

@@ -232,6 +232,7 @@ class CreateRecordView(CreateView):
     def get_form_kwargs(self):
         kwargs = super(CreateRecordView, self).get_form_kwargs()
         kwargs['type_category_pk'] = self.kwargs['type']
+        kwargs['user'] = self.request.user
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -255,6 +256,11 @@ class UpdateRecordView(UpdateView):
             instance.save() 
 
         return HttpResponse('successfully-sent!')
+
+    def get_form_kwargs(self):
+        kwargs = super(UpdateRecordView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class DeleteRecordView(DeleteView):
