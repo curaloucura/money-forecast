@@ -10,11 +10,15 @@
 			<tr>
 				<th></th>
 				<th>{% trans "Initial Balance" %}</th>
-				<th>{% trans "Income" %}</th>
-				<th>{% trans "Extra Income" %}</th>
-				<th>{% trans "Outcome" %}</th>
-				<th>{% trans "Extra Outcome" %}</th>
-				<th>{% trans "Difference" %}</th>
+				<th class="visible-lg-inline">{% trans "Income" %}</th>
+				<th class="visible-lg-inline">{% trans "Extra Income" %}</th>
+				<th class="hidden-lg">{% trans "Income" %}</th>
+				<th></th>
+				<th class="visible-lg-inline">{% trans "Outcome" %}</th>
+				<th class="visible-lg-inline">{% trans "Extra Outcome" %}</th>
+				<th class="hidden-lg">{% trans "Outcome" %}</th>
+				<th></th>
+				<th class="hidden-xs">{% trans "Difference" %}</th>
 				<th>{% trans "Final Balance" %}</th>
 			</tr>
 		</thead>
@@ -40,8 +44,12 @@
 	                    {% endif %}
                     {% endif %}
 				</span></td>
-				<td><span id="col-3">{{ month.income_monthly|format_number }}</span></td>
-				<td><span id="col-4">{{ month.income_variable|format_number }}</span>
+				<td class="visible-lg-inline"><span id="col-3">{{ month.income_monthly|format_number }}</span></td>
+				<td class="visible-lg-inline"><span id="col-4">{{ month.income_variable|format_number }}</span>
+				</td>
+				<td class="hidden-lg"><span id="col-4">{{ month.total_income|format_number }}</span>
+				</td>
+				<td>
 					<a href="#income-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#income-{{ month.month }}-{{ month.year }}">
 						<span class="glyphicon glyphicon-option-vertical text-muted" aria-hidden="true"></span>
 					</a>
@@ -51,18 +59,20 @@
 					{% endwith %}
 					{% endwith %}
 				</td>
-				<td><span id="col-5">{{ month.outcome_monthly|format_number }}</span></td>
-				<td><span id="col-6">{{ month.outcome_variable |format_number}}</span>
-					<a href="#outcome-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#outcome-{{ month.month }}-{{ month.year }}">
+				<td class="visible-lg-inline"><span id="col-5">{{ month.outcome_monthly|format_number }}</span></td>
+				<td class="visible-lg-inline"><span id="col-6">{{ month.outcome_variable|format_number}}</span>
+				</td>
+				<td class="hidden-lg"><span id="col-6">{{ month.total_outcome|format_number}}</span>
+				</td>
+				<td><a href="#outcome-{{ month.month }}-{{ month.year }}" data-toggle="modal" data-target="#outcome-{{ month.month }}-{{ month.year }}">
 						<span class="glyphicon glyphicon-option-vertical text-muted" aria-hidden="true"></span>
 					</a>
 					{% with month.sorted_outcome_list as record_list %}
 					{% with "outcome" as type_records %}
 						{% include "includes/modal_overview.html" %}
 					{% endwith %}
-					{% endwith %}
-				</td>
-				<td><span id="col-7">{{ month.difference|pretty_number }}</span></td>
+					{% endwith %}</td>
+				<td class="hidden-xs"><span id="col-7">{{ month.difference|pretty_number }}</span></td>
 				<td><span id="col-8">{{ month.final_balance|pretty_number }}</span></td>					
 			</tr>
 			{% endfor %}

@@ -42,3 +42,9 @@ table#upcoming {
 fieldset div.fields{
 	display: none;
 }
+
+@media (min-width: 1200px) {
+.table .visible-lg-inline {
+	display: table-cell !important;
+}
+}
