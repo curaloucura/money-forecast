@@ -53,4 +53,26 @@ function prepareForm(){
       $(this).find('span').toggleClass('glyphicon-collapse-up');
       return false;
     });
+    var changeCategory = function() {
+      var link = $('#add-category');
+      var link_icon = link.find('span');
+      var input_add = $('#add-new-category');
+      var selector = $('#select-category');
+      is_adding = input_add.is(':visible');
+      if (is_adding) {
+        input_add.hide();
+        selector.show();
+        link_icon.removeClass('glyphicon-remove');
+        link_icon.addClass('glyphicon-plus');
+        link.attr('title', link.data('title-add'));
+      } else {
+        selector.hide();
+        input_add.show();
+        link_icon.removeClass('glyphicon-plus');
+        link_icon.addClass('glyphicon-remove');
+        link.attr('title', link.data('title-cancel'));
+      };
+      return false;
+    }
+    $('#add-category').click(changeCategory);
 }

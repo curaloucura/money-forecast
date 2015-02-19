@@ -1,3 +1,5 @@
+{% load i18n %}
+    {{ form.type_category }}
     <p><label for="id_description">Description
         <span class="glyphicon glyphicon-question-sign" title="{{ form.description.help_text }}"></span>
         </label> 
@@ -14,7 +16,14 @@
         <span class="glyphicon glyphicon-question-sign" title="{{ form.category.help_text }}"></span>
         </label> 
         <br>
-        {{ form.category }} 
+        <span id="add-new-category" style="display:none;">
+            {{ form.new_category }}
+        </span>
+        <span id="select-category">
+            {{ form.category }}
+        </span>
+        <a href="#" id="add-category" title="{% trans "Add new category" %}" data-title-add="{% trans "Add new category" %}" data-title-cancel="{% trans "Return to choose a category" %}"><span class="glyphicon  glyphicon-plus"></span></a>
+        <br>
         {% if form.category.errors %}
             <div id="{{ form.category.auto_id }}_errors">
                 {{ form.category.errors }}
@@ -25,7 +34,7 @@
         <span class="glyphicon glyphicon-question-sign" title="{{ form.amount.help_text }}"></span>
         </label> 
         <br>
-        <input id="id_amount" name="amount" step="any" value="{{ form.initial.amount }}" type="number" placeholder="0.00">
+        <input id="id_amount" name="amount" step="any" value="{{ form.amount.value }}" type="number" placeholder="0.00">
         {% if form.amount.errors %}
             <div id="{{ form.amount.auto_id }}_errors">
                 {{ form.amount.errors }}

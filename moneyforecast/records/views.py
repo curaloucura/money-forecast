@@ -219,7 +219,6 @@ def set_language(request):
 
 
 class CreateRecordView(CreateView):
-    model = Record
     template_name = 'includes/create_record_form.html'
     form_class = RecordForm
 
@@ -232,7 +231,7 @@ class CreateRecordView(CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(CreateRecordView, self).get_form_kwargs()
-        kwargs['type_category'] = self.kwargs['type']
+        kwargs['type_category_pk'] = self.kwargs['type']
         return kwargs
 
     def get_context_data(self, **kwargs):
@@ -243,9 +242,11 @@ class CreateRecordView(CreateView):
 
 
 class UpdateRecordView(UpdateView):
-    model = Record
     template_name = 'includes/edit_record_form.html'
     form_class = RecordForm
+
+    def get_queryset(self):
+        return Record.objects.filter(user=self.request.user)
 
     def form_valid(self, form): 
         instance = form.save(commit=False)
