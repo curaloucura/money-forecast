@@ -71,6 +71,7 @@ function prepareForm(){
         link_icon.removeClass('glyphicon-plus');
         link_icon.addClass('glyphicon-remove');
         link.attr('title', link.data('title-cancel'));
+        input_add.find('input').focus();
       };
       return false;
     }
