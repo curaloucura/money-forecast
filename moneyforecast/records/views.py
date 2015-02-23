@@ -185,7 +185,7 @@ def index(request):
     month_list = []
     today = timezone.now().replace(hour=0, minute=0)
     tomorrow = today+timedelta(days=1)
-    for i in range(0,13):
+    for i in range(0,18):
         target_month = today+relativedelta(months=i)
         month_list.append(MonthControl(request.user, target_month.month, target_month.year))
 
