@@ -195,7 +195,7 @@ def index(request):
     today = timezone.now().replace(hour=0, minute=0)
     tomorrow = today+timedelta(days=1)
     cached_months = {}
-    for i in range(0,13):
+    for i in range(0,18):
         target_month = today+relativedelta(months=i)
         cached_months[_cache_key(target_month)] = MonthControl(request.user, target_month.month, target_month.year, cache=cached_months)
         month_list.append(cached_months[_cache_key(target_month)])

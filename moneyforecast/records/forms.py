@@ -15,7 +15,7 @@ class RecordForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
 
-        user = kwargs.pop('user', None)
+        self.user = kwargs.pop('user', None)
 
         instance = kwargs.get('instance', None)
         if instance:
@@ -30,12 +30,13 @@ class RecordForm(forms.ModelForm):
         super(RecordForm, self).__init__(*args, **kwargs) 
 
         if type_category_pk:
-            self.fields['category'].queryset = Category.objects.filter(type_category=type_category_pk, user=user)
+            self.fields['category'].queryset = Category.objects.filter(type_category=type_category_pk, user=self.user)
         else:
             try:
-                self.fields['category'].queryset = Category.objects.filter(type_category=self.instance.category.type_category, user=user)
+                self.fields['category'].queryset = Category.objects.filter(type_category=self.instance.category.type_category, user=self.user)
             except:
-                self.fields['category'].queryset = Category.objects.filter(user=user)
+                self.fields['category'].queryset = Category.objects.filter(user=self.user)
+
 
     def clean_category(self):
         data = self.data
@@ -44,7 +45,7 @@ class RecordForm(forms.ModelForm):
         if data['new_category']:
             try:
                 cat_instance = Category.objects.create(type_category=int(data['type_category']), name=data['new_category'], 
-                                                        slug=slugify(data['new_category']))
+                                                        slug=slugify(data['new_category']), user=self.user)
             except:
                 raise forms.ValidationError(_("This field is required."), code="required")
         else:
@@ -63,13 +64,13 @@ class InitialBalanceForm(forms.ModelForm):
 
     def save(self, user, commit=False):
         instance = super(InitialBalanceForm, self).save(commit=False)
-        instance.category = Category.objects.get(type_category=SYSTEM_CATEGORIES, slug=self.slug_category) 
         if not instance.pk:
             instance.user = user
         else:
             if instance.user != user:
                 raise Exception("Invalid user")
 
+        instance.category = Category.objects.get(type_category=SYSTEM_CATEGORIES, slug=self.slug_category, user=instance.user) 
         instance.save()
         return instance
 

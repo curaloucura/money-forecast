@@ -1,5 +1,5 @@
 {% load i18n record_tags static %}
-<div id="sidebar" class="col-md-3">
+<div id="sidebar" class="col-md-4">
 	<h3>
 		{% trans "It's" %} {{ current_month.start_date|date:"F Y" }}!
 	</h3>
@@ -11,7 +11,7 @@
 	
 	<p>
 		{% if current_month.difference < 0 %}
-				{% trans "You spent"%}: <br>
+				{% trans "You've spent"%}: <br>
 					{{ currency }} {{ current_month.difference|pretty_number:"absolute" }} <br>
 				{% trans "more then you've earned this month" %}.
 		{% else %}
@@ -49,6 +49,7 @@
 			</td>
 			<td>{# TODO: add number eg. 2/10 #} 
 				{{ record.1.description|default:record.1.category }}
+				{% if record.1.is_savings %}<span class="glyphicon glyphicon-piggy-bank" aria-hidden="true" title="{% trans 'Savings' %}"></span>{% endif %}
 			</td>
 			<td class="number">{{ currency }} {{ record.1.amount|format_number }}</td>
 		</tr>
@@ -80,7 +81,13 @@
 	<p><a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'create_record' type=savings_type %}">
 		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
 		{% trans "Add savings" %}
-	</a></p>
+	</a>
+	&nbsp;
+	<!-- <a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'create_record' type=savings_type %}"> -->
+		<span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+		{% trans "Withdraw" %}
+	<!-- </a> -->
+	</p>
 	<hr>
 
 	<h4>
