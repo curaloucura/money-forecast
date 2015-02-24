@@ -14,9 +14,15 @@ from records.models import tmz, get_last_day_of_month, Record, Category, INCOME,
                              SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,\
                              UNSCHEDULED_CREDIT_SLUG
 
+
+def _cache_key(date):
+    return '%d-%d' % (date.month, date.year)
+
+
 class MonthControl(object):
-    def __init__(self, user, month, year):
+    def __init__(self, user, month, year, cache=None):
         self.user = user
+        self.cache = cache
         self.month = month
         self.year = year
         self.today = timezone.now().replace(hour=0, minute=0)
@@ -46,7 +52,7 @@ class MonthControl(object):
 
     def _calculate_totals(self):
         self.initial_balance = self.get_initial_balance()
-        # TODO: disaply total amount but not use it for calculations
+        # TODO: display total amount but not use it for calculations
         self.income_monthly = sum([x.amount for x in self.income_monthly_list])
         self.income_variable = sum([x.amount for x in self.income_variable_list])
         self.outcome_monthly = sum([x.amount for x in self.outcome_monthly_list])
@@ -119,7 +125,10 @@ class MonthControl(object):
             return (balance[idx].start_date, balance[idx].amount, balance[idx])
         else:
             # TODO: Have to improve it, raising errors when no last balance is found
-            last_balance = MonthControl(self.user, self.last_month.month, self.last_month.year)
+            last_balance = self.cache.get(_cache_key(self.last_month), None)
+            if not last_balance:
+                last_balance = MonthControl(self.user, self.last_month.month, self.last_month.year)
+                self.cache[_cache_key(self.last_month)] = last_balance
             # If using last month, initial date is the first day of the month
             return (self.start_date, last_balance.final_balance, None)
 
@@ -185,9 +194,11 @@ def index(request):
     month_list = []
     today = timezone.now().replace(hour=0, minute=0)
     tomorrow = today+timedelta(days=1)
+    cached_months = {}
     for i in range(0,13):
         target_month = today+relativedelta(months=i)
-        month_list.append(MonthControl(request.user, target_month.month, target_month.year))
+        cached_months[_cache_key(target_month)] = MonthControl(request.user, target_month.month, target_month.year, cache=cached_months)
+        month_list.append(cached_months[_cache_key(target_month)])
 
     current_month = month_list[0]
 
