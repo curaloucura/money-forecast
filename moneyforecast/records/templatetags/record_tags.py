@@ -28,8 +28,12 @@ def pretty_number(amount,variation=None):
 def date_for_month(record, base_date):
     return record.get_date_for_month(base_date.month, base_date.year)
 
-
 @register.filter
 def is_accountable(record, date):
     return record.is_accountable(date)
 
+@register.simple_tag(takes_context=True)
+def is_same_month(context, record, month, year, var_name):
+    same_month = (record.start_date.month == month) and (record.start_date.year == year)
+    context[var_name] = same_month
+    return ""

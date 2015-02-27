@@ -9,7 +9,8 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import TemplateView, DeleteView
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
-from records.forms import RecordForm, InitialBalanceForm, UnscheduledDebtForm, UnscheduledCreditForm
+from records.forms import RecordForm, ChangeRecurrentMonthForm, InitialBalanceForm,\
+                             UnscheduledDebtForm, UnscheduledCreditForm
 from records.models import tmz, get_last_day_of_month, Record, Category, INCOME, OUTCOME,\
                              SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,\
                              UNSCHEDULED_CREDIT_SLUG
@@ -86,24 +87,31 @@ class MonthControl(object):
         self.income_monthly_list = self._get_records_by_type(INCOME, False)
         self.income_variable_list = self._get_records_by_type(INCOME, True)
         self.outcome_monthly_list = self._get_records_by_type(OUTCOME, False)
-        self.outcome_monthly_list = self.outcome_monthly_list | self._get_records_by_type(SAVINGS, False)
+        self.outcome_monthly_list = self.outcome_monthly_list + self._get_records_by_type(SAVINGS, False)
         self.outcome_variable_list = self._get_records_by_type(OUTCOME, True)
-        self.outcome_variable_list = self.outcome_variable_list | self._get_records_by_type(SAVINGS, True)
-        self.income_list = self.income_monthly_list | self.income_variable_list 
+        self.outcome_variable_list = self.outcome_variable_list + self._get_records_by_type(SAVINGS, True)
+        self.income_list = self.income_monthly_list + self.income_variable_list 
         self.sorted_income_list = self._sort_records_by_date(self.income_list)
-        self.outcome_list = self.outcome_monthly_list | self.outcome_variable_list 
+        self.outcome_list = self.outcome_monthly_list + self.outcome_variable_list 
         self.sorted_outcome_list = self._sort_records_by_date(self.outcome_list)
 
     def _get_records_by_type(self, category, one_time_only):
         records = self.get_queryset() 
         records = records.filter( Q(end_date__isnull=True) | Q(end_date__range=(self.start_date, self.end_date)) )
-        records = records.filter(category__type_category=category, day_of_month__isnull=one_time_only)
+        records = records.filter(category__type_category=category)
+        records = records.filter(parent__isnull=True, day_of_month__isnull=one_time_only)
         records = records.filter(start_date__lte=self.end_date)
 
         if one_time_only:
             # If not recurring, then it should check the start date within this month
-            records = records.filter(start_date__range=(self.start_date, self.end_date))
-        return records
+            record_list = list(records.filter(start_date__range=(self.start_date, self.end_date)))
+        else:
+            # If recurring, it should check if there's a record for the month
+            record_list = []
+            for record in records:
+                record_list.append(record.get_record_for_month(self.month, self.year))
+
+        return record_list
 
     def get_queryset(self):
         # Make sure to filter only records by the user
@@ -283,6 +291,41 @@ class DeleteRecordView(DeleteView):
         self.object.delete()
         payload = {'delete': 'ok'}
         return HttpResponse('successfully-sent!')
+
+
+class CreateRecurrentMonthView(CreateView):
+    template_name = 'includes/create_edit_recurrent_month_form.html'
+    form_class = ChangeRecurrentMonthForm
+
+    def form_valid(self, form): 
+        form.save(commit=True) 
+
+        return HttpResponse('successfully-sent!')
+
+    def get_form_kwargs(self):
+        kwargs = super(CreateRecurrentMonthView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        kwargs['parent_pk'] = self.kwargs['parent_pk']
+        kwargs['month'] = int(self.kwargs['month'])
+        kwargs['year'] = int(self.kwargs['year'])
+        return kwargs
+
+
+class EditRecurrentMonthView(UpdateView):
+    template_name = 'includes/create_edit_recurrent_month_form.html'
+    form_class = ChangeRecurrentMonthForm
+
+    def get_queryset(self):
+        return Record.objects.filter(user=self.request.user)
+
+    def form_valid(self, form): 
+        form.save(commit=True) 
+        return HttpResponse('successfully-sent!')
+
+    def get_form_kwargs(self):
+        kwargs = super(EditRecurrentMonthView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class CreateInitialBalanceView(CreateView):

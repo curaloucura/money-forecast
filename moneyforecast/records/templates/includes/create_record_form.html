@@ -21,6 +21,6 @@
 {% block post-footer %}
     </form>
     <script> 
-       prepareForm();
+       prepareForm('{{ form.start_date.value|date:"Y/m/d" }}');
     </script> 
 {% endblock %}

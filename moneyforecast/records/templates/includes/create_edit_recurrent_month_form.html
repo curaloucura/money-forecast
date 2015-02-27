@@ -1,0 +1,52 @@
+{% extends 'includes/modal_base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans 'Edit month' %}{% endblock title %} 
+
+{% block pre-body %}
+<p class="center-block bg-warning">{% trans "You are editing the details for" %} {{ form.start_date.value.month }}/{{ form.start_date.value.year }}. {% trans "Click the button to edit the master record" %} <a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_record' pk=form.parent_obj.pk %}">
+                      <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+                    </a></p>
+<form action="{{ form.get_action }}" id="change-recurrent-form" method="post" class="modal-form">
+{% endblock %}
+
+{% block body %} 
+    {{ form.errors }}
+    {% csrf_token %}
+    {{ form.parent }}
+    <p><label for="id_amount">Amount 
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.amount.help_text }}"></span>
+        </label> 
+        <br>
+        <input id="id_amount" name="amount" step="any" value="{{ form.amount.value }}" type="number" placeholder="0.00">
+        {% if form.amount.errors %}
+            <div id="{{ form.amount.auto_id }}_errors">
+                {{ form.amount.errors }}
+            </div>
+        {% endif %}
+    </p>
+    <p><label for="id_start_date">Date
+        <span class="glyphicon glyphicon-question-sign" title="{{ form.start_date.help_text }}"></span>
+        </label> 
+        <br>
+        {{ form.start_date }}
+        {% if form.start_date.errors %}
+            <div id="{{ form.start_date.auto_id }}_errors">
+                {{ form.start_date.errors }}
+            </div>
+        {% endif %}
+    </p>
+{% endblock body %}
+
+
+{% block footer-body %}
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+{% endblock footer-body %}
+
+{% block post-footer %}
+    </form>
+    <script> 
+       prepareForm('{{ form.start_date.value|date:"Y/m/d" }}','{{ form.min_date|date:"Y/m/d" }}','{{ form.max_date|date:"Y/m/d" }}');
+    </script> 
+{% endblock %}

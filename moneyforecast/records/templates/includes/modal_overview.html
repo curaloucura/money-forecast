@@ -10,7 +10,7 @@
               {% for record in record_list %}
               <tr title="{{ record.category }}" class="{% if not record.1|is_accountable:month.initial_balance_date %}warning{% endif %}">
                 <td>
-                  {% if record.1.day_of_month %}<small><span class="glyphicon glyphicon-repeat" aria-hidden="true" title="{% trans "Recurrent" %}"></span></small>{% endif %}
+                  {% if record.1.is_recurrent %}<small><span class="glyphicon glyphicon-repeat" aria-hidden="true" title="{% trans "Recurrent" %}"></span></small>{% endif %}
                 </td>
                 <td>
                   {{ record.0|date:"d b" }}
@@ -22,9 +22,22 @@
                 </td>
                 <td class="number">{{ currency }} {{ record.1.amount|format_number }}</td>
                 <td>
-                  <a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_record' pk=record.1.pk %}">
+                {% is_same_month record.1 month.month month.year "same_month" %}
+                {% if record.1.is_recurrent and not same_month %}
+                  <a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'create_recurrent_month' parent_pk=record.1.pk month=month.start_date.month year=month.start_date.year %}">
                     <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
                   </a>
+                {% else %}
+                  {% if record.1.parent %}
+                    <a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'edit_recurrent_month' pk=record.1.pk %}">
+                      <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+                    </a>
+                  {% else %}
+                    <a  href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_record' pk=record.1.pk %}">
+                      <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+                    </a>
+                  {% endif %}
+                {% endif %}
                 </td>
               </tr>
               {% endfor %}

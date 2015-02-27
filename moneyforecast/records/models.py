@@ -59,6 +59,7 @@ class Record(models.Model):
     is_paid_out = models.BooleanField(default=False, verbose_name=_('Is it totally paid?'), help_text=_('If checked, the record won\'t appear in the calculations anymore. Click it only to hide a record from your spreadsheet'))
     notes = models.TextField(blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True)
+    parent = models.ForeignKey('self', blank=True, null=True)
     
     def __unicode__(self):
         return "%s %s %s" % (self.description,self.category,self.amount)
@@ -108,11 +109,28 @@ class Record(models.Model):
     def get_default_description(self):
         return self.description or self.category.name
 
+    # TODO: on saving System Categories, make sure invalid fields are not being saved like end_date
     def is_savings(self):
         return self.category.type_category == SAVINGS
 
+    def is_recurrent(self):
+        return self.day_of_month and (self.day_of_month > 0)
 
-    # TODO: on saving System Categories, make sure invalid fields are not being saved like end_date
+    def _is_same_month(month, year):
+        return ((self.start_date.month == month) and 
+                (self.start_date.year == year))
+
+    def get_record_for_month(self, month, year):
+        if not self.is_recurrent():
+            return self
+
+        current = Record.objects.filter(parent=self, start_date__month=month, start_date__year=year)
+        if current.count():
+            return current[0]
+        else:
+            return self
+
+
 
 
 @receiver(post_save, sender=User)

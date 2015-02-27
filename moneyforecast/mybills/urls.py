@@ -3,7 +3,7 @@ from django.contrib import admin
 from records.views import index, set_language, CreateRecordView, UpdateRecordView,\
          DeleteRecordView, UpdateInitialBalanceView, CreateInitialBalanceView,\
          CreateUnscheduledDebtView, CreateUnscheduledCreditView, UpdateUnscheduledDebtView,\
-         UpdateUnscheduledCreditView
+         UpdateUnscheduledCreditView, CreateRecurrentMonthView, EditRecurrentMonthView
 from profiles.views import set_timezone, UpdateProfileView
 from django.core.urlresolvers import reverse_lazy
 
@@ -20,6 +20,8 @@ urlpatterns = patterns('',
     url(r'^record/create/(?P<type>\d+)/$', CreateRecordView.as_view(), name='create_record'),
     url(r'^record/update/(?P<pk>\d+)/$', UpdateRecordView.as_view(), name='update_record'),
     url(r'^record/delete/(?P<pk>\d+)/$', DeleteRecordView.as_view(), name='delete_record'),
+    url(r'^record/recurrent/create/(?P<parent_pk>\d+)/(?P<month>\d+)/(?P<year>\d+)/$', CreateRecurrentMonthView.as_view(), name='create_recurrent_month'),
+    url(r'^record/recurrent/edit/(?P<pk>\d+)/$', EditRecurrentMonthView.as_view(), name='edit_recurrent_month'),
 
     # System accounts
     url(r'^balance/create/$', CreateInitialBalanceView.as_view(), name='create_initial_balance'),

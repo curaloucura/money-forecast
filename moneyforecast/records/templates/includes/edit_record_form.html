@@ -24,7 +24,7 @@
 {% block post-footer %}
     </form>
     <script> 
-        prepareForm();
+        prepareForm('{{ form.start_date.value|date:"Y/m/d" }}');
         $('#edit-record-form #btn-delete').on('click',function(){
             var pk = $(this).data("id")
             var url = $(this).data("url")
