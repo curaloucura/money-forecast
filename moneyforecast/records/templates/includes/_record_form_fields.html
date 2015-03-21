@@ -1,6 +1,6 @@
 {% load i18n %}
     {{ form.type_category }}
-    <p><label for="id_description">Description
+    <p><label for="id_description">{% trans "Description" %}
         <span class="glyphicon glyphicon-question-sign" title="{{ form.description.help_text }}"></span>
         </label> 
         <br>
@@ -12,7 +12,7 @@
         {% endif %}
     </p>
 
-    <p><label for="id_category">Category
+    <p><label for="id_category">{% trans "Category" %}
         <span class="glyphicon glyphicon-question-sign" title="{{ form.category.help_text }}"></span>
         </label> 
         <br>
@@ -30,7 +30,7 @@
             </div>
         {% endif %}
     </p>
-    <p><label for="id_amount">Amount 
+    <p><label for="id_amount">{% trans "Amount" %} 
         <span class="glyphicon glyphicon-question-sign" title="{{ form.amount.help_text }}"></span>
         </label> 
         <br>
@@ -41,7 +41,7 @@
             </div>
         {% endif %}
     </p>
-    <p><label for="id_start_date">Date
+    <p><label for="id_start_date">{% trans "Date" %}
         <span class="glyphicon glyphicon-question-sign" title="{{ form.start_date.help_text }}"></span>
         </label> 
         <br>
@@ -53,28 +53,28 @@
         {% endif %}
     </p>
     <fieldset>
-    <caption>Extra Info
+    <caption>{% trans "Recurrent" %}
             <a href="#" class="toggle text-muted"><span class="glyphicon glyphicon-collapse-down"></span></a>
     </caption>
     <div class="fields">
-    <p><label for="id_day_of_month">Day of the month
+    <p><label for="id_day_of_month">{% trans "Day of the month" %}
         <span class="glyphicon glyphicon-question-sign" title="{{ form.day_of_month.help_text }}"></span>
         </label> 
         <br>
         {{ form.day_of_month }}
     </p>
-    <p><label for="id_number_payments">Number of Payments
+    <p><label for="id_number_payments">{% trans "Remaining payments" %}
         <span class="glyphicon glyphicon-question-sign" title="{{ form.number_payments.help_text }}"></span>
         </label> 
         <br>
-        {{ form.number_payments }}
+        {{ form.number_payments }}<button id="btn-calc" type="button">{% trans "Calculate" %}</button>
         {% if form.number_payments.errors %}
             <div id="{{ form.number_payments.auto_id }}_errors">
                 {{ form.number_payments.errors }}
             </div>
         {% endif %}
     </p>
-    <p><label for="id_end_date">Last payment on
+    <p><label for="id_end_date">{% trans "Last payment on" %}
         <span class="glyphicon glyphicon-question-sign" title="{{ form.end_date.help_text }}"></span>
         </label> 
         <br>
@@ -85,7 +85,7 @@
             </div>
         {% endif %}
     </p>
-    <p><label for="id_is_paid_out">Is it totally paid
+    <p><label for="id_is_paid_out">{% trans "Is it totally paid" %}
         <span class="glyphicon glyphicon-question-sign" title="{{ form.is_paid_out.help_text }}"></span>
         </label> 
         {{ form.is_paid_out }}
@@ -93,7 +93,7 @@
     </div>
     </fieldset>
     <fieldset>
-        <caption>Notes
+        <caption>{% trans "Notes" %}
             <a href="#" class="toggle text-muted"><span class="glyphicon glyphicon-collapse-down"></span></a>
         </caption>
         <div class="fields">

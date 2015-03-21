@@ -41,6 +41,7 @@ function prepareForm(start_date, min_date, max_date){
         startDate: start_date, minDate:min_date, maxDate:max_date, 
         timepicker:true, 
         validateOnBlur: false});
+    $('#id_end_date').val('');
     $('.modal-form').on('submit', function(){
         form = $(this);
         $.post(form.attr('action'), form.serialize(), function(responseText){
@@ -82,4 +83,17 @@ function prepareForm(start_date, min_date, max_date){
       return false;
     }
     $('#add-category').click(changeCategory);
+    $('#btn-calc').click(function(){
+      var num_pay = parseInt($('#id_number_payments').val()) || 1; //if not valid number, returns 1
+      var day_month = $('#id_day_of_month').val();
+      var date = $('#id_start_date').val();
+      var start = moment($('#id_start_date').val());
+      if (!day_month){
+        day_month = start.date();
+        $('#id_day_of_month').val(day_month);
+      }
+      var final_date = start.date(day_month);
+      var final_date = final_date.add(num_pay, 'months');
+      $('#id_end_date').val(final_date.format('YYYY/MM/DD HH:mm'))
+    });
 }

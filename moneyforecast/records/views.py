@@ -97,7 +97,7 @@ class MonthControl(object):
 
     def _get_records_by_type(self, category, one_time_only):
         records = self.get_queryset() 
-        records = records.filter( Q(end_date__isnull=True) | Q(end_date__range=(self.start_date, self.end_date)) )
+        records = records.filter( Q(end_date__isnull=True) | Q(end_date__gte=self.start_date) )
         records = records.filter(category__type_category=category)
         records = records.filter(parent__isnull=True, day_of_month__isnull=one_time_only)
         records = records.filter(start_date__lte=self.end_date)
