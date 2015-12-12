@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.translation import ugettext as _
@@ -83,7 +83,7 @@ class CreateRecordView(CreateView):
         instance.user = self.request.user
         instance.save()
 
-        return HttpResponse('successfully-sent!')
+        return JsonResponse({'id': instance.id})
 
     def get_form_kwargs(self):
         kwargs = super(CreateRecordView, self).get_form_kwargs()
@@ -111,7 +111,7 @@ class UpdateRecordView(UpdateView):
         if self.request.user == instance.user:
             instance.save()
 
-        return HttpResponse('successfully-sent!')
+        return JsonResponse({'id': instance.id})
 
     def get_form_kwargs(self):
         kwargs = super(UpdateRecordView, self).get_form_kwargs()
@@ -124,9 +124,9 @@ class DeleteRecordView(DeleteView):
         return Record.objects.filter(user=self.request.user)
 
     def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.delete()
-        return HttpResponse('successfully-sent!')
+        instance = self.get_object()
+        instance.delete()
+        return JsonResponse({'id': instance.id})
 
 
 class CreateRecurrentMonthView(CreateView):

@@ -20,6 +20,11 @@ def future_date(current_date):
 
 @pytest.fixture
 def month_control(user, current_date):
+    """
+    Return a MonthControl object for the current date.
+
+    Important: currently any Record fixture should come before month_control
+    """
     month_control = MonthControl(
         user, current_date.month, current_date.year, cache=False)
     return month_control
@@ -35,31 +40,40 @@ def user(request):
 
 
 @pytest.fixture
-def outcome(request):
+def outcome(request, user):
+    """
+    Category of Outcome
+    """
     category = Category.objects.create(
-        name="outcome", type_category=OUTCOME)
+        name="outcome", type_category=OUTCOME, user=user)
     return category
 
 
 @pytest.fixture
-def savings(request):
+def savings(request, user):
+    """
+    Category of Savings
+    """
     category = Category.objects.create(
-        name="savings", type_category=SAVINGS)
+        name="savings", type_category=SAVINGS, user=user)
     return category
 
 
 @pytest.fixture
 def outcome_future(request, user, outcome, future_date):
-    # TODO: a catch, outcome_future must come before month_control
+    """
+    Record of type Outcome set in the future
+    """
     record = Record.objects.create(
         category=outcome, amount=1, start_date=future_date, user=user)
     return record
 
 
 @pytest.fixture
-def savings_record(request, user, savings):
-    # TODO: a catch, outcome_future must come before month_control
-    today = datetime.now()
+def savings_record(request, user, savings, current_date):
+    """
+    Record of type Outcome set in the future
+    """
     record = Record.objects.create(
-        category=savings, amount=1, start_date=today, user=user)
+        category=savings, amount=1, start_date=current_date, user=user)
     return record
