@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 
-from records.models import Category, Record, OUTCOME, SAVINGS
+from records.models import Category, Record, OUTCOME, INCOME, SAVINGS
 from records.month_control import MonthControl
 
 
@@ -42,10 +42,20 @@ def user(request):
 @pytest.fixture
 def outcome(request, user):
     """
-    Category of Outcome
+    Main category of outcome type
     """
     category = Category.objects.create(
         name="outcome", type_category=OUTCOME, user=user)
+    return category
+
+
+@pytest.fixture
+def income(request, user):
+    """
+    Main category of income type
+    """
+    category = Category.objects.create(
+        name="income", type_category=INCOME, user=user)
     return category
 
 
