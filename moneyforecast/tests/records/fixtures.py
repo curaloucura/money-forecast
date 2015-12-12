@@ -8,16 +8,29 @@ from records.month_control import MonthControl
 
 
 @pytest.fixture
-def month_control(user):
-    current = datetime.today()
+def current_date():
+    return datetime.today()
+
+
+@pytest.fixture
+def future_date(current_date):
+    date = current_date+timedelta(days=7)
+    return date
+
+
+@pytest.fixture
+def month_control(user, current_date):
     month_control = MonthControl(
-        user, current.month, current.year, cache=False)
+        user, current_date.month, current_date.year, cache=False)
     return month_control
 
 
 @pytest.fixture
 def user(request):
-    new_user = User.objects.create_user(username="test_user", email="a@b.com")
+    raw_password = "fake"
+    new_user = User.objects.create_user(
+        username="test_user", email="a@b.com", password=raw_password)
+    setattr(new_user, "raw_password", raw_password)
     return new_user
 
 
@@ -36,12 +49,10 @@ def savings(request):
 
 
 @pytest.fixture
-def outcome_future(request, user, outcome):
+def outcome_future(request, user, outcome, future_date):
     # TODO: a catch, outcome_future must come before month_control
-    today = datetime.now()
-    day_in_the_future = today + timedelta(days=5)
     record = Record.objects.create(
-        category=outcome, amount=1, start_date=day_in_the_future, user=user)
+        category=outcome, amount=1, start_date=future_date, user=user)
     return record
 
 
