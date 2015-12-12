@@ -7,6 +7,25 @@ from records.models import Category, Record, OUTCOME, SAVINGS
 from records.month_control import MonthControl
 
 
+@pytest.mark.django_db
+class TestMonthControl:
+    def test_is_current(self, month_control):
+        assert month_control.is_current()
+
+    def test_get_initial_balance_starts_with_zero(self, month_control):
+        assert month_control.get_initial_balance() == 0
+
+    def test_upcoming_records_is_empty(self, month_control):
+        assert month_control.get_upcoming_records() == []
+
+    def test_upcoming_records_has_one(self, outcome_future, month_control):
+        upcoming_records = month_control.get_upcoming_records()
+        assert len(upcoming_records) == 1
+
+    def test_get_savings_total(self, savings_record, month_control):
+        assert month_control.get_savings_totals()['total'] == 1
+
+
 @pytest.fixture
 def month_control(user):
     current = datetime.today()
@@ -52,22 +71,3 @@ def savings_record(request, user, savings):
     record = Record.objects.create(
         category=savings, amount=1, start_date=today, user=user)
     return record
-
-
-@pytest.mark.django_db
-class TestMonthControl:
-    def test_is_current(self, month_control):
-        assert month_control.is_current()
-
-    def test_get_initial_balance_starts_with_zero(self, month_control):
-        assert month_control.get_initial_balance() == 0
-
-    def test_upcoming_records_is_empty(self, month_control):
-        assert month_control.get_upcoming_records() == []
-
-    def test_upcoming_records_has_one(self, outcome_future, month_control):
-        upcoming_records = month_control.get_upcoming_records()
-        assert len(upcoming_records) == 1
-
-    def test_get_savings_total(self, savings_record, month_control):
-        assert month_control.get_savings_totals()['total'] == 1
