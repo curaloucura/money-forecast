@@ -143,16 +143,30 @@ class Record(models.Model):
     def is_recurrent(self):
         return self.day_of_month and (self.day_of_month > 0)
 
+    def _get_self_only_if_same_month_and_year(self, month, year):
+        same_month = self.start_date.month == month
+        same_year = self.start_date.year == year
+        if same_month and same_year:
+            return self
+        else:
+            return None
+
+    def _get_record_for_month_and_year(self, month, year):
+        default_record = self
+
+        record_at_date = Record.objects.filter(
+            parent=self, start_date__month=month, start_date__year=year)
+        if record_at_date.count():
+            record = record_at_date[0]
+        else:
+            record = default_record
+        return record
+
     def get_record_for_month(self, month, year):
         if not self.is_recurrent():
-            return self
+            return self._get_self_only_if_same_month_and_year(month, year)
 
-        current = Record.objects.filter(
-            parent=self, start_date__month=month, start_date__year=year)
-        if current.count():
-            return current[0]
-        else:
-            return self
+        return self._get_record_for_month_and_year(month, year)
 
 
 @receiver(post_save, sender=User)

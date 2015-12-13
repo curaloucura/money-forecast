@@ -19,9 +19,15 @@ class MonthControl(object):
     def __init__(self, user, month, year, cache=None):
         self.user = user
         self.cache = cache
+        self.today = now().replace(hour=0, minute=0)
+        self.set_month_and_year(month, year)
+
+    def __str__(self):
+        return "MonthControl for {} / {}".format(self.month, self.year)
+
+    def set_month_and_year(self, month, year):
         self.month = month
         self.year = year
-        self.today = now().replace(hour=0, minute=0)
         self.start_date = tmz(datetime(day=1, month=month, year=year))
         # end_date is the last day of the month
         self.end_date = get_last_day_of_month(month, year).replace(

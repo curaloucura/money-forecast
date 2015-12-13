@@ -19,5 +19,10 @@ class TestMonthControl:
         upcoming_records = month_control.get_upcoming_records()
         assert len(upcoming_records) == 1
 
-    def test_get_savings_total(self, savings_record, month_control):
+    def test_get_savings_total(self, savings_current, month_control):
         assert month_control.get_savings_totals()['total'] == 1
+
+    def test_get_records_matches_date_of_records(
+            self, outcome_future, month_control):
+        upcoming_records = month_control.get_upcoming_records()
+        assert upcoming_records[0][0] == upcoming_records[0][1].start_date
