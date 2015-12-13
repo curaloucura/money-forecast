@@ -44,10 +44,10 @@ def tmz(naive_date):
 
 
 def get_last_date_of_month(month, year):
-    first_day_of_the_month = datetime(day=1, month=month, year=year)
-    first_day_of_next_month = first_day_of_the_month+relativedelta(months=1)
-    last_day_of_the_month = first_day_of_next_month-timedelta(days=1)
-    return tmz(last_day_of_the_month)
+    first_date_of_the_month = datetime(day=1, month=month, year=year)
+    first_date_of_next_month = first_date_of_the_month+relativedelta(months=1)
+    last_date_of_the_month = first_date_of_next_month-timedelta(days=1)
+    return tmz(last_date_of_the_month)
 
 
 class Record(models.Model):
@@ -88,50 +88,52 @@ class Record(models.Model):
     def __unicode__(self):
         return "%s %s %s" % (self.description, self.category, self.amount)
 
-    def _get_valid_date_of_month(self, month, year):
-        day = 1
-        if self.day_of_month:
-            if not(self.day_of_month in range(1, 32)):
-                # Invalid day, return 1
-                day = 1
-
-            # Avoid returning 31 of February for example
-            last_day = get_last_date_of_month(month, year)
-            if self.day_of_month > last_day.day:
-                day = last_day.day
-            else:
-                day = self.day_of_month
-
-        return tmz(datetime(day=day, month=month, year=year))
-
-    def get_date_for_month(self, month=None, year=None):
+    def get_date_for_month(self, month, year):
         """
         Get date for the record, but when it's recurring, will get
         the date object for the month using the day_of_month
         For recurring objects, month and year are required
         """
+        record = self.get_record_for_month(month, year)
 
-        # Check if parameters are given, then if it's not
-        # current month (and not same month in different year)
-        # and finally if there is a day of the month
-        if month and year:
-            if (((month != self.start_date.month) or
-                (month == self.start_date.month) and
-                 (year != self.start_date.year)) and
-                    self.day_of_month):
-                return self._get_valid_date_of_month(month, year)
+        if record._is_same_month_and_year(month, year):
+            date = record.start_date
+        else:
+            date = record._get_date_of_month_on(month, year)
 
-        return self.start_date
+        return date
 
-    def is_accountable(self, at_date=None):
+    def _is_same_month_and_year(self, month, year):
+        same_month = month == self.start_date.month
+        same_year = year == self.start_date.year
+        return same_month and same_year
+
+    def _get_date_of_month_on(self, month, year):
+        day = self._get_valid_day_of_month(month, year)
+        return tmz(datetime(day=day, month=month, year=year))
+
+    def _get_valid_day_of_month(self, month, year):
+        day = self.day_of_month
+        if not(day in range(1, 32)):
+            raise Exception(
+                "Day of month invalid. It must be an integer between 1 and 31")
+
+        # Avoid returning 31 of February for example
+        last_day = get_last_date_of_month(month, year)
+        if self.day_of_month > last_day.day:
+            day = last_day.day
+
+        return day
+
+    def is_accountable(self, on_date=None):
         """
         An accountable record is all records that are in the same day or
         after the initial balance for the month
         """
         # TODO: Perhaps consider checking the time too?
         record_date = self.get_date_for_month(
-            at_date.month, at_date.year)
-        return at_date <= record_date
+            on_date.month, on_date.year)
+        return on_date <= record_date
 
     def get_default_description(self):
         return self.description or self.category.name
@@ -144,30 +146,59 @@ class Record(models.Model):
     def is_recurrent(self):
         return self.day_of_month and (self.day_of_month > 0)
 
-    def _get_self_only_if_same_month_and_year(self, month, year):
-        same_month = self.start_date.month == month
-        same_year = self.start_date.year == year
-        if same_month and same_year:
-            return self
+    def _in_range_of_recurrence(self, date):
+        if self.parent:
+            recurrent = self.parent
         else:
-            return None
+            recurrent = self
 
-    def _get_record_for_month_and_year(self, month, year):
-        default_record = self
+        start_range = recurrent.start_date <= date
+        end_range = True
+        if recurrent.end_date:
+            end_range = recurrent.end_date >= date
+        return start_range and end_range
 
+    def _get_default_recurrent_record(self, month, year):
+        return self
+        # TODO: fix the check for range in recurrence
+        day = self._get_valid_day_of_month(month, year)
+        date = datetime(day=day, month=month, year=year)
+        if self._in_range_of_recurrence(tmz(date)):
+            default_record = self
+        else:
+            default_record = None
+        return default_record
+
+    def get_record_for_month(self, month, year):
+        if self.is_recurrent():
+            record = self._get_record_for_recurrent(month, year)
+        else:
+            record = self._get_record_for_non_recurrent(month, year)
+        return record
+
+    def _get_record_for_recurrent(self, month, year):
+        default_record = self._get_default_recurrent_record(month, year)
+
+        record = self._get_other_record_on(month, year)
+        if not record:
+            record = default_record
+        return record
+
+    def _get_record_for_non_recurrent(self, month, year):
+        if self._is_same_month_and_year(month, year):
+            record = self
+        else:
+            record = None
+        return record
+
+    def _get_other_record_on(self, month, year):
         record_at_date = Record.objects.filter(
             parent=self, start_date__month=month, start_date__year=year)
         if record_at_date.count():
             record = record_at_date[0]
         else:
-            record = default_record
+            record = None
         return record
-
-    def get_record_for_month(self, month, year):
-        if not self.is_recurrent():
-            return self._get_self_only_if_same_month_and_year(month, year)
-
-        return self._get_record_for_month_and_year(month, year)
 
 
 @receiver(post_save, sender=User)

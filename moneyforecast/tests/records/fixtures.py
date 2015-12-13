@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import User
@@ -10,7 +10,10 @@ from records.month_control import MonthControl
 
 @pytest.fixture
 def current_date():
-    return datetime.today()
+    today = date.today()
+    today_datetime = datetime(
+        day=today.day, month=today.month, year=today.year)
+    return today_datetime
 
 
 @pytest.fixture
@@ -47,6 +50,11 @@ def next_month(current_date):
     date = current_date+relativedelta(months=1)
     return date
 
+
+@pytest.fixture
+def next_month_future(future_date):
+    date = future_date+relativedelta(months=1)
+    return date
 
 @pytest.fixture
 def infinite_future_date(current_date):
