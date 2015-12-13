@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _, get_language
 from django.utils import formats 
 from records.models import Record, Category, SYSTEM_CATEGORIES,\
              INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG, UNSCHEDULED_CREDIT_SLUG,\
-             get_last_day_of_month, tmz
+             get_last_date_of_month, tmz
 
 
 # TODO: needs to properly localize date and times
@@ -110,7 +110,7 @@ class ChangeRecurrentMonthForm(forms.ModelForm):
 
     def _get_date_for_month(self):
         day_of_month = self.parent_obj.day_of_month
-        last_day = get_last_day_of_month(self.month, self.year)
+        last_day = get_last_date_of_month(self.month, self.year)
         if day_of_month > last_day.day:
             day = last_day
         else:
@@ -122,7 +122,7 @@ class ChangeRecurrentMonthForm(forms.ModelForm):
         return tmz(datetime(day=1, month=self.month, year=self.year))        
 
     def max_date(self):
-        return get_last_day_of_month(self.month, self.year)
+        return get_last_date_of_month(self.month, self.year)
 
     def save(self, commit=True):
         instance = super(ChangeRecurrentMonthForm, self).save(commit=False)

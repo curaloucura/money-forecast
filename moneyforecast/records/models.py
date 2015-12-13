@@ -43,10 +43,11 @@ def tmz(naive_date):
         return naive_date.replace(tzinfo=pytz.utc)
 
 
-def get_last_day_of_month(month, year):
-    start_date = datetime(day=1, month=month, year=year)
-    start_date = (start_date+relativedelta(months=1))-timedelta(days=1)
-    return tmz(start_date)
+def get_last_date_of_month(month, year):
+    first_day_of_the_month = datetime(day=1, month=month, year=year)
+    first_day_of_next_month = first_day_of_the_month+relativedelta(months=1)
+    last_day_of_the_month = first_day_of_next_month-timedelta(days=1)
+    return tmz(last_day_of_the_month)
 
 
 class Record(models.Model):
@@ -95,7 +96,7 @@ class Record(models.Model):
                 day = 1
 
             # Avoid returning 31 of February for example
-            last_day = get_last_day_of_month(month, year)
+            last_day = get_last_date_of_month(month, year)
             if self.day_of_month > last_day.day:
                 day = last_day.day
             else:
@@ -122,15 +123,15 @@ class Record(models.Model):
 
         return self.start_date
 
-    def is_accountable(self, initial_date=None):
+    def is_accountable(self, at_date=None):
         """
         An accountable record is all records that are in the same day or
         after the initial balance for the month
         """
         # TODO: Perhaps consider checking the time too?
         record_date = self.get_date_for_month(
-            initial_date.month, initial_date.year)
-        return initial_date <= record_date
+            at_date.month, at_date.year)
+        return at_date <= record_date
 
     def get_default_description(self):
         return self.description or self.category.name

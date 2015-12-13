@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 # TODO: move this function to a util module
 from records.models import (
-    tmz, get_last_day_of_month, Category, Record, INCOME, OUTCOME, SAVINGS,
+    tmz, get_last_date_of_month, Category, Record, INCOME, OUTCOME, SAVINGS,
     SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,
     UNSCHEDULED_CREDIT_SLUG)
 
@@ -30,7 +30,7 @@ class MonthControl(object):
         self.year = year
         self.start_date = tmz(datetime(day=1, month=month, year=year))
         # end_date is the last day of the month
-        self.end_date = get_last_day_of_month(month, year).replace(
+        self.end_date = get_last_date_of_month(month, year).replace(
             hour=23, minute=59, second=59)
         self.last_month = (self.start_date-relativedelta(months=1))
 
