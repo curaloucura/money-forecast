@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import User
 
-from records.models import Category, Record, OUTCOME, INCOME, SAVINGS
+from records.models import Category, Record, OUTCOME, INCOME, SAVINGS, tmz
 from records.month_control import MonthControl
 
 
@@ -13,7 +13,7 @@ def current_date():
     today = date.today()
     today_datetime = datetime(
         day=today.day, month=today.month, year=today.year)
-    return today_datetime
+    return tmz(today_datetime)
 
 
 @pytest.fixture
@@ -56,6 +56,7 @@ def next_month_future(future_date):
     date = future_date+relativedelta(months=1)
     return date
 
+
 @pytest.fixture
 def infinite_future_date(current_date):
     date = current_date+relativedelta(years=360)
@@ -75,7 +76,7 @@ def month_control(user, current_date):
 
 
 @pytest.fixture
-def user(request):
+def user():
     raw_password = "fake"
     new_user = User.objects.create_user(
         username="test_user", email="a@b.com", password=raw_password)
@@ -84,7 +85,7 @@ def user(request):
 
 
 @pytest.fixture
-def outcome(request, user):
+def outcome(user):
     """
     Main category of outcome type
     """
@@ -94,7 +95,7 @@ def outcome(request, user):
 
 
 @pytest.fixture
-def income(request, user):
+def income(user):
     """
     Main category of income type
     """
@@ -104,7 +105,7 @@ def income(request, user):
 
 
 @pytest.fixture
-def savings(request, user):
+def savings(user):
     """
     Category of Savings
     """
@@ -114,7 +115,7 @@ def savings(request, user):
 
 
 @pytest.fixture
-def outcome_future(request, user, outcome, future_date):
+def outcome_future(user, outcome, future_date):
     """
     Record of type Outcome set in the future
     """
@@ -124,10 +125,13 @@ def outcome_future(request, user, outcome, future_date):
 
 
 @pytest.fixture
-def outcome_recurrent(request, user, outcome, start_of_recurrence):
+def outcome_recurrent(user, outcome, start_of_recurrence):
     """
     Record of type Outcome set in the future with a day of the month set
     to create a recurring record
+
+    This fixture should not be used with outcome_recurrent_limited and
+    outcome_with_parent since they change the instance of this own record
     """
     record = Record.objects.create(
         category=outcome, amount=1, start_date=start_of_recurrence, user=user,
@@ -136,8 +140,7 @@ def outcome_recurrent(request, user, outcome, start_of_recurrence):
 
 
 @pytest.fixture
-def outcome_recurrent_limited(
-        request, user, outcome_recurrent, end_of_recurrence):
+def outcome_recurrent_limited(user, outcome_recurrent, end_of_recurrence):
     """
     Record of type Outcome set in the future with a recurring day of the month
     set and limited to a certain time
@@ -145,6 +148,15 @@ def outcome_recurrent_limited(
     outcome_recurrent.end_date = end_of_recurrence
     outcome_recurrent.save()
     return outcome_recurrent
+
+
+@pytest.fixture
+def outcome_with_parent(
+        outcome_future, outcome_recurrent, next_month_future):
+    outcome_future.parent = outcome_recurrent
+    outcome_future.start_date = next_month_future
+    outcome_future.save()
+    return outcome_future
 
 
 @pytest.fixture

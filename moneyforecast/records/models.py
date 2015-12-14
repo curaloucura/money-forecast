@@ -115,7 +115,7 @@ class Record(models.Model):
     def _get_valid_day_of_month(self, month, year):
         day = self.day_of_month
         if not(day in range(1, 32)):
-            raise Exception(
+            raise ValueError(
                 "Day of month invalid. It must be an integer between 1 and 31")
 
         # Avoid returning 31 of February for example
@@ -144,7 +144,7 @@ class Record(models.Model):
         return self.category.type_category == SAVINGS
 
     def is_recurrent(self):
-        return self.day_of_month and (self.day_of_month > 0)
+        return (self.day_of_month is not None) and (self.day_of_month > 0)
 
     def _in_range_of_recurrence(self, date):
         if self.parent:
@@ -159,11 +159,9 @@ class Record(models.Model):
         return start_range and end_range
 
     def _get_default_recurrent_record(self, month, year):
-        return self
-        # TODO: fix the check for range in recurrence
         day = self._get_valid_day_of_month(month, year)
-        date = datetime(day=day, month=month, year=year)
-        if self._in_range_of_recurrence(tmz(date)):
+        record_date_for_month = datetime(day=day, month=month, year=year)
+        if self._in_range_of_recurrence(tmz(record_date_for_month)):
             default_record = self
         else:
             default_record = None

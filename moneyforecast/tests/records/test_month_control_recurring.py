@@ -37,11 +37,12 @@ class TestMonthControlRecurrent:
         records = month_control.get_upcoming_records()
         assert len(records) == 0
 
-    @pytest.mark.xfail
-    def test_recurring_day_change_on_future_record(self, month_control):
-        assert 0
+    def test_recurring_with_other_other_is_returned(
+            self, outcome_with_parent, outcome_recurrent, next_month_future,
+            month_control):
 
-    @pytest.mark.xfail
-    def test_recurring_day_change_original_and_future_record(
-            self, month_control):
-        assert 0
+        date = next_month_future
+        month_control.set_month_and_year(date.month, date.year)
+        records = month_control.get_upcoming_records()
+        record_other = records[0][1]
+        assert record_other == outcome_with_parent

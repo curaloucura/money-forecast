@@ -103,7 +103,7 @@ class TestRecord:
             date.month, date.year)
         assert record_on_month == record_recurrent
 
-    def test_get_other_for_next_month(
+    def test_get_other_for_next_month_when_exists(
             self, record_recurrent, record_other, next_month_future):
         date = next_month_future
         record_on_month = record_recurrent.get_record_for_month(
@@ -118,14 +118,23 @@ class TestRecord:
             date.month, date.year)
         assert record_on is None
 
-    @pytest.mark.xfail
     def test_get_none_if_not_in_range_recurrent(
-            self, record, next_month_future):
-        date = next_month_future
-        record_on = record._get_record_for_recurrent(
+            self, record_recurrent, next_month_future, infinite_future_date):
+        record_recurrent.end_date = next_month_future
+        date = infinite_future_date
+        assert not record_recurrent._in_range_of_recurrence(date)
+        record_on = record_recurrent._get_record_for_recurrent(
             date.month, date.year)
         assert record_on is None
 
-    @pytest.mark.xfail
-    def test_get_valid_day_of_month_raises_exception_on_invalid_date(self):
-        assert 0
+    def test_get_valid_day_of_month_sets_correct_end_date(
+            self, record_recurrent):
+        record_recurrent.day_of_month = 31
+        day_for_february = record_recurrent._get_valid_day_of_month(02, 2015)
+        assert day_for_february == 28
+
+    def test_get_valid_day_of_month_raises_exception_on_invalid_date(
+            self, record_recurrent):
+        record_recurrent.day_of_month = 32
+        with pytest.raises(ValueError):
+            record_recurrent._get_valid_day_of_month(12, 2015)
