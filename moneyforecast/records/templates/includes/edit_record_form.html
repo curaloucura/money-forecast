@@ -31,7 +31,7 @@
             var r = confirm("{% trans "Do you really want to delete this record?" %}");
             if (r == true) {
                 $.post(url, function(responseText){
-                    if (responseText == 'successfully-sent!'){
+                    if (responseText['id'] == 0){
                         location.reload();
                     } else {
                         alert("{% trans "We are experiencing a problem. Please, try again later." %}");

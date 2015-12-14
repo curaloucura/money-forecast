@@ -33,19 +33,27 @@ $.ajaxSetup({
 });
 /// End huge code dump
 
-function prepareForm(start_date, min_date, max_date){
+function prepareDatePicker(start_date, min_date, max_date){
     $('#id_start_date, #id_end_date').datetimepicker({
-        format:'Y/m/d H:i',
-        allowTimes: ['07:00','12:00','18:00','22:00'], 
-        value: start_date, 
-        startDate: start_date, minDate:min_date, maxDate:max_date, 
-        timepicker:true, 
+        format:'d.m.Y',
+        formatDate:'d.m.Y',
+        // allowTimes: ['07:00','12:00','18:00','22:00'], 
+        // value: start_date, 
+        startDate: start_date, 
+        minDate: min_date, 
+        maxDate: max_date, 
+        timepicker: false, 
         validateOnBlur: false});
     $('#id_end_date').val('');
+}
+
+
+function prepareForm(start_date, min_date, max_date){
+    prepareDatePicker(start_date, min_date, max_date);
     $('.modal-form').on('submit', function(){
         form = $(this);
         $.post(form.attr('action'), form.serialize(), function(responseText){
-            if (responseText == 'successfully-sent!'){
+            if (responseText['id'] > 0){
                 location.reload();
             } else {
                 $('#record-form .modal-content').html(responseText);

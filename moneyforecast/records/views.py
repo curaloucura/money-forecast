@@ -5,7 +5,6 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import DeleteView
-from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
 
@@ -15,7 +14,7 @@ from records.forms import (
 from records.models import (
     Record, INCOME, OUTCOME, Category,
     SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,
-    UNSCHEDULED_CREDIT_SLUG)
+    UNSCHEDULED_CREDIT_SLUG, get_last_date_of_month)
 from records.month_control import MonthControl, _cache_key
 
 
@@ -33,7 +32,7 @@ def _get_category_id(user, type_category, slug):
 def index(request):
     month_list = []
     today = timezone.now().replace(hour=0, minute=0)
-    tomorrow = today+timedelta(days=1)
+    tomorrow = today+relativedelta(days=1)
     cached_months = {}
     for i in range(0, 18):
         target_month = today+relativedelta(months=i)
@@ -92,7 +91,7 @@ class CreateRecordView(CreateView):
         return kwargs
 
     def get_context_data(self, **kwargs):
-        context = kwargs
+        context = super(CreateRecordView, self).get_context_data(**kwargs)
         self.type_category = self.kwargs['type']
         context['type_category'] = self.type_category
         return context
@@ -126,7 +125,7 @@ class DeleteRecordView(DeleteView):
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
-        return JsonResponse({'id': instance.id})
+        return JsonResponse({'id': 0})
 
 
 class CreateRecurrentMonthView(CreateView):
@@ -134,9 +133,9 @@ class CreateRecurrentMonthView(CreateView):
     form_class = ChangeRecurrentMonthForm
 
     def form_valid(self, form):
-        form.save(commit=True)
+        instance = form.save(commit=True)
 
-        return HttpResponse('successfully-sent!')
+        return JsonResponse({'id': instance.id})
 
     def get_form_kwargs(self):
         kwargs = super(CreateRecurrentMonthView, self).get_form_kwargs()
@@ -155,8 +154,8 @@ class EditRecurrentMonthView(UpdateView):
         return Record.objects.filter(user=self.request.user)
 
     def form_valid(self, form):
-        form.save(commit=True)
-        return HttpResponse('successfully-sent!')
+        instance = form.save(commit=True)
+        return JsonResponse({'id': instance.id})
 
     def get_form_kwargs(self):
         kwargs = super(EditRecurrentMonthView, self).get_form_kwargs()
@@ -165,6 +164,9 @@ class EditRecurrentMonthView(UpdateView):
 
 
 class CreateInitialBalanceView(CreateView):
+    """
+    TODO: this class is probably never used since InitialBalance is only updated
+    """
     model = Record
     form_class = InitialBalanceForm
     template_name = 'includes/edit_balance_form.html'
@@ -172,9 +174,24 @@ class CreateInitialBalanceView(CreateView):
     url_name = 'create_initial_balance'
 
     def form_valid(self, form):
-        form.save(self.request.user)
+        instance = form.save(self.request.user)
 
-        return HttpResponse('successfully-sent!')
+        return JsonResponse({'id': instance.id})
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateInitialBalanceView, self).get_context_data(
+            **kwargs)
+        current_date = timezone.now()
+        min_date = timezone.datetime(
+            day=1, month=current_date.month, year=current_date.year)
+        context['min_date'] = min_date.strftime("%d.%m.%Y")
+        last_date = get_last_date_of_month(
+            current_date.month, current_date.year)
+        context['max_date'] = last_date.strftime("%d.%m.%Y")
+        start_date = context['form'].initial['start_date']
+        context['start_date'] = start_date.strftime('%d.%m.%Y')
+
+        return context
 
 
 class UpdateInitialBalanceView(UpdateView):
@@ -186,9 +203,25 @@ class UpdateInitialBalanceView(UpdateView):
     can_delete = False
 
     def form_valid(self, form):
-        form.save(self.request.user)
+        instance = form.save(self.request.user)
 
-        return HttpResponse('successfully-sent!')
+        return JsonResponse({'id': instance.id})
+
+    def get_context_data(self, **kwargs):
+        context = super(UpdateInitialBalanceView, self).get_context_data(
+            **kwargs)
+        current_date = timezone.now()
+        min_date = timezone.datetime(
+            day=1, month=current_date.month, year=current_date.year)
+        context['min_date'] = min_date.strftime("%d.%m.%Y")
+        last_date = get_last_date_of_month(
+            current_date.month, current_date.year)
+        context['max_date'] = last_date.strftime("%d.%m.%Y")
+        start_date = context['form'].initial['start_date']
+        start_date = timezone.localtime(start_date)
+        context['start_date'] = start_date.strftime('%d.%m.%Y')
+
+        return context
 
 
 class CreateUnscheduledDebtView(CreateInitialBalanceView):

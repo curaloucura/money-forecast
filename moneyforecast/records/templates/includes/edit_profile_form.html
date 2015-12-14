@@ -27,7 +27,7 @@
         $('#edit-profile-form').on('submit', function(){
             form = $(this);
             $.post(form.attr('action'), form.serialize(), function(responseText){
-                if (responseText == 'successfully-sent!'){
+                if (responseText == 'ok'){
                     location.reload();
                 } else {
                     alert("{% trans "We are experiencing a problem. Please, try again later." %}");

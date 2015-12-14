@@ -7,7 +7,7 @@ class CurrentUserAdmin(admin.ModelAdmin):
     readonly_fields = ('user',)
 
     def get_queryset(self, request):
-        qs = super(CurrentUserAdmin, self).queryset(request)
+        qs = super(CurrentUserAdmin, self).get_queryset(request)
          # make sure all users, even superusers, see only their own objects
         return qs.filter(user=request.user)
 

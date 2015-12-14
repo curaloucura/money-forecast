@@ -33,11 +33,11 @@
     </form>
 
     <script> 
-        $('#id_start_date, #id_end_date').datetimepicker({format:'Y-m-d H:i'});
+        prepareDatePicker('{{ start_date }}', '{{ min_date }}', '{{ max_date }}');
         $('#edit-balance-form').on('submit', function(){
             form = $(this);
             $.post(form.attr('action'), form.serialize(), function(responseText){
-                if (responseText == 'successfully-sent!'){
+                if (responseText['id']){
                     location.reload();
                 } else {
                     alert("{% trans "We are experiencing a problem. Please, try again later." %}");
@@ -52,7 +52,7 @@
             var r = confirm("{% trans "Do you really want to delete this record?" %}");
             if (r == true) {
                 $.post(url, function(responseText){
-                    if (responseText == 'successfully-sent!'){
+                    if (responseText['id']){
                         location.reload();
                     } else {
                         alert("{% trans "We are experiencing a problem. Please, try again later." %}");

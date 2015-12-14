@@ -122,8 +122,8 @@ class MonthControl(object):
         if one_time_only:
             # If not recurring, then it should check the start
             # date within this month
-            record_list = list(records.filter(start_date__range=(
-                self.start_date, self.end_date)))
+            # import pdb; pdb.set_trace()
+            record_list = list(records.filter(start_date__gte=self.start_date).filter(start_date__lte=self.end_date))
         else:
             # If recurring, it should check if there's a record for the month
             record_list = []
