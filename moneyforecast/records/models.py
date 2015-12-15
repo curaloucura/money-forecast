@@ -102,8 +102,8 @@ class Record(models.Model):
 
         return date
 
-    def _is_same_month_and_year(self, month, year):
-        local_start = timezone.localtime(self.start_date)
+    def _is_same_month_and_year(self, month, year, tmz_info=None):
+        local_start = timezone.localtime(self.start_date, tmz_info)
         same_month = month == local_start.month
         same_year = year == local_start.year
         return same_month and same_year

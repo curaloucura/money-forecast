@@ -1,4 +1,5 @@
 import pytest
+import pytz
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -9,8 +10,8 @@ pytest_plugins = ['tests.records.fixtures']
 
 
 def test_get_last_day_of_month():
-    known_date_with_ending_day_31 = datetime(day=15, month=12, year=2015)
-    date = known_date_with_ending_day_31
+    nonaware_date_with_ending_day_31 = datetime(day=15, month=12, year=2015)
+    date = nonaware_date_with_ending_day_31
     last_day = get_last_date_of_month(date.month, date.year)
     assert last_day.day == 31
 
@@ -124,8 +125,7 @@ class TestRecord:
         date = infinite_future_date
         assert not record_recurrent._in_range_of_recurrence(date)
         with pytest.raises(OutOfRange):
-            record_on = record_recurrent._get_record_for_recurrent(
-                date.month, date.year)
+            record_recurrent._get_record_for_recurrent(date.month, date.year)
 
     def test_get_valid_day_of_month_sets_correct_end_date(
             self, record_recurrent):
@@ -138,3 +138,12 @@ class TestRecord:
         record_recurrent.day_of_month = 32
         with pytest.raises(ValueError):
             record_recurrent._get_valid_day_of_month(12, 2015)
+
+    def test_is_same_month_and_year_with_localtime(
+            self, record):
+        date = datetime(day=1, month=12, year=2015)
+        timezone_yesterday = pytz.timezone("America/Chicago")
+        timezone_today = pytz.timezone("Europe/Berlin")
+        record.start_date = date.replace(tzinfo=timezone_yesterday)
+        assert record._is_same_month_and_year(
+            date.month, date.year, timezone_today)
