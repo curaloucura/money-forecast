@@ -5,7 +5,6 @@ from django.utils.translation import ugettext as _
 from django.db.models.signals import post_save
 from django.utils import timezone
 from datetime import datetime, timedelta
-import pytz
 from dateutil.relativedelta import relativedelta
 
 OUTCOME = 0
@@ -40,7 +39,7 @@ class Category(models.Model):
 
 
 def tmz(naive_date):
-        return naive_date.replace(tzinfo=pytz.utc)
+    return timezone.make_aware(naive_date)
 
 
 def get_last_date_of_month(month, year):
@@ -104,8 +103,9 @@ class Record(models.Model):
         return date
 
     def _is_same_month_and_year(self, month, year):
-        same_month = month == self.start_date.month
-        same_year = year == self.start_date.year
+        local_start = timezone.localtime(self.start_date)
+        same_month = month == local_start.month
+        same_year = year == local_start.year
         return same_month and same_year
 
     def _get_date_of_month_on(self, month, year):
@@ -164,7 +164,8 @@ class Record(models.Model):
         if self._in_range_of_recurrence(tmz(record_date_for_month)):
             default_record = self
         else:
-            default_record = None
+            raise OutOfRange("{}/{} is not a valid date for record {}".format(
+                month, year, self))
         return default_record
 
     def get_record_for_month(self, month, year):
@@ -197,6 +198,10 @@ class Record(models.Model):
         else:
             record = None
         return record
+
+
+class OutOfRange(ValueError):
+    pass
 
 
 @receiver(post_save, sender=User)

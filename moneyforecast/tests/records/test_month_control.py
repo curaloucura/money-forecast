@@ -26,3 +26,12 @@ class TestMonthControl:
             self, outcome_future, month_control):
         upcoming_records = month_control.get_upcoming_records()
         assert upcoming_records[0][0] == upcoming_records[0][1].start_date
+
+    def test_record_first_day_with_timezone_is_returned(
+            self, outcome_current, month_control, current_date):
+        first_day = current_date.replace(day=1)
+        outcome_current.start_date = first_day
+        outcome_current.save()
+        upcoming_records = month_control._get_records_by_type(
+            outcome_current.category.type_category, False)
+        assert len(upcoming_records)

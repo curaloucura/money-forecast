@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-from records.models import get_last_date_of_month, tmz, Record
+from records.models import get_last_date_of_month, Record, OutOfRange
 
 
 pytest_plugins = ['tests.records.fixtures']
@@ -53,7 +53,7 @@ class TestRecord:
         month = next_month_future
         date = record_recurrent.get_date_for_month(month.month, month.year)
         next_month_date = future_date + relativedelta(months=1)
-        assert date == tmz(next_month_date)
+        assert date == next_month_date
 
     def test_is_accountable(self, record, future_date):
         initial_balance_entry_date = future_date
@@ -123,9 +123,9 @@ class TestRecord:
         record_recurrent.end_date = next_month_future
         date = infinite_future_date
         assert not record_recurrent._in_range_of_recurrence(date)
-        record_on = record_recurrent._get_record_for_recurrent(
-            date.month, date.year)
-        assert record_on is None
+        with pytest.raises(OutOfRange):
+            record_on = record_recurrent._get_record_for_recurrent(
+                date.month, date.year)
 
     def test_get_valid_day_of_month_sets_correct_end_date(
             self, record_recurrent):

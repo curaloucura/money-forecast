@@ -93,16 +93,16 @@ class MonthControl(object):
             return results
 
     def _get_records(self):
-        self.income_monthly_list = self._get_records_by_type(INCOME, False)
-        self.income_variable_list = self._get_records_by_type(INCOME, True)
-        self.outcome_monthly_list = self._get_records_by_type(OUTCOME, False)
+        self.income_monthly_list = self._get_records_by_type(INCOME, True)
+        self.income_variable_list = self._get_records_by_type(INCOME, False)
+        self.outcome_monthly_list = self._get_records_by_type(OUTCOME, True)
         self.outcome_monthly_list = (
             self.outcome_monthly_list + self._get_records_by_type(
-                SAVINGS, False))
-        self.outcome_variable_list = self._get_records_by_type(OUTCOME, True)
+                SAVINGS, True))
+        self.outcome_variable_list = self._get_records_by_type(OUTCOME, False)
         self.outcome_variable_list = (
             self.outcome_variable_list + self._get_records_by_type(
-                SAVINGS, True))
+                SAVINGS, False))
         self.income_list = self.income_monthly_list + self.income_variable_list
         self.sorted_income_list = self._sort_records_by_date(self.income_list)
         self.outcome_list = (
@@ -110,20 +110,35 @@ class MonthControl(object):
         self.sorted_outcome_list = self._sort_records_by_date(
             self.outcome_list)
 
-    def _get_records_by_type(self, category, one_time_only):
-        records = self.get_queryset()
+    def _filter_records_not_ended(self, records, date_limit):
         records = records.filter(
-            Q(end_date__isnull=True) | Q(end_date__gte=self.start_date))
-        records = records.filter(category__type_category=category)
-        records = records.filter(
-            parent__isnull=True, day_of_month__isnull=one_time_only)
-        records = records.filter(start_date__lte=self.end_date)
+            Q(end_date__isnull=True) | Q(end_date__gte=date_limit))
+        return records
 
-        if one_time_only:
-            # If not recurring, then it should check the start
-            # date within this month
+    def _filter_by_category(self, records, category):
+        records = records.filter(category__type_category=category)
+        return records
+
+    def _filter_out_child_records(self, records, recurring):
+        ignore_day_of_month = not recurring
+        records = records.filter(
+            parent__isnull=True, day_of_month__isnull=ignore_day_of_month)
+        return records
+
+    def _filter_records_starting_this_month(self, records):
+        records = records.filter(start_date__gte=self.start_date)
+        return records
+
+    def _get_records_by_type(self, category, recurring):
+        records = self.get_queryset()
+        records = self._filter_records_not_ended(records, self.start_date)
+        records = self._filter_by_category(records, category)
+        records = self._filter_out_child_records(records, recurring)
+
+        if not recurring:
             # import pdb; pdb.set_trace()
-            record_list = list(records.filter(start_date__gte=self.start_date).filter(start_date__lte=self.end_date))
+            records = self._filter_records_starting_this_month(records)
+            record_list = list(records)
         else:
             # If recurring, it should check if there's a record for the month
             record_list = []

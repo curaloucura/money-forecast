@@ -6,6 +6,9 @@ from django.core.urlresolvers import reverse
 from records.models import Record, OUTCOME, INCOME
 
 
+pytest_plugins = ['tests.records.fixtures']
+
+
 @pytest.fixture
 def user_client(user, client):
     result = client.login(username=user.username, password=user.raw_password)
@@ -41,7 +44,7 @@ class TestIncomeNoRecurring:
             'category': income.id,
             'new_category': '',
             'amount': 1,
-            'start_date': current_date.strftime("%Y/%m/%d"),
+            'start_date': current_date.strftime("%d.%m.%Y"),
         }
         create_income_url = reverse("create_record", kwargs={"type": INCOME})
         response = user_client.post(create_income_url, post_data)
@@ -64,7 +67,7 @@ class TestIncomeNoRecurring:
             'category': income.id,
             'new_category': '',
             'amount': new_amount,
-            'start_date': current_date.strftime("%Y/%m/%d"),
+            'start_date': current_date.strftime("%d.%m.%Y"),
         }
         response = user_client.post(update_record_url, post_data)
         assert response.status_code == 200
@@ -81,7 +84,7 @@ class TestIncomeNoRecurring:
         response = user_client.post(delete_record_url)
         assert response.status_code == 200
         deleted = json.loads(response.content)
-        assert deleted['id'] is None
+        assert deleted['id'] is 0
 
 
 @pytest.mark.django_db
@@ -99,7 +102,7 @@ class TestOutcomeNoRecurring:
             'category': outcome.id,
             'new_category': '',
             'amount': 1,
-            'start_date': current_date.strftime("%Y/%m/%d"),
+            'start_date': current_date.strftime("%d.%m.%Y"),
         }
         create_outcome_url = reverse("create_record", kwargs={"type": OUTCOME})
         response = user_client.post(create_outcome_url, post_data)
@@ -122,7 +125,7 @@ class TestOutcomeNoRecurring:
             'category': outcome.id,
             'new_category': '',
             'amount': new_amount,
-            'start_date': current_date.strftime("%Y/%m/%d"),
+            'start_date': current_date.strftime("%d.%m.%Y"),
         }
         response = user_client.post(update_record_url, post_data)
         assert response.status_code == 200
@@ -139,4 +142,4 @@ class TestOutcomeNoRecurring:
         response = user_client.post(delete_record_url)
         assert response.status_code == 200
         deleted = json.loads(response.content)
-        assert deleted['id'] is None
+        assert deleted['id'] is 0

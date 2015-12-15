@@ -115,6 +115,16 @@ def savings(user):
 
 
 @pytest.fixture
+def outcome_current(user, outcome, current_date):
+    """
+    Record of type Outcome set to today (current date)
+    """
+    record = Record.objects.create(
+        category=outcome, amount=1, start_date=current_date, user=user)
+    return record
+
+
+@pytest.fixture
 def outcome_future(user, outcome, future_date):
     """
     Record of type Outcome set in the future
