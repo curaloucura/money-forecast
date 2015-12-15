@@ -1,12 +1,13 @@
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import DeleteView
-
-from dateutil.relativedelta import relativedelta
 
 from records.forms import (
     RecordForm, ChangeRecurrentMonthForm, InitialBalanceForm,
@@ -182,7 +183,7 @@ class CreateInitialBalanceView(CreateView):
         context = super(UpdateInitialBalanceView, self).get_context_data(
             **kwargs)
         current_date = timezone.now()
-        min_date = timezone.datetime(
+        min_date = datetime(
             day=1, month=current_date.month, year=current_date.year)
         context['min_date'] = min_date.strftime("%d.%m.%Y")
         last_date = get_last_date_of_month(
@@ -211,7 +212,7 @@ class UpdateInitialBalanceView(UpdateView):
         context = super(UpdateInitialBalanceView, self).get_context_data(
             **kwargs)
         current_date = timezone.now()
-        min_date = timezone.datetime(
+        min_date = datetime(
             day=1, month=current_date.month, year=current_date.year)
         context['min_date'] = min_date.strftime("%d.%m.%Y")
         last_date = get_last_date_of_month(
