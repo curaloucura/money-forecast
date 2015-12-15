@@ -37,7 +37,7 @@ class RecordForm(forms.ModelForm):
         initial.update({'type_category': type_category_pk})
 
         kwargs['initial'] = initial
-        super(RecordForm, self).__init__(*args, **kwargs) 
+        super(RecordForm, self).__init__(*args, **kwargs)
 
         if type_category_pk:
             self.fields['category'].queryset = Category.objects.filter(
