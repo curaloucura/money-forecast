@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 
 from django.db.models import Q, Sum
 from django.utils.timezone import now
@@ -35,7 +36,7 @@ class MonthControl(object):
         self.last_month = (self.start_date-relativedelta(months=1))
 
         # Initialize variables
-        self.initial_balance = 0
+        self.initial_balance = Decimal('0')
         self._get_records()
         self._calculate_totals()
 
@@ -44,7 +45,7 @@ class MonthControl(object):
                 (self.today <= self.end_date))
 
     def _sum_after_date(self, date, record_list):
-        total = 0.0
+        total = 0
         for record in record_list:
             if record.is_accountable(date):
                 total += record.amount

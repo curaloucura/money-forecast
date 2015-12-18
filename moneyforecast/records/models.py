@@ -53,8 +53,9 @@ class Record(models.Model):
     description = models.CharField(max_length=50, blank=True)
     category = models.ForeignKey(Category, help_text=_(
         'Select the category for this record. This field is required'))
-    amount = models.FloatField(
-        default=0, verbose_name=_("How much?"),
+    amount = models.DecimalField(
+        default=0, max_digits=12, decimal_places=2,
+        verbose_name=_("How much?"),
         help_text=_(
             "Please, use only the monthly amount. This field is required"))
     start_date = models.DateTimeField(
