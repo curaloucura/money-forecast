@@ -24,7 +24,8 @@
 {% block post-footer %}
     </form>
     <script> 
-        prepareForm('{{ form.start_date.value|date:"Y/m/d" }}');
+        {# TODO: find a way to simplify the date formatting for the datetimepicker #}
+        prepareForm('{{ form.start_date.value|date:"d.m.Y" }}');
         $('#edit-record-form #btn-delete').on('click',function(){
             var pk = $(this).data("id")
             var url = $(this).data("url")

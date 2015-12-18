@@ -37,8 +37,7 @@ function prepareDatePicker(start_date, min_date, max_date){
     $('#id_start_date, #id_end_date').datetimepicker({
         format:'d.m.Y',
         formatDate:'d.m.Y',
-        // allowTimes: ['07:00','12:00','18:00','22:00'], 
-        // value: start_date, 
+        value: start_date, 
         startDate: start_date, 
         minDate: min_date, 
         maxDate: max_date, 
@@ -102,6 +101,6 @@ function prepareForm(start_date, min_date, max_date){
       }
       var final_date = start.date(day_month);
       var final_date = final_date.add(num_pay, 'months');
-      $('#id_end_date').val(final_date.format('YYYY/MM/DD HH:mm'))
+      $('#id_end_date').val(final_date.format('DD.MM.YYYY'))
     });
 }
