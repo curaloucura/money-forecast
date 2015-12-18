@@ -131,7 +131,6 @@ class Record(models.Model):
         An accountable record is all records that are in the same day or
         after the initial balance for the month
         """
-        # TODO: Perhaps consider checking the time too?
         record_date = self.get_date_for_month(
             on_date.month, on_date.year)
         return on_date <= record_date

@@ -1,12 +1,12 @@
 {% load i18n record_tags static %}
 <div class="row">
-	<div class="col-md-8">
+	<div class="col-md-6">
 		<h1>
 		{% trans "My Money Forecast" %}
 		<span class="glyphicon glyphicon-cloud" aria-hidden="true"></span>
 		</h1>
 	</div>
-	<div id="user-menu" class="col-md-4 text-right">
+	<div id="user-menu" class="col-md-6 text-right">
 		<a href="{% url 'set_language' %}?language=pt&next=/" title="Português" class="language-selector"><img src="{% static "img/brazil_small.png" %}" alt="Portuguese"></a>
 		<a href="{% url 'set_language' %}?language=en&next=/" title="English" class="language-selector"><img src="{% static "img/uk_small.png" %}" alt="English"></a>
 		<a href="{% url 'set_language' %}?language=de&next=/" title="Deutsch" class="language-selector"><img src="{% static "img/germany_small.png" %}" alt="German"></a>
