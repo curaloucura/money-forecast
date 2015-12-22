@@ -21,7 +21,8 @@ class MonthControl(object):
         self.user = user
         self.cache = cache
         self.today = now().replace(hour=0, minute=0)
-        budget, created = Budget.objects.get_or_create(user=user, category__isnull=True)
+        budget, created = Budget.objects.get_or_create(
+            user=user, category__isnull=True)
         self.budget = budget.amount
 
         self.set_month_and_year(month, year)

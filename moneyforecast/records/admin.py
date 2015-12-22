@@ -1,5 +1,5 @@
 from django.contrib import admin
-from records.models import Category, Record, SYSTEM_CATEGORIES
+from records.models import Category, Record, Budget, SYSTEM_CATEGORIES
 
 
 class CurrentUserAdmin(admin.ModelAdmin):
@@ -45,3 +45,4 @@ class RecordAdmin(CurrentUserAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Record, RecordAdmin)
+admin.site.register(Budget)

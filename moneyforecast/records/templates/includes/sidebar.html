@@ -25,6 +25,13 @@
 			{% endif %}
 		{% endif %}
 	</p>
+	<h4>
+		{% trans "Budget" %}:
+	</h4>
+	<p>
+		Your budget is {{ current_month.budget }}.
+		{{ current_month.remaining_budget }} is left to spend this month.
+	</p>
 
 	<h4>
 		{% trans "Upcoming this month" %}:
