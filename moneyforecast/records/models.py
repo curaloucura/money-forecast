@@ -238,3 +238,12 @@ def generate_default_categories(sender, instance, created, **kwargs):
             start_date=timezone.now().replace(day=1),
             user=instance
         )
+
+
+class Budget(models.Model):
+    description = models.CharField(max_length=30)
+    amount = models.DecimalField(
+        default=0, max_digits=12, decimal_places=2,
+        verbose_name=_("How much?"))
+    category = models.ForeignKey(Category, blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True)

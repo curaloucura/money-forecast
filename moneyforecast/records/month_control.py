@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from records.models import (
     tmz, get_last_date_of_month, Category, Record, INCOME, OUTCOME, SAVINGS,
     SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,
-    UNSCHEDULED_CREDIT_SLUG)
+    UNSCHEDULED_CREDIT_SLUG, Budget)
 
 
 def _cache_key(date):
@@ -21,6 +21,9 @@ class MonthControl(object):
         self.user = user
         self.cache = cache
         self.today = now().replace(hour=0, minute=0)
+        budget, created = Budget.objects.get_or_create(user=user, category__isnull=True)
+        self.budget = budget.amount
+
         self.set_month_and_year(month, year)
 
     def __str__(self):
@@ -52,6 +55,10 @@ class MonthControl(object):
 
         return total
 
+    def _set_budget_amounts(self, amount_used):
+        self.used_budget = min(amount_used, self.budget)
+        self.remaining_budget = self.budget - self.used_budget
+
     def _calculate_totals(self):
         self.initial_balance = self.get_initial_balance()
         # TODO: display total amount but not use it for calculations
@@ -60,8 +67,11 @@ class MonthControl(object):
             [x.amount for x in self.income_variable_list])
         self.outcome_monthly = sum(
             [x.amount for x in self.outcome_monthly_list])
-        self.outcome_variable = sum(
+        outcome_variable = sum(
             [x.amount for x in self.outcome_variable_list])
+        self._set_budget_amounts(outcome_variable)
+        self.outcome_variable = outcome_variable + self.remaining_budget
+
         self.accountable_income_monthly = self._sum_after_date(
             self.initial_balance_date, self.income_monthly_list)
         self.accountable_income_variable = self._sum_after_date(

@@ -4,7 +4,8 @@ from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import User
 
-from records.models import Category, Record, OUTCOME, INCOME, SAVINGS, tmz
+from records.models import (
+    Category, Record, Budget, OUTCOME, INCOME, SAVINGS, tmz)
 from records.month_control import MonthControl
 
 
@@ -177,3 +178,9 @@ def savings_current(request, user, savings, current_date):
     record = Record.objects.create(
         category=savings, amount=1, start_date=current_date, user=user)
     return record
+
+
+@pytest.fixture
+def budget(user):
+    budget = Budget.objects.create(user=user, amount=1)
+    return budget

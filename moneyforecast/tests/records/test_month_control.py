@@ -35,3 +35,13 @@ class TestMonthControl:
         upcoming_records = month_control._get_records_by_type(
             outcome_current.category.type_category, False)
         assert len(upcoming_records)
+
+    def test_remaining_budget(self, budget, month_control):
+        assert month_control.budget == 1
+        month_control._set_budget_amounts(0)
+        assert month_control.remaining_budget == 1
+        month_control._set_budget_amounts(1)
+        assert month_control.remaining_budget == 0
+
+    def test_outcome_with_budget(self, budget, outcome_current, month_control):
+        assert month_control.outcome_variable == 1
