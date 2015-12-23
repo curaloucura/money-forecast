@@ -42,7 +42,8 @@ function prepareDatePicker(start_date, min_date, max_date){
         minDate: min_date, 
         maxDate: max_date, 
         timepicker: false, 
-        validateOnBlur: false});
+        validateOnBlur: false,
+        closeOnDateSelect: true});
     $('#id_end_date').val('');
 }
 
