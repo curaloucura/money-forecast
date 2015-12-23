@@ -30,7 +30,11 @@
 	</h4>
 	<p>
 		Your budget is {{ current_month.budget }}.
-		{{ current_month.remaining_budget }} is left to spend this month.
+		{% if current_month.remaining_budget >= 0 %}
+			{{ current_month.remaining_budget }} is left to spend this month.
+		{% else %}
+			{{ budget_over_amount }} is over your budget.
+		{% endif %}
 	</p>
 
 	<h4>

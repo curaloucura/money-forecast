@@ -59,6 +59,7 @@ class MonthControl(object):
     def _set_budget_amounts(self, amount_used):
         self.used_budget = min(amount_used, self.budget)
         self.remaining_budget = self.budget - self.used_budget
+        self.budget_over_amount = max(amount_used - self.budget, 0)
 
     def _calculate_totals(self):
         self.initial_balance = self.get_initial_balance()
