@@ -5,7 +5,6 @@ from django.utils.timezone import now
 from django.db.models import Sum
 from dateutil.relativedelta import relativedelta
 
-# TODO: move this function to a util module
 from records.models import (
     tmz, get_last_date_of_month, Category, Record, INCOME, OUTCOME, SAVINGS,
     SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,
@@ -155,11 +154,16 @@ class MonthControl(object):
         # Initial Balance must be from this month
         balance = balance.filter(start_date__range=(
             self.start_date, self.end_date))
-        if balance.count():
+        balance_count = balance.count()
+        if balance_count:
+            if balance_count > 1:
+                raise Exception("Only one balance is valid for {}/{}".format(
+                    self.start_date.month, self.start_date.year))
             # Get the most recent balance
-            idx = balance.count()-1
-            return (balance[idx].start_date, balance[idx].amount, balance[idx])
+            balance = balance[0]
+            return (balance.start_date, balance.amount, balance)
         else:
+            # TODO: make this smarter
             if self.cache:
                 last_balance = self.cache.get(
                     _cache_key(self.last_month), None)

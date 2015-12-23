@@ -3,6 +3,7 @@ lxml
 pytest==2.8.5
 pytest-django==2.9.1
 pyquery
+django-cprofile-middleware
 
 #in case of error, install also
 #py==1.4.31
