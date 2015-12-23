@@ -7,12 +7,10 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-OUTCOME = 0
-INCOME = 1
-# Savings has it's own category because it must be grouped together
-SAVINGS = 2
-# System Categories are those not being accounted
-SYSTEM_CATEGORIES = 3
+from .manager import (
+    RecordManager, OUTCOME, INCOME, SAVINGS,
+    SYSTEM_CATEGORIES)
+
 TYPE_CATEGORY_CHOICES = (
     (OUTCOME, _('Outcome')), (INCOME, _('Income')), (SAVINGS, _('Savings')),
     (SYSTEM_CATEGORIES, _('System Internals')))
@@ -84,6 +82,8 @@ class Record(models.Model):
     notes = models.TextField(blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True)
     parent = models.ForeignKey('self', blank=True, null=True)
+
+    objects = RecordManager()
 
     def __unicode__(self):
         return "%s %s %s" % (self.description, self.category, self.amount)
@@ -173,6 +173,9 @@ class Record(models.Model):
             record = self._get_record_for_recurrent(month, year)
         else:
             record = self._get_record_for_non_recurrent(month, year)
+        if not record:
+            raise OutOfRange("Record {} is not available on {}/{}".format(
+                self, month, year))
         return record
 
     def _get_record_for_recurrent(self, month, year):

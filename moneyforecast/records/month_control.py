@@ -1,8 +1,8 @@
 from datetime import datetime
 from decimal import Decimal
 
-from django.db.models import Q, Sum
 from django.utils.timezone import now
+from django.db.models import Sum
 from dateutil.relativedelta import relativedelta
 
 # TODO: move this function to a util module
@@ -41,7 +41,7 @@ class MonthControl(object):
 
         # Initialize variables
         self.initial_balance = Decimal('0')
-        self._get_records()
+        self._prepare_records()
         self._calculate_totals()
 
     def is_current(self):
@@ -77,6 +77,11 @@ class MonthControl(object):
         self._set_budget_amounts(outcome_variable)
         self.outcome_variable = outcome_variable + self.remaining_budget
 
+    def _set_budget_amounts(self, amount_used):
+        self.used_budget = min(amount_used, self.budget)
+        self.remaining_budget = self.budget - self.used_budget
+        self.budget_over_amount = max(amount_used - self.budget, 0)
+
     def _set_sum_of_amounts(self):
         self.accountable_income_monthly = self._sum_after_date(
             self.initial_balance_date, self.income_monthly_list)
@@ -95,12 +100,34 @@ class MonthControl(object):
 
         return total
 
-    def _set_budget_amounts(self, amount_used):
-        self.used_budget = min(amount_used, self.budget)
-        self.remaining_budget = self.budget - self.used_budget
-        self.budget_over_amount = max(amount_used - self.budget, 0)
+    def get_queryset(self):
+        return Record.objects.active_for(self.user, self.end_date)
 
-    def _sort_records_by_date(self, record_list):
+    def _prepare_records(self):
+        self._prepare_income()
+        self._prepare_outcome()
+
+    def _prepare_income(self):
+        self.income_monthly_list = self._get_records_by_type(INCOME, True)
+        self.income_variable_list = self._get_records_by_type(INCOME, False)
+        self.income_list = self.income_monthly_list + self.income_variable_list
+        self.sorted_income_list = self._get_sorted_date_list(self.income_list)
+
+    def _prepare_outcome(self):
+        self.outcome_monthly_list = self._get_records_by_type(OUTCOME, True)
+        self.outcome_monthly_list = (
+            self.outcome_monthly_list + self._get_records_by_type(
+                SAVINGS, True))
+        self.outcome_variable_list = self._get_records_by_type(OUTCOME, False)
+        self.outcome_variable_list = (
+            self.outcome_variable_list + self._get_records_by_type(
+                SAVINGS, False))
+        self.outcome_list = (
+            self.outcome_monthly_list + self.outcome_variable_list)
+        self.sorted_outcome_list = self._get_sorted_date_list(
+            self.outcome_list)
+
+    def _get_sorted_date_list(self, record_list):
         records_for_the_month = []
         for record in record_list:
             # Calculate dates
@@ -111,70 +138,14 @@ class MonthControl(object):
         records_for_the_month.sort(key=lambda r: r[date_idx])
         return records_for_the_month
 
-    def _get_records(self):
-        self.income_monthly_list = self._get_records_by_type(INCOME, True)
-        self.income_variable_list = self._get_records_by_type(INCOME, False)
-        self.outcome_monthly_list = self._get_records_by_type(OUTCOME, True)
-        self.outcome_monthly_list = (
-            self.outcome_monthly_list + self._get_records_by_type(
-                SAVINGS, True))
-        self.outcome_variable_list = self._get_records_by_type(OUTCOME, False)
-        self.outcome_variable_list = (
-            self.outcome_variable_list + self._get_records_by_type(
-                SAVINGS, False))
-        self.income_list = self.income_monthly_list + self.income_variable_list
-        self.sorted_income_list = self._sort_records_by_date(self.income_list)
-        self.outcome_list = (
-            self.outcome_monthly_list + self.outcome_variable_list)
-        self.sorted_outcome_list = self._sort_records_by_date(
-            self.outcome_list)
-
-    def _filter_records_not_ended(self, records, date_limit):
-        records = records.filter(
-            Q(end_date__isnull=True) | Q(end_date__gte=date_limit))
-        return records
-
-    def _filter_by_category(self, records, category):
-        records = records.filter(category__type_category=category)
-        return records
-
-    def _filter_out_child_records(self, records, recurring):
-        ignore_day_of_month = not recurring
-        records = records.filter(
-            parent__isnull=True, day_of_month__isnull=ignore_day_of_month)
-        return records
-
-    def _filter_records_starting_this_month(self, records):
-        records = records.filter(start_date__gte=self.start_date)
-        return records
-
-    def _get_records_by_type(self, category, recurring):
-        records = self.get_queryset()
-        records = self._filter_records_not_ended(records, self.start_date)
-        records = self._filter_by_category(records, category)
-        records = self._filter_out_child_records(records, recurring)
-
-        if not recurring:
-            records = self._filter_records_starting_this_month(records)
-            record_list = list(records)
+    def _get_records_by_type(self, type_category, recurring):
+        if recurring:
+            records = Record.objects.get_recurring_records_by_type(
+                self.user, type_category, self.start_date, self.end_date,
+                self.month, self.year)
         else:
-            # If recurring, it should check if there's a record for the month
-            record_list = []
-            for record in records:
-                record_list.append(
-                    record.get_record_for_month(self.month, self.year))
-
-        return record_list
-
-    def get_queryset(self):
-        # Make sure to filter only records by the user
-        # TODO: improve the way to track paid off or it could disappear
-        # prematurely
-        records = Record.objects.filter(user=self.user, is_paid_out=False)
-
-        # All records must start in the month or earlier
-        records = records.filter(start_date__lte=self.end_date)
-
+            records = Record.objects.get_records_by_type(
+                self.user, type_category, self.start_date, self.end_date)
         return records
 
     def _get_initial_balance_info(self):
@@ -239,7 +210,7 @@ class MonthControl(object):
 
         return {'list': savings_list, 'total': total}
 
-    def _get_unscheduled(self, slug_category):
+    def _get_unscheduled_list_and_total(self, slug_category):
         category = Category.objects.get(
             type_category=SYSTEM_CATEGORIES, slug=slug_category,
             user=self.user)
@@ -248,7 +219,7 @@ class MonthControl(object):
         return {'list': records, 'total': total}
 
     def get_unscheduled_debt_totals(self):
-        return self._get_unscheduled(UNSCHEDULED_DEBT_SLUG)
+        return self._get_unscheduled_list_and_total(UNSCHEDULED_DEBT_SLUG)
 
     def get_unscheduled_credit_totals(self):
-        return self._get_unscheduled(UNSCHEDULED_CREDIT_SLUG)
+        return self._get_unscheduled_list_and_total(UNSCHEDULED_CREDIT_SLUG)

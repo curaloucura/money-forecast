@@ -19,6 +19,13 @@ class TestMonthControl:
         upcoming_records = month_control.get_upcoming_records()
         assert len(upcoming_records) == 1
 
+    def test_next_month_returns_no_record(
+            self, outcome_future, month_control, next_month_future):
+        month_control.set_month_and_year(
+            next_month_future.month, next_month_future.year)
+        upcoming_records = month_control.get_upcoming_records()
+        assert len(upcoming_records) == 0
+
     def test_get_savings_total(self, savings_current, month_control):
         assert month_control.get_savings_totals()['total'] == 1
 
