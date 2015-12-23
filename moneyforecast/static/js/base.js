@@ -33,7 +33,7 @@ $.ajaxSetup({
 });
 /// End huge code dump
 
-function prepareDatePicker(start_date, min_date, max_date){
+function prepareInputs(start_date, min_date, max_date){
     $('#id_start_date, #id_end_date').datetimepicker({
         format:'d.m.Y',
         formatDate:'d.m.Y',
@@ -45,11 +45,12 @@ function prepareDatePicker(start_date, min_date, max_date){
         validateOnBlur: false,
         closeOnDateSelect: true});
     $('#id_end_date').val('');
+    amount_formatter();
 }
 
 
 function prepareForm(start_date, min_date, max_date){
-    prepareDatePicker(start_date, min_date, max_date);
+    prepareInputs(start_date, min_date, max_date);
     $('.modal-form').on('submit', function(){
         form = $(this);
         $.post(form.attr('action'), form.serialize(), function(responseText){

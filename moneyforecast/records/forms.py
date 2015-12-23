@@ -18,6 +18,10 @@ class RecordForm(forms.ModelForm):
         required=False, widget=forms.HiddenInput)
     category = forms.ModelChoiceField(
         required=False, queryset=Category.objects.none())
+    amount = forms.DecimalField(
+        max_digits=12, decimal_places=2, localize=True, widget=forms.TextInput,
+        initial=0)
+    start_date = forms.DateField(input_formats=["%d.%m.%Y"])
 
     class Meta:
         model = Record
@@ -74,6 +78,10 @@ class RecordForm(forms.ModelForm):
 
 class ChangeRecurrentMonthForm(forms.ModelForm):
     parent = forms.IntegerField(widget=forms.HiddenInput())
+    amount = forms.DecimalField(
+        max_digits=12, decimal_places=2, localize=True, widget=forms.TextInput,
+        initial=0)
+    start_date = forms.DateField(input_formats=["%d.%m.%Y"])
 
     class Meta:
         model = Record
@@ -156,6 +164,10 @@ class ChangeRecurrentMonthForm(forms.ModelForm):
 
 class InitialBalanceForm(forms.ModelForm):
     slug_category = INITIAL_BALANCE_SLUG
+    amount = forms.DecimalField(
+        max_digits=20, decimal_places=2, localize=True, widget=forms.TextInput,
+        initial=0)
+    start_date = forms.DateField(input_formats=["%d.%m.%Y"])
 
     class Meta:
         model = Record

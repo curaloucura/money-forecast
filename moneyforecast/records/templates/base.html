@@ -7,6 +7,7 @@
 	<!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
 <link rel="stylesheet" href="{% static "css/base.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "js/datetimepicker/jquery.datetimepicker.css" %}"/ >
 
 <!-- Optional theme -->
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
@@ -28,8 +29,19 @@
 		</div>
 	</div>
 </body>
-<link rel="stylesheet" type="text/css" href="{% static "js/datetimepicker/jquery.datetimepicker.css" %}"/ >
+
 <script src="{% static "js/datetimepicker/jquery.datetimepicker.js" %}"></script>
 <script src="{% static "js/moment.js" %}"></script>
 <script src="{% static "js/base.js" %}"></script>
+<script src="{% static "js/jquery.maskMoney.min.js" %}"></script>
+<script type="text/javascript">
+	function amount_formatter(){
+		{# TODO: this is here due the template tag to get_decimal_separator #}
+		var amount = $('#id_amount');
+		amount.attr("type", "text");
+		var value = amount.val();
+		var unformatted = value.replace(",","").replace(".","");
+        amount.maskMoney({"decimal":"{% get_decimal_separator %}", "thousands":"", "allowZero":true, "allowNegative":true});
+	}
+</script>
 </html>

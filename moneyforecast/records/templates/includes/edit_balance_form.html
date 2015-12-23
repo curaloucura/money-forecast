@@ -33,7 +33,7 @@
     </form>
 
     <script> 
-        prepareDatePicker('{{ start_date }}', '{{ min_date }}', '{{ max_date }}');
+        prepareInputs('{{ start_date }}', '{{ min_date }}', '{{ max_date }}');
         $('#edit-balance-form').on('submit', function(){
             form = $(this);
             $.post(form.attr('action'), form.serialize(), function(responseText){
