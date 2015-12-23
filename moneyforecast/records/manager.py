@@ -41,12 +41,12 @@ class RecordQuerySet(models.QuerySet):
         return self.filter(Q(end_date__lte=on_date) | Q(end_date__isnull=True))
 
     def by_user(self, user):
-        return self.filter(user=self.user)
+        return self.filter(user=user)
 
     def active_for(self, user, max_date):
         # TODO: improve the way to track paid off or it could disappear
         # prematurely
-        records = self.by_user(user=user)
+        records = self.by_user(user)
         records = records.filter(is_paid_out=False)
         records = records.starting_before(max_date)
         records = records.ending_before(max_date)
