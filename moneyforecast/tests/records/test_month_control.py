@@ -52,3 +52,11 @@ class TestMonthControl:
 
     def test_outcome_with_budget(self, budget, outcome_current, month_control):
         assert month_control.outcome_variable == 1
+
+    def test_return_from_user_only(
+            self, outcome_current, another_user, month_control):
+        assert len(month_control.outcome_list) == 1
+        outcome_current.user = another_user
+        outcome_current.save()
+        month_control._prepare_outcome()
+        assert len(month_control.outcome_list) == 0

@@ -76,13 +76,22 @@ def month_control(user, current_date):
     return month_control
 
 
-@pytest.fixture
-def user():
+def _user(username='test_user'):
     raw_password = "fake"
     new_user = User.objects.create_user(
-        username="test_user", email="a@b.com", password=raw_password)
+        username=username, email="a@b.com", password=raw_password)
     setattr(new_user, "raw_password", raw_password)
     return new_user
+
+
+@pytest.fixture
+def user():
+    return _user()
+
+
+@pytest.fixture
+def another_user():
+    return _user('another_user')
 
 
 @pytest.fixture
