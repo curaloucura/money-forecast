@@ -4,6 +4,7 @@ from django import forms
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext as _
+from django.utils import timezone
 from records.models import (
     Record, Category, SYSTEM_CATEGORIES,
     INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG, UNSCHEDULED_CREDIT_SLUG,
@@ -167,7 +168,8 @@ class InitialBalanceForm(forms.ModelForm):
     amount = forms.DecimalField(
         max_digits=20, decimal_places=2, localize=True, widget=forms.TextInput,
         initial=0)
-    start_date = forms.DateField(input_formats=["%d.%m.%Y"])
+    start_date = forms.DateField(
+        input_formats=["%d.%m.%Y"], initial=timezone.now)
 
     class Meta:
         model = Record

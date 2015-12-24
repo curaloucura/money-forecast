@@ -62,6 +62,8 @@ class TestRecord:
         assert accountable
 
     def test_is_not_accountable(self, record, future_date):
+        # TODO: this may fail if run at the end of the month as future_date
+        # may be next month
         initial_balance_entry_date = future_date+relativedelta(days=1)
         accountable = record.is_accountable(initial_balance_entry_date)
         assert not accountable

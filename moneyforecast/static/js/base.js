@@ -44,7 +44,6 @@ function prepareInputs(start_date, min_date, max_date){
         timepicker: false, 
         validateOnBlur: false,
         closeOnDateSelect: true});
-    $('#id_end_date').val('');
     amount_formatter();
 }
 

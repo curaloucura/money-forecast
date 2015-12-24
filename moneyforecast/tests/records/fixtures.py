@@ -19,7 +19,7 @@ def current_date():
 
 @pytest.fixture
 def future_date(current_date):
-    date = current_date+relativedelta(days=7)
+    date = current_date+relativedelta(days=1)
     return date
 
 

@@ -175,7 +175,7 @@ class EditRecurrentMonthView(UpdateView):
         return kwargs
 
 
-class CreateInitialBalanceView(CreateView):
+class BaseCreateRecordView(CreateView):
     """
     TODO: this class is probably never used since InitialBalance is only updated
     """
@@ -191,7 +191,7 @@ class CreateInitialBalanceView(CreateView):
         return JsonResponse({'id': instance.id})
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateInitialBalanceView, self).get_context_data(
+        context = super(BaseCreateRecordView, self).get_context_data(
             **kwargs)
         current_date = timezone.now()
         min_date = datetime(
@@ -200,13 +200,13 @@ class CreateInitialBalanceView(CreateView):
         last_date = get_last_date_of_month(
             current_date.month, current_date.year)
         context['max_date'] = last_date.strftime("%d.%m.%Y")
-        start_date = context['form'].initial['start_date']
+        start_date = context['form'].fields['start_date'].initial()
         context['start_date'] = start_date.strftime('%d.%m.%Y')
 
         return context
 
 
-class UpdateInitialBalanceView(UpdateView):
+class BaseUpdateRecordView(UpdateView):
     model = Record
     form_class = InitialBalanceForm
     template_name = 'includes/edit_balance_form.html'
@@ -220,7 +220,7 @@ class UpdateInitialBalanceView(UpdateView):
         return JsonResponse({'id': instance.id})
 
     def get_context_data(self, **kwargs):
-        context = super(UpdateInitialBalanceView, self).get_context_data(
+        context = super(BaseUpdateRecordView, self).get_context_data(
             **kwargs)
         current_date = timezone.now()
         min_date = datetime(
@@ -236,27 +236,39 @@ class UpdateInitialBalanceView(UpdateView):
         return context
 
 
-class CreateUnscheduledDebtView(CreateInitialBalanceView):
+class CreateInitialBalanceView(BaseCreateRecordView):
+    pass
+
+
+class UpdateInitialBalanceView(BaseUpdateRecordView):
+    pass
+
+
+class CreateUnscheduledDebtView(BaseCreateRecordView):
     title = _('Create Unscheduled Debt')
     form_class = UnscheduledDebtForm
     url_name = 'create_unscheduled_debt'
+    template_name = 'includes/edit_unscheduled_form.html'
 
 
-class CreateUnscheduledCreditView(CreateInitialBalanceView):
+class CreateUnscheduledCreditView(BaseCreateRecordView):
     title = _('Create Unscheduled Credit')
     form_class = UnscheduledCreditForm
     url_name = 'create_unscheduled_credit'
+    template_name = 'includes/edit_unscheduled_form.html'
 
 
-class UpdateUnscheduledDebtView(UpdateInitialBalanceView):
+class UpdateUnscheduledDebtView(BaseUpdateRecordView):
     title = _('Update Unscheduled Debt')
     form_class = UnscheduledDebtForm
     url_name = 'update_unscheduled_debt'
     can_delete = True
+    template_name = 'includes/edit_unscheduled_form.html'
 
 
-class UpdateUnscheduledCreditView(UpdateInitialBalanceView):
+class UpdateUnscheduledCreditView(BaseUpdateRecordView):
     title = _('Update Unscheduled Credit')
     form_class = UnscheduledCreditForm
     url_name = 'update_unscheduled_credit'
     can_delete = True
+    template_name = 'includes/edit_unscheduled_form.html'

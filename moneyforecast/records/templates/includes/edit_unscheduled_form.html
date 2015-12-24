@@ -1,20 +1,28 @@
 {% extends 'includes/modal_base.html' %}
 {% load i18n %}
 
-{% block title %}{% trans 'Update Record' %}{% endblock title %} 
+{% block title %}
+    {{ view.title }}
+{% endblock title %} 
 
 {% block pre-body %}
-<form action="{% url 'update_record' pk=object.pk %}" id="edit-record-form" method="post" class="modal-form">
+{% if object and object.pk %}
+    <form action="{% url view.url_name pk=object.pk %}" id="edit-balance-form" method="post">
+{% else %}
+    <form action="{% url view.url_name %}" id="edit-balance-form" method="post">
+{% endif %}
 {% endblock %}
 
 {% block body %} 
     {% csrf_token %}
-    {% include "includes/_record_form_fields.html" %}
+    {{ form.as_p }}
 {% endblock body %}
 
 
 {% block footer-body %}
+        {% if view.can_delete %}
         <button id="btn-delete" type="button" class="btn btn-danger" data-url="{% url 'delete_record' pk=object.pk %}">Delete record</button>
+        {% endif %}
         <div class="pull-right">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-primary">Save changes</button>
@@ -23,16 +31,28 @@
 
 {% block post-footer %}
     </form>
+
     <script> 
-        {# TODO: find a way to simplify the date formatting for the datetimepicker #}
-        prepareForm('{{ form.start_date.value|date:"d.m.Y" }}');
-        $('#edit-record-form #btn-delete').on('click',function(){
+        prepareInputs('{{ start_date }}');
+        $('#edit-balance-form').on('submit', function(){
+            form = $(this);
+            $.post(form.attr('action'), form.serialize(), function(responseText){
+                if (responseText['id']){
+                    location.reload();
+                } else {
+                    alert("{% trans "We are experiencing a problem. Please, try again later." %}");
+                }
+            });
+            return false;
+        });
+        {% if view.can_delete %}
+        $('#edit-balance-form #btn-delete').on('click',function(){
             var pk = $(this).data("id")
             var url = $(this).data("url")
             var r = confirm("{% trans "Do you really want to delete this record?" %}");
             if (r == true) {
                 $.post(url, function(responseText){
-                    if (responseText['id'] == 0){
+                    if (responseText['id']){
                         location.reload();
                     } else {
                         alert("{% trans "We are experiencing a problem. Please, try again later." %}");
@@ -41,6 +61,7 @@
             } else {
                 return false;
             }
-        }); 
+        });
+        {% endif %}
     </script> 
 {% endblock %}
