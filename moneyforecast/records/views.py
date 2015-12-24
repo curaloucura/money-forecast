@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
@@ -18,6 +19,8 @@ from records.models import (
     UNSCHEDULED_CREDIT_SLUG, get_last_date_of_month)
 from records.month_control import MonthControl, _cache_key
 
+logger = logging.getLogger(__name__)
+
 
 def _get_category_id(user, type_category, slug):
     category = Category.objects.filter(
@@ -34,13 +37,17 @@ def index(request):
     month_list = []
     today = timezone.now().replace(hour=0, minute=0)
     tomorrow = today+relativedelta(days=1)
+
+    t1 = datetime.now()
     cached_months = {}
-    for i in range(0, 18):
+    for i in range(0, 16):
         target_month = today+relativedelta(months=i)
         cached_months[_cache_key(target_month)] = MonthControl(
             request.user, target_month.month,
             target_month.year, cache=cached_months)
         month_list.append(cached_months[_cache_key(target_month)])
+    t2 = datetime.now()
+    logger.debug("Time to process months: {}".format(t2-t1))
 
     current_month = month_list[0]
 
