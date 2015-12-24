@@ -66,7 +66,11 @@ def index(request):
 
     currency = request.user.profile.get_currency_display()
     record_form = RecordForm()
-    return render(request, "dashboard.html", locals())
+    t1 = datetime.now()
+    response = render(request, "dashboard.html", locals())
+    t2 = datetime.now()
+    logger.debug("Time to render the template: {}".format(t2-t1))
+    return response
 
 
 def set_language(request):
