@@ -127,7 +127,7 @@
 		{% endfor %}
 		{% if unscheduled_list.total > 0 %}
 		<tr>
-			<td class="text-left"><strong>Total Debts</strong></td>
+			<td colspan="2" class="text-left"><strong>Total Debts</strong></td>
 			<td class="number">{{ currency }} {{ unscheduled_list.total|format_number }}</td>	
 			<td></td>
 		</tr>
