@@ -12,10 +12,6 @@
 <!-- Optional theme -->
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css"> -->
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="{% static "bootstrap/js/j.js" %}"></script>
-<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
-{% block extra_js%}{% endblock %}
 </head>
 <body>
  	<div class="container">
@@ -30,10 +26,14 @@
 	</div>
 </body>
 
+<!-- Latest compiled and minified JavaScript -->
+<script src="{% static "bootstrap/js/j.js" %}"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 <script src="{% static "js/datetimepicker/jquery.datetimepicker.js" %}"></script>
 <script src="{% static "js/moment.js" %}"></script>
 <script src="{% static "js/base.js" %}"></script>
 <script src="{% static "js/jquery.maskMoney.min.js" %}"></script>
+{% block extra_js%}{% endblock %}
 <script type="text/javascript">
 	function amount_formatter(){
 		{# TODO: this is here due the template tag to get_decimal_separator #}
