@@ -30,6 +30,14 @@ class TestMonthControlRecurrent:
         records = month_control.get_upcoming_records()
         assert len(records) == 0
 
+    def test_one_month_before_end_date_is_displayed(
+            self, outcome_recurrent_limited, month_control, end_of_recurrence):
+        one_month_before = end_of_recurrence - relativedelta(months=1)
+        month_control.set_month_and_year(
+            one_month_before.month, one_month_before.year)
+        records = month_control.outcome_list
+        assert records[0] == outcome_recurrent_limited
+
     def test_recurring_day_has_no_past_records(
             self, outcome_recurrent, start_of_recurrence, month_control):
         past_date = start_of_recurrence - relativedelta(months=1)

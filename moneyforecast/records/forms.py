@@ -23,6 +23,7 @@ class RecordForm(forms.ModelForm):
         max_digits=12, decimal_places=2, localize=True, widget=forms.TextInput,
         initial=0)
     start_date = forms.DateField(input_formats=["%d.%m.%Y"])
+    end_date = forms.DateField(input_formats=["%d.%m.%Y"], required=False)
 
     class Meta:
         model = Record
@@ -83,6 +84,7 @@ class ChangeRecurrentMonthForm(forms.ModelForm):
         max_digits=12, decimal_places=2, localize=True, widget=forms.TextInput,
         initial=0)
     start_date = forms.DateField(input_formats=["%d.%m.%Y"])
+    end_date = forms.DateField(input_formats=["%d.%m.%Y"], required=False)
 
     class Meta:
         model = Record
@@ -170,6 +172,7 @@ class InitialBalanceForm(forms.ModelForm):
         initial=0)
     start_date = forms.DateField(
         input_formats=["%d.%m.%Y"], initial=timezone.now)
+    end_date = forms.DateField(input_formats=["%d.%m.%Y"], required=False)
 
     class Meta:
         model = Record

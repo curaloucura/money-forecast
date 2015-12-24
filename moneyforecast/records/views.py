@@ -176,9 +176,6 @@ class EditRecurrentMonthView(UpdateView):
 
 
 class BaseCreateRecordView(CreateView):
-    """
-    TODO: this class is probably never used since InitialBalance is only updated
-    """
     model = Record
     form_class = InitialBalanceForm
     template_name = 'includes/edit_balance_form.html'

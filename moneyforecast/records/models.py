@@ -96,12 +96,7 @@ class Record(models.Model):
         """
         record = self.get_record_for_month(month, year)
 
-        if record._is_same_month_and_year(month, year):
-            date = record.start_date
-        else:
-            date = record._get_date_of_month_on(month, year)
-
-        return date
+        return record._get_date_of_month_on(month, year)
 
     def _is_same_month_and_year(self, month, year, tmz_info=None):
         local_start = timezone.localtime(self.start_date, tmz_info)
@@ -110,6 +105,9 @@ class Record(models.Model):
         return same_month and same_year
 
     def _get_date_of_month_on(self, month, year):
+        if self._is_same_month_and_year(month, year):
+            return self.start_date
+
         day = self._get_valid_day_of_month(month, year)
         return tmz(datetime(day=day, month=month, year=year))
 
@@ -158,16 +156,6 @@ class Record(models.Model):
             end_range = recurrent.end_date >= date
         return start_range and end_range
 
-    def _get_default_recurrent_record(self, month, year):
-        day = self._get_valid_day_of_month(month, year)
-        record_date_for_month = datetime(day=day, month=month, year=year)
-        if self._in_range_of_recurrence(tmz(record_date_for_month)):
-            default_record = self
-        else:
-            raise OutOfRange("{}/{} is not a valid date for record {}".format(
-                month, year, self))
-        return default_record
-
     def get_record_for_month(self, month, year):
         if self.is_recurrent():
             record = self._get_record_for_recurrent(month, year)
@@ -179,12 +167,25 @@ class Record(models.Model):
         return record
 
     def _get_record_for_recurrent(self, month, year):
+        if self._is_same_month_and_year(month, year):
+            return self
+
         default_record = self._get_default_recurrent_record(month, year)
 
         record = self._get_other_record_on(month, year)
         if not record:
             record = default_record
         return record
+
+    def _get_default_recurrent_record(self, month, year):
+        day = self._get_valid_day_of_month(month, year)
+        record_date_for_month = datetime(day=day, month=month, year=year)
+        if self._in_range_of_recurrence(tmz(record_date_for_month)):
+            default_record = self
+        else:
+            raise OutOfRange("{}/{} is not a valid date for record {}".format(
+                month, year, self))
+        return default_record
 
     def _get_record_for_non_recurrent(self, month, year):
         if self._is_same_month_and_year(month, year):

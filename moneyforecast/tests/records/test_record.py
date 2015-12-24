@@ -38,6 +38,17 @@ class TestRecord:
             parent=record_recurrent)
         return other
 
+    def test_get_recurrent_on_recurring_date_before_start_date(
+            self, user, record_recurrent, current_date):
+        second_day = current_date.replace(day=2)
+        record_recurrent.start_date = second_day
+        day_before_start_date = 1
+        record_recurrent.day_of_month = day_before_start_date
+        record_recurrent.save()
+        ocurrence = record_recurrent.get_record_for_month(
+            current_date.month, current_date.year)
+        assert ocurrence == record_recurrent
+
     def test_get_date_for_month_non_recurring_same_month(
             self, record, future_date):
         date = record.get_date_for_month(future_date.month, future_date.year)

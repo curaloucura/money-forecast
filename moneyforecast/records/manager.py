@@ -49,7 +49,6 @@ class RecordQuerySet(models.QuerySet):
         records = self.by_user(user)
         records = records.filter(is_paid_out=False)
         records = records.starting_before(max_date)
-        records = records.ending_before(max_date)
         return records
 
 

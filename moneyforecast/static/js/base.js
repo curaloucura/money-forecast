@@ -34,16 +34,18 @@ $.ajaxSetup({
 /// End huge code dump
 
 function prepareInputs(start_date, min_date, max_date){
-    $('#id_start_date, #id_end_date').datetimepicker({
+    var options = {
         format:'d.m.Y',
         formatDate:'d.m.Y',
-        value: start_date, 
         startDate: start_date, 
         minDate: min_date, 
         maxDate: max_date, 
         timepicker: false, 
         validateOnBlur: false,
-        closeOnDateSelect: true});
+        closeOnDateSelect: true};
+    var start_date_options = $.extend({}, options, {value: start_date});
+    $('#id_start_date').datetimepicker(start_date_options);
+    $('#id_end_date').datetimepicker(options);
     amount_formatter();
 }
 
