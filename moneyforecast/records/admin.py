@@ -1,5 +1,8 @@
+import logging
 from django.contrib import admin
 from records.models import Category, Record, Budget, SYSTEM_CATEGORIES
+
+logger = logging.getLogger(__name__)
 
 
 class CurrentUserAdmin(admin.ModelAdmin):
@@ -8,6 +11,10 @@ class CurrentUserAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super(CurrentUserAdmin, self).get_queryset(request)
         # make sure all users, even superusers, see only their own objects
+        # to see all categories a superuser need to add a hidden option
+        # ?all=True to the querystring eg.: /admin/categories/?all=True
+        if request.user.is_superuser and request.GET.get("all"):
+            return qs
         return qs.filter(user=request.user)
 
     def save_model(self, request, obj, form, change):
@@ -18,15 +25,12 @@ class CurrentUserAdmin(admin.ModelAdmin):
 
 class CategoryAdmin(CurrentUserAdmin):
     list_display = ('name', 'type_category')
-    list_filter = ('type_category',)
+    list_filter = ('type_category', )
     prepopulated_fields = {"slug": ("name",)}
-    # TODO: block changing the slug for internal categories
 
     def get_queryset(self, request):
-        qs = super(CurrentUserAdmin, self).queryset(request)
-        # make sure all users, even superusers, see only their own objects
+        qs = super(CategoryAdmin, self).get_queryset(request)
         return qs.exclude(type_category=SYSTEM_CATEGORIES)
-        # TODO: Hide also extra income and others
 
 
 class RecordAdmin(CurrentUserAdmin):
