@@ -218,7 +218,8 @@ class MonthControl(object):
         category = Category.objects.get(
             type_category=SYSTEM_CATEGORIES, slug=slug_category,
             user=self.user)
-        records = Record.objects.filter(user=self.user, category=category)
+        records = Record.objects.filter(
+            user=self.user, category=category).order_by('start_date')
         total = records.aggregate(Sum('amount'))['amount__sum']
         return {'list': records, 'total': total}
 
