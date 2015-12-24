@@ -250,3 +250,6 @@ class Budget(models.Model):
         verbose_name=_("How much?"))
     category = models.ForeignKey(Category, blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.description

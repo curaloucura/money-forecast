@@ -47,6 +47,10 @@ class RecordAdmin(CurrentUserAdmin):
             db_field, request, **kwargs)
 
 
+class BudgetAdmin(CurrentUserAdmin):
+    list_display = ('description', 'amount', 'category')
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Record, RecordAdmin)
-admin.site.register(Budget)
+admin.site.register(Budget, BudgetAdmin)
