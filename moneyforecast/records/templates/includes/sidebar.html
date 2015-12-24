@@ -115,6 +115,7 @@
 	<table class="table table-condensed">
 		{% for record in unscheduled_list.list %}
 		<tr>
+			<td class="text-left">{{ record.start_date|date:"d.m.y" }}</td>
 			<td class="text-left">{{ record.description|default:record.category }}</td>
 			<td class="number">{{ currency }} {{ record.amount|format_number }}</td>
 			<td>
