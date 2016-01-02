@@ -18,7 +18,7 @@ def _cache_key(date):
 class MonthControl(object):
     def __init__(self, user, month, year, cache=None):
         self.user = user
-        self.cache = cache
+        self.cache = cache or {}
         self.today = now().replace(hour=0, minute=0)
         budget, created = Budget.objects.get_or_create(
             user=user, category__isnull=True)
@@ -36,7 +36,7 @@ class MonthControl(object):
         # end_date is the last day of the month
         self.end_date = get_last_date_of_month(month, year).replace(
             hour=23, minute=59, second=59)
-        self.last_month = (self.start_date-relativedelta(months=1))
+        self.last_month = (self.end_date-relativedelta(months=1))
 
         # Initialize variables
         self.initial_balance = Decimal('0')
@@ -164,16 +164,35 @@ class MonthControl(object):
             return (balance.start_date, balance.amount, balance)
         else:
             # TODO: make this smarter
-            if self.cache:
-                last_balance = self.cache.get(
-                    _cache_key(self.last_month), None)
-                if not last_balance:
-                    last_balance = MonthControl(
-                        self.user, self.last_month.month, self.last_month.year)
-                    self.cache[_cache_key(self.last_month)] = last_balance
-                final_balance = last_balance.final_balance
-            else:
-                final_balance = 0
+            # Currently it walks one month back and calculates the initial
+            # balance for it, but it makes it recursively as long as there
+            # are records. This works fine until you look too much in the
+            # future with infinite recurring records or if the user
+            # do not input any initial balance for too many months.
+            # See the test_month_control_recurring tests for an example of
+            # a failing case
+            records_by_date = self.get_queryset().filter()
+            earliest_date = None
+            if records_by_date.count():
+                earliest_date = records_by_date[0].start_date
+
+            empty_initial_balance_info = (self.start_date, 0, None)
+            if not earliest_date:
+                return empty_initial_balance_info
+
+            last_month_has_records = Record.objects.active_for(
+                self.user, self.last_month)
+
+            if not last_month_has_records:
+                return empty_initial_balance_info
+
+            last_balance = self.cache.get(
+                _cache_key(self.last_month), None)
+            if not last_balance:
+                last_balance = MonthControl(
+                    self.user, self.last_month.month, self.last_month.year)
+                self.cache[_cache_key(self.last_month)] = last_balance
+            final_balance = last_balance.final_balance
             # If using last month, initial date is the first day of the month
             return (self.start_date, final_balance, None)
 

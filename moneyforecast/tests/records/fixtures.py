@@ -72,7 +72,7 @@ def month_control(user, current_date):
     Important: currently any Record fixture should come before month_control
     """
     month_control = MonthControl(
-        user, current_date.month, current_date.year, cache=False)
+        user, current_date.month, current_date.year, cache={})
     return month_control
 
 
