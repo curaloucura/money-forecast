@@ -16,15 +16,13 @@ def _cache_key(date):
 
 
 class MonthControl(object):
-    def __init__(self, user, month, year, cache=None):
+    def __init__(self, user, month, year, cache=None, initiate=True):
         self.user = user
         self.cache = cache or {}
         self.today = now().replace(hour=0, minute=0)
-        budget, created = Budget.objects.get_or_create(
-            user=user, category__isnull=True)
-        self.budget = budget.amount
 
-        self.set_month_and_year(month, year)
+        if initiate:
+            self.set_month_and_year(month, year)
 
     def __str__(self):
         return "MonthControl for {} / {}".format(self.month, self.year)
@@ -56,13 +54,17 @@ class MonthControl(object):
         self.total_outcome = self.outcome_monthly + self.outcome_variable
         self.difference = ((self.income_monthly+self.income_variable) -
                            (self.outcome_monthly+self.outcome_variable))
-        self.accountable_difference = (
+        self.accountable_difference = self._get_accountable_difference()
+
+        self.final_balance = self.initial_balance + self.accountable_difference
+
+    def _get_accountable_difference(self):
+        return (
             (self.accountable_income_monthly +
              self.accountable_income_variable) -
             (self.accountable_outcome_monthly +
              self.accountable_outcome_variable)
             )
-        self.final_balance = self.initial_balance + self.accountable_difference
 
     def _set_income_and_outcome(self):
         # TODO: display total amount but not use it for calculations
@@ -71,15 +73,8 @@ class MonthControl(object):
             [x.amount for x in self.income_variable_list])
         self.outcome_monthly = sum(
             [x.amount for x in self.outcome_monthly_list])
-        outcome_variable = sum(
+        self.outcome_variable = sum(
             [x.amount for x in self.outcome_variable_list])
-        self._set_budget_amounts(outcome_variable)
-        self.outcome_variable = outcome_variable + self.remaining_budget
-
-    def _set_budget_amounts(self, amount_used):
-        self.used_budget = min(amount_used, self.budget)
-        self.remaining_budget = self.budget - self.used_budget
-        self.budget_over_amount = max(amount_used - self.budget, 0)
 
     def _set_sum_of_amounts(self):
         self.accountable_income_monthly = self._sum_after_date(
@@ -189,7 +184,7 @@ class MonthControl(object):
             last_balance = self.cache.get(
                 _cache_key(self.last_month), None)
             if not last_balance:
-                last_balance = MonthControl(
+                last_balance = self.__class__(
                     self.user, self.last_month.month, self.last_month.year)
                 self.cache[_cache_key(self.last_month)] = last_balance
             final_balance = last_balance.final_balance
@@ -247,3 +242,30 @@ class MonthControl(object):
 
     def get_unscheduled_credit_totals(self):
         return self._get_unscheduled_list_and_total(UNSCHEDULED_CREDIT_SLUG)
+
+
+class MonthControlWithBudget(MonthControl):
+    def __init__(self, user, month, year, cache=None, initiate=True):
+        super(MonthControlWithBudget, self).__init__(
+            user, month, year, cache, False)
+        budget, created = Budget.objects.get_or_create(
+            user=user, category__isnull=True)
+        self.budget = budget.amount
+
+        if initiate:
+            self.set_month_and_year(month, year)
+
+    def _set_budget_amounts(self, amount_used):
+        self.used_budget = min(amount_used, self.budget)
+        self.remaining_budget = self.budget - self.used_budget
+        self.budget_over_amount = max(amount_used - self.budget, 0)
+
+    def _set_income_and_outcome(self):
+        super(MonthControlWithBudget, self)._set_income_and_outcome()
+        self._set_budget_amounts(self.outcome_variable)
+        self.outcome_variable = self.outcome_variable + self.remaining_budget
+
+    def _get_accountable_difference(self):
+        accountable_difference = super(
+            MonthControlWithBudget, self)._get_accountable_difference()
+        return accountable_difference - self.remaining_budget

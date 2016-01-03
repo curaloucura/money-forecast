@@ -17,7 +17,8 @@ from records.models import (
     Record, INCOME, OUTCOME, Category,
     SAVINGS, SYSTEM_CATEGORIES, INITIAL_BALANCE_SLUG, UNSCHEDULED_DEBT_SLUG,
     UNSCHEDULED_CREDIT_SLUG, get_last_date_of_month)
-from records.month_control import MonthControl, _cache_key
+from records.month_control import (
+    MonthControl, MonthControlWithBudget, _cache_key)
 
 logger = logging.getLogger(__name__)
 
@@ -38,11 +39,17 @@ def index(request):
     today = timezone.now().replace(hour=0, minute=0)
     tomorrow = today+relativedelta(days=1)
 
+    use_budget = request.GET.get('budget', 'True') == 'True'
+    if use_budget:
+        month_class = MonthControlWithBudget
+    else:
+        month_class = MonthControl
+
     t1 = datetime.now()
     cached_months = {}
     for i in range(0, 16):
         target_month = today+relativedelta(months=i)
-        cached_months[_cache_key(target_month)] = MonthControl(
+        cached_months[_cache_key(target_month)] = month_class(
             request.user, target_month.month,
             target_month.year, cache=cached_months)
         month_list.append(cached_months[_cache_key(target_month)])
