@@ -40,6 +40,21 @@
 					Caution: {{ current_month.budget_over_amount }} is over your budget.
 				{% endif %}
 			{% endif %}
+			<h5>Used by</h5>
+			<table id="upcoming" class="table table-condensed">
+				{% for record in current_month.outcome_variable_list %}
+				<tr>
+					<td class="text-left">{{ record.start_date|date:"d.m.y" }}</td>
+					<td class="text-left">{{ record.description|default:record.category }}</td>
+					<td class="number">{{ currency }} {{ record.amount|format_number }}</td>
+					<td>
+						 <a href="#" data-toggle="modal" data-target="#record-form" data-url="{% url 'update_unscheduled_debt' pk=record.pk %}">
+			                 <span class="glyphicon glyphicon-pencil text-muted" aria-hidden="true"></span>
+			             </a>
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
 			<p><a href="?budget=False">Hide budget from calculations</a></p>
 		{% else %}
 			<p><a href="?budget=True">Show budget in calculations</a></p>
