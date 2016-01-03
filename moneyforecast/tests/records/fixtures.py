@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 from records.models import (
     Category, Record, Budget, OUTCOME, INCOME, SAVINGS, tmz)
-from records.month_control import MonthControl
+from records.month_control import MonthControl, MonthControlWithBudget
 
 
 @pytest.fixture
@@ -72,6 +72,18 @@ def month_control(user, current_date):
     Important: currently any Record fixture should come before month_control
     """
     month_control = MonthControl(
+        user, current_date.month, current_date.year, cache={})
+    return month_control
+
+
+@pytest.fixture
+def month_control_with_budget(user, current_date):
+    """
+    Return a MonthControlWithBudget object for the current date.
+
+    Important: currently any Record fixture should come before month_control
+    """
+    month_control = MonthControlWithBudget(
         user, current_date.month, current_date.year, cache={})
     return month_control
 

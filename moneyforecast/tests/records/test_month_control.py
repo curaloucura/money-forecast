@@ -43,15 +43,17 @@ class TestMonthControl:
             outcome_current.category.type_category, False)
         assert len(upcoming_records)
 
-    def test_remaining_budget(self, budget, month_control):
+    def test_remaining_budget(self, budget, month_control_with_budget):
+        month_control = month_control_with_budget
         assert month_control.budget == 1
         month_control._set_budget_amounts(0)
         assert month_control.remaining_budget == 1
         month_control._set_budget_amounts(1)
         assert month_control.remaining_budget == 0
 
-    def test_outcome_with_budget(self, budget, outcome_current, month_control):
-        assert month_control.outcome_variable == 1
+    def test_outcome_with_budget(
+            self, budget, outcome_current, month_control_with_budget):
+        assert month_control_with_budget.outcome_variable == 1
 
     def test_return_from_user_only(
             self, outcome_current, another_user, month_control):
