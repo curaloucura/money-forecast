@@ -122,6 +122,12 @@ class Record(models.Model):
         if self.day_of_month > last_day.day:
             day = last_day.day
 
+        if self.end_date:
+            date = self.end_date
+            is_last_month = (date.month == month) and (date.year == year)
+            if is_last_month:
+                day = date.day
+
         return day
 
     def is_accountable(self, on_date=None):
