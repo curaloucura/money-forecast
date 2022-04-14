@@ -1,7 +1,7 @@
 from django.db import models
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -24,7 +24,7 @@ class Category(models.Model):
     name = models.CharField(max_length=50)
     type_category = models.IntegerField(choices=TYPE_CATEGORY_CHOICES)
     slug = models.SlugField(null=True)
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.name
@@ -49,7 +49,7 @@ def get_last_date_of_month(month, year):
 
 class Record(models.Model):
     description = models.CharField(max_length=50, blank=True)
-    category = models.ForeignKey(Category, help_text=_(
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, help_text=_(
         'Select the category for this record. This field is required'))
     amount = models.DecimalField(
         default=0, max_digits=12, decimal_places=2,
@@ -80,8 +80,8 @@ class Record(models.Model):
             'calculations anymore. Click it only to hide a record '
             'from your spreadsheet'))
     notes = models.TextField(blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True)
-    parent = models.ForeignKey('self', blank=True, null=True)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
 
     objects = RecordManager()
 
@@ -255,8 +255,8 @@ class Budget(models.Model):
     amount = models.DecimalField(
         default=0, max_digits=12, decimal_places=2,
         verbose_name=_("How much?"))
-    category = models.ForeignKey(Category, blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True)
+    category = models.ForeignKey(Category, blank=True, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.description

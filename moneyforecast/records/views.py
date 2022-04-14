@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import DeleteView
 

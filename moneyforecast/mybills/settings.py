@@ -1,16 +1,10 @@
 """
 Django settings for mybills project.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.7/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -47,11 +41,25 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 ALLOWED_HOSTS = []
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
+         'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 LOGIN_URL = '/admin/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -70,12 +78,11 @@ INSTALLED_APPS = (
     'profiles',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -94,10 +101,8 @@ WSGI_APPLICATION = 'mybills.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'money', #os.path.join(BASE_DIR, 'db.sqlite3'),
-        'USER': 'money',
-        'PASSWORD': 'money',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -110,7 +115,7 @@ LANGUAGES = (
     ('en', _('English')),
 )
 
-LANGUAGE_CODE = 'pt-br'
+LANGUAGE_CODE = 'en'
 
 LOCALE_PATHS = (
     os.path.join(BASE_DIR, 'locale'),
@@ -140,3 +145,4 @@ STATIC_ROOT = os.path.join(BASE_DIR,'..','public')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+

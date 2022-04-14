@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='record',
             name='parent',
-            field=models.ForeignKey(blank=True, to='records.Record', null=True),
+            field=models.ForeignKey(blank=True, to='records.Record', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

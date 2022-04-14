@@ -18,7 +18,7 @@ TIMEZONE_CHOICES = [(x, x) for x in pytz.common_timezones]
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, related_name='profile')
+    user = models.OneToOneField(User, related_name='profile', on_delete=models.CASCADE)
     currency = models.CharField(
         max_length=5, choices=CURRENCY_CHOICES, default='$')
     timezone = models.CharField(

@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from django import forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from records.models import (
     Record, Category, SYSTEM_CATEGORIES,
